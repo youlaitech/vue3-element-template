@@ -14,7 +14,7 @@
     </div>
 
     <!-- 登录表单 -->
-    <el-form class="login-form" ref="loginFormRef" :model="loginData" :rules="loginRules">
+    <el-form ref="loginFormRef" class="login-form" :model="loginData" :rules="loginRules">
       <div class="form-title">
         <h2>{{ defaultSettings.title }}</h2>
         <el-dropdown style="position: absolute; right: 0">
@@ -292,7 +292,7 @@ onMounted(() => {
   width: 100%;
   height: 100%;
   overflow-y: auto;
-  background: url("@/assets/images/login-background-light.jpg") no-repeat center right;
+  background: url("@/assets/images/login-bg.jpg") no-repeat center right;
 
   .login-header {
     position: absolute;
@@ -401,7 +401,7 @@ onMounted(() => {
 
 html.dark {
   .login {
-    background: url("@/assets/images/login-background-dark.jpg") no-repeat center right;
+    background: url("@/assets/images/login-bg-dark.jpg") no-repeat center right;
 
     .login-content {
       background: transparent;
