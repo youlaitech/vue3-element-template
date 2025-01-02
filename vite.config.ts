@@ -23,6 +23,7 @@ const pathSrc = resolve(__dirname, "src");
 export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
   const env = loadEnv(mode, process.cwd());
   return {
+    base: env.VITE_APP_BASE_PATH,
     resolve: {
       alias: {
         "@": pathSrc,

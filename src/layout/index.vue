@@ -22,9 +22,7 @@
       </div>
 
       <div :class="{ hasTagsView: showTagsView }" class="main-container">
-        <div :class="{ 'fixed-header': fixedHeader }">
-          <TagsView v-if="showTagsView" />
-        </div>
+        <TagsView v-if="showTagsView" />
         <AppMain />
         <Settings v-if="defaultSettings.showSettings" />
         <!-- 返回顶部 -->
@@ -36,10 +34,8 @@
 
     <!-- 左侧和顶部布局 -->
     <div v-else :class="{ hasTagsView: showTagsView }" class="main-container">
-      <div :class="{ 'fixed-header': fixedHeader }">
-        <NavBar v-if="layout === LayoutEnum.LEFT" />
-        <TagsView v-if="showTagsView" />
-      </div>
+      <NavBar v-if="layout === LayoutEnum.LEFT" />
+      <TagsView v-if="showTagsView" />
       <AppMain />
       <Settings v-if="defaultSettings.showSettings" />
       <!-- 返回顶部 -->
@@ -66,7 +62,6 @@ const width = useWindowSize().width;
 const WIDTH_DESKTOP = 992; // 响应式布局容器固定宽度  大屏（>=1200px） 中屏（>=992px） 小屏（>=768px）
 const isMobile = computed(() => appStore.device === DeviceEnum.MOBILE);
 const isOpenSidebar = computed(() => appStore.sidebar.opened);
-const fixedHeader = computed(() => settingsStore.fixedHeader); // 是否固定header
 const showTagsView = computed(() => settingsStore.tagsView); // 是否显示tagsView
 const layout = computed(() => settingsStore.layout); // 布局模式 left top mix
 const activeTopMenuPath = computed(() => appStore.activeTopMenuPath); // 顶部菜单激活path
