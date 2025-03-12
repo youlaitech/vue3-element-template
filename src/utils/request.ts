@@ -3,7 +3,6 @@ import qs from "qs";
 import { useUserStoreHook } from "@/store/modules/user";
 import { ResultEnum } from "@/enums/ResultEnum";
 import { getToken } from "@/utils/auth";
-import router from "@/router";
 
 // 创建 axios 实例
 const service = axios.create({
@@ -46,14 +45,20 @@ service.interceptors.response.use(
   },
   async (error: any) => {
     // 非 2xx 状态码处理 401、403、500 等
-    const { config, response } = error;
+    const response = error.response;
     if (response) {
       const { code, msg } = response.data;
       if (code === ResultEnum.ACCESS_TOKEN_INVALID) {
-        // Token 过期，刷新 Token
-        return handleTokenRefresh(config);
-      } else if (code === ResultEnum.REFRESH_TOKEN_INVALID) {
-        return Promise.reject(new Error(msg || "Error"));
+        ElMessageBox.confirm("当前页面已失效，请重新登录", "提示", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning",
+        }).then(() => {
+          const userStore = useUserStoreHook();
+          userStore.resetUserSession().then(() => {
+            location.reload();
+          });
+        });
       } else {
         ElMessage.error(msg || "系统出错");
       }
@@ -63,50 +68,3 @@ service.interceptors.response.use(
 );
 
 export default service;
-
-// 刷新 Token 的锁
-let isRefreshing = false;
-// 因 Token 过期导致失败的请求队列
-let requestsQueue: Array<() => void> = [];
-
-// 刷新 Token 处理
-async function handleTokenRefresh(config: InternalAxiosRequestConfig) {
-  return new Promise((resolve) => {
-    const requestCallback = () => {
-      config.headers.Authorization = getToken();
-      resolve(service(config));
-    };
-
-    requestsQueue.push(requestCallback);
-
-    if (!isRefreshing) {
-      isRefreshing = true;
-
-      // 刷新 Token
-      useUserStoreHook()
-        .refreshToken()
-        .then(() => {
-          // Token 刷新成功，执行请求队列
-          requestsQueue.forEach((callback) => callback());
-          requestsQueue = [];
-        })
-        .catch((error) => {
-          console.log("handleTokenRefresh error", error);
-          // Token 刷新失败，清除用户数据并跳转到登录
-          ElNotification({
-            title: "提示",
-            message: "您的会话已过期，请重新登录",
-            type: "info",
-          });
-          useUserStoreHook()
-            .clearUserData()
-            .then(() => {
-              router.push("/login");
-            });
-        })
-        .finally(() => {
-          isRefreshing = false;
-        });
-    }
-  });
-}
