@@ -11,7 +11,7 @@
                   <component :is="selectedIcon.replace('el-icon-', '')" />
                 </el-icon>
                 <template v-else>
-                  <svg-icon :icon-class="selectedIcon" />
+                  <div :class="`i-svg:${selectedIcon}`" />
                 </template>
               </template>
               <template #suffix>
@@ -52,7 +52,7 @@
                   @click="selectIcon(icon)"
                 >
                   <el-tooltip :content="icon" placement="bottom" effect="light">
-                    <svg-icon :icon-class="icon" />
+                    <div :class="`i-svg:${icon}`" />
                   </el-tooltip>
                 </li>
               </ul>
@@ -126,7 +126,7 @@ function loadIcons() {
 }
 
 function handleTabClick(tabPane: any) {
-  activeTab.value = tabPane.name;
+  activeTab.value = tabPane.props.name;
   filterIcons();
 }
 

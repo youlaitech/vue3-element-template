@@ -3,30 +3,26 @@
   <el-upload
     v-model:file-list="fileList"
     list-type="picture-card"
-    :class="fileList.length >= props.limit || !props.showUploadBtn ? 'hide' : 'show'"
     :before-upload="handleBeforeUpload"
-    :action="props.action"
-    :headers="props.headers"
-    :data="props.data"
-    :name="props.name"
-    :on-success="handleSuccessFile"
+    :http-request="handleUpload"
+    :on-success="handleSuccess"
     :on-error="handleError"
+    :on-exceed="handleExceed"
     :accept="props.accept"
     :limit="props.limit"
+    multiple
   >
     <el-icon><Plus /></el-icon>
     <template #file="{ file }">
       <div style="width: 100%">
-        <img class="el-upload-list__item-thumbnail" :src="file.url" alt="" />
+        <img class="el-upload-list__item-thumbnail" :src="file.url" />
         <span class="el-upload-list__item-actions">
-          <span class="el-upload-list__item-preview" @click="previewImg(file)">
+          <!-- 预览 -->
+          <span @click="handlePreviewImage(file.url!)">
             <el-icon><zoom-in /></el-icon>
           </span>
-          <span
-            v-if="props.showDelBtn"
-            class="el-upload-list__item-delete"
-            @click="handleRemove(file)"
-          >
+          <!-- 删除 -->
+          <span @click="handleRemove(file.url!)">
             <el-icon><Delete /></el-icon>
           </span>
         </span>
@@ -35,47 +31,18 @@
   </el-upload>
 
   <el-image-viewer
-    v-if="viewVisible"
+    v-if="previewVisible"
     :zoom-rate="1.2"
-    :initialIndex="initialIndex"
-    :url-list="viewFileList"
-    @close="closePreview"
+    :initial-index="previewImageIndex"
+    :url-list="modelValue"
+    @close="handlePreviewClose"
   />
 </template>
 <script setup lang="ts">
-import { UploadRawFile, UploadUserFile, UploadFile, UploadProps } from "element-plus";
-import FileAPI from "@/api/file";
-import { getToken } from "@/utils/auth";
-import { ResultEnum } from "@/enums/ResultEnum";
-
-const emit = defineEmits(["update:modelValue"]);
+import { UploadRawFile, UploadRequestOptions, UploadUserFile } from "element-plus";
+import FileAPI, { FileInfo } from "@/api/file";
 
 const props = defineProps({
-  /**
-   * 文件路径集合
-   */
-  modelValue: {
-    type: Array<string>,
-    default: () => [],
-  },
-  /**
-   * 上传地址
-   */
-  action: {
-    type: String,
-    default: FileAPI.uploadUrl,
-  },
-  /**
-   * 请求头
-   */
-  headers: {
-    type: Object,
-    default: () => {
-      return {
-        Authorization: getToken(),
-      };
-    },
-  },
   /**
    * 请求携带的额外参数
    */
@@ -100,23 +67,9 @@ const props = defineProps({
     default: 10,
   },
   /**
-   * 是否显示删除按钮
+   * 单个文件的最大允许大小
    */
-  showDelBtn: {
-    type: Boolean,
-    default: true,
-  },
-  /**
-   * 是否显示上传按钮
-   */
-  showUploadBtn: {
-    type: Boolean,
-    default: true,
-  },
-  /**
-   * 单张图片最大大小
-   */
-  maxSize: {
+  maxFileSize: {
     type: Number,
     default: 10,
   },
@@ -125,119 +78,138 @@ const props = defineProps({
    */
   accept: {
     type: String,
-    default: "image/*",
+    default: "image/*", //  默认支持所有图片格式 ，如果需要指定格式，格式如下：'.png,.jpg,.jpeg,.gif,.bmp'
   },
 });
 
-const viewVisible = ref(false);
-const initialIndex = ref(0);
+const previewVisible = ref(false); // 是否显示预览
+const previewImageIndex = ref(0); // 预览图片的索引
 
-const fileList = ref([] as UploadUserFile[]);
-const valFileList = ref([] as string[]);
-const viewFileList = ref([] as string[]);
+const modelValue = defineModel("modelValue", {
+  type: [Array] as PropType<string[]>,
+  default: () => [],
+});
 
-watch(
-  () => props.modelValue,
-  (newVal: string[]) => {
-    const filePaths = fileList.value.map((file) => file.url);
-    // 监听modelValue文件集合值未变化时，跳过赋值
-    if (
-      filePaths.length > 0 &&
-      filePaths.length === newVal.length &&
-      filePaths.every((x) => newVal.some((y) => y === x)) &&
-      newVal.every((y) => filePaths.some((x) => x === y))
-    ) {
-      return;
-    }
-
-    if (newVal.length <= 0) {
-      fileList.value = [];
-      viewFileList.value = [];
-      valFileList.value = [];
-      return;
-    }
-
-    fileList.value = newVal.map((filePath) => {
-      return { url: filePath } as UploadUserFile;
-    });
-    valFileList.value = newVal.map((filePath) => {
-      return filePath;
-    });
-  },
-  { immediate: true }
-);
-
-/**
- * 上传成功回调
- *
- * @param options
- */
-const handleSuccessFile = (response: any, file: UploadFile) => {
-  if (response.code === ResultEnum.SUCCESS) {
-    ElMessage.success("上传成功");
-    valFileList.value.push(response.data.url);
-    emit("update:modelValue", valFileList.value);
-    return;
-  } else {
-    ElMessage.error(response.msg || "上传失败");
-  }
-};
-
-const handleError = (error: any) => {
-  ElMessage.error("上传失败");
-};
+const fileList = ref<UploadUserFile[]>([]);
 
 /**
  * 删除图片
  */
-function handleRemove(removeFile: UploadFile) {
-  const filePath = removeFile.url;
-  if (filePath) {
-    FileAPI.deleteByPath(filePath).then(() => {
-      valFileList.value = valFileList.value.filter((x) => x !== filePath);
-      // 删除成功回调
-      emit("update:modelValue", valFileList.value);
-    });
-  }
+function handleRemove(imageUrl: string) {
+  FileAPI.delete(imageUrl).then(() => {
+    const index = modelValue.value.indexOf(imageUrl);
+    if (index !== -1) {
+      // 直接修改数组避免触发整体更新
+      modelValue.value.splice(index, 1);
+      fileList.value.splice(index, 1); // 同步更新 fileList
+    }
+  });
 }
 
 /**
- * 限制用户上传文件的格式和大小
+ * 上传前校验
  */
 function handleBeforeUpload(file: UploadRawFile) {
-  if (file.size > props.maxSize * 1024 * 1024) {
-    ElMessage.warning("上传图片不能大于" + props.maxSize + "M");
+  // 校验文件类型：虽然 accept 属性限制了用户在文件选择器中可选的文件类型，但仍需在上传时再次校验文件实际类型，确保符合 accept 的规则
+  const acceptTypes = props.accept.split(",").map((type) => type.trim());
+
+  // 检查文件格式是否符合 accept
+  const isValidType = acceptTypes.some((type) => {
+    if (type === "image/*") {
+      // 如果是 image/*，检查 MIME 类型是否以 "image/" 开头
+      return file.type.startsWith("image/");
+    } else if (type.startsWith(".")) {
+      // 如果是扩展名 (.png, .jpg)，检查文件名是否以指定扩展名结尾
+      return file.name.toLowerCase().endsWith(type);
+    } else {
+      // 如果是具体的 MIME 类型 (image/png, image/jpeg)，检查是否完全匹配
+      return file.type === type;
+    }
+  });
+
+  if (!isValidType) {
+    ElMessage.warning(`上传文件的格式不正确，仅支持：${props.accept}`);
+    return false;
+  }
+
+  // 限制文件大小
+  if (file.size > props.maxFileSize * 1024 * 1024) {
+    ElMessage.warning("上传图片不能大于" + props.maxFileSize + "M");
     return false;
   }
   return true;
 }
 
+/*
+ * 上传文件
+ */
+function handleUpload(options: UploadRequestOptions) {
+  return new Promise((resolve, reject) => {
+    const file = options.file;
+
+    const formData = new FormData();
+    formData.append(props.name, file);
+
+    // 处理附加参数
+    Object.keys(props.data).forEach((key) => {
+      formData.append(key, props.data[key]);
+    });
+
+    FileAPI.upload(formData)
+      .then((data) => {
+        resolve(data);
+      })
+      .catch((error) => {
+        reject(error);
+      });
+  });
+}
+
+/**
+ * 上传文件超出限制
+ */
+function handleExceed() {
+  ElMessage.warning("最多只能上传" + props.limit + "张图片");
+}
+
+/**
+ * 上传成功回调
+ */
+const handleSuccess = (fileInfo: FileInfo, uploadFile: UploadUserFile) => {
+  ElMessage.success("上传成功");
+  const index = fileList.value.findIndex((file) => file.uid === uploadFile.uid);
+  if (index !== -1) {
+    fileList.value[index].url = fileInfo.url;
+    fileList.value[index].status = "success";
+    modelValue.value[index] = fileInfo.url;
+  }
+};
+
+/**
+ * 上传失败回调
+ */
+const handleError = (error: any) => {
+  console.log("handleError");
+  ElMessage.error("上传失败: " + error.message);
+};
+
 /**
  * 预览图片
  */
-const previewImg: UploadProps["onPreview"] = (uploadFile: UploadFile) => {
-  viewFileList.value = fileList.value.map((file) => file.url!);
-  initialIndex.value = fileList.value.findIndex((file) => file.url === uploadFile.url);
-  viewVisible.value = true;
+const handlePreviewImage = (imageUrl: string) => {
+  previewImageIndex.value = modelValue.value.findIndex((url) => url === imageUrl);
+  previewVisible.value = true;
 };
 
 /**
  * 关闭预览
  */
-const closePreview = () => {
-  viewVisible.value = false;
+const handlePreviewClose = () => {
+  previewVisible.value = false;
 };
-</script>
-<style lang="scss" scoped>
-.hide {
-  :deep(.el-upload--picture-card) {
-    display: none;
-  }
-}
 
-.show {
-  :deep(.el-upload--picture-card) {
-    display: flex;
-  }
-}
-</style>
+onMounted(() => {
+  fileList.value = modelValue.value.map((url) => ({ url }) as UploadUserFile);
+});
+</script>
+<style lang="scss" scoped></style>

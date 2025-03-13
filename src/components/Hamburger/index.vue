@@ -1,23 +1,19 @@
-<!-- 汉堡按钮组件：展开/收缩菜单  -->
 <template>
-  <div
-    class="px-[15px] flex items-center justify-center color-[var(--el-text-color-regular)]"
-    @click="toggleClick"
-  >
-    <svg-icon icon-class="collapse" :class="{ hamburger: true, 'is-active': isActive }" />
+  <div class="hamburger-wrapper" @click="toggleClick">
+    <div :class="['i-svg:collapse', { hamburger: true, 'is-active': isActive }]" />
   </div>
 </template>
 
 <script setup lang="ts">
+import { useSettingsStore } from "@/store";
+
 defineProps({
-  isActive: {
-    required: true,
-    type: Boolean,
-    default: false,
-  },
+  isActive: { type: Boolean, required: true },
 });
 
 const emit = defineEmits(["toggleClick"]);
+
+const settingsStore = useSettingsStore();
 
 function toggleClick() {
   emit("toggleClick");
@@ -25,13 +21,25 @@ function toggleClick() {
 </script>
 
 <style scoped lang="scss">
-.hamburger {
-  vertical-align: middle;
+.hamburger-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 15px;
   cursor: pointer;
-  transform: scaleX(-1);
-}
 
-.hamburger.is-active {
-  transform: scaleX(1);
+  .hamburger {
+    vertical-align: middle;
+    transform: scaleX(-1);
+    transition: transform 0.3s ease;
+
+    &--white {
+      color: #fff;
+    }
+
+    &.is-active {
+      transform: scaleX(1);
+    }
+  }
 }
 </style>
