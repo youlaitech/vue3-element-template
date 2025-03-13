@@ -11,7 +11,7 @@
     <template v-else>
       <SidebarLogo v-if="sidebarLogo" :collapse="isSidebarCollapsed" />
       <el-scrollbar>
-        <SidebarMenu :menu-list="permissionStore.routes" base-path="" />
+        <SidebarMenu :data="permissionStore.routes" base-path="" />
       </el-scrollbar>
 
       <!-- 顶部布局导航 -->

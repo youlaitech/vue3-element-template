@@ -1,5 +1,5 @@
 <template>
-  <div class="dashboard">
+  <div class="p-5">
     <el-card shadow="never">
       <el-row justify="space-between">
         <el-col :span="18" :xs="24">
@@ -14,6 +14,65 @@
             </div>
           </div>
         </el-col>
+
+        <el-col :span="6" :xs="24">
+          <el-row class="h-80px flex-y-center" :gutter="10">
+            <el-col :span="10">
+              <div class="font-bold color-#ff9a2e text-sm flex-y-center">
+                <el-icon class="mr-2px"><Folder /></el-icon>
+                仓库
+              </div>
+              <div class="mt-3">
+                <el-link href="https://gitee.com/youlaiorg/vue3-element-admin" target="_blank">
+                  <div class="i-svg:gitee text-lg color-#F76560" />
+                </el-link>
+                <el-divider direction="vertical" />
+                <el-link href="https://github.com/youlaitech/vue3-element-admin" target="_blank">
+                  <div class="i-svg:github text-lg color-#4080FF" />
+                </el-link>
+                <el-divider direction="vertical" />
+                <el-link href="https://gitcode.com/youlai/vue3-element-admin" target="_blank">
+                  <div class="i-svg:gitcode text-lg color-#FF9A2E" />
+                </el-link>
+              </div>
+            </el-col>
+
+            <el-col :span="10">
+              <div class="font-bold color-#4080ff text-sm flex-y-center">
+                <el-icon class="mr-2px"><Document /></el-icon>
+                文档
+              </div>
+              <div class="mt-3">
+                <el-link href="https://juejin.cn/post/7228990409909108793" target="_blank">
+                  <div class="i-svg:juejin text-lg" />
+                </el-link>
+                <el-divider direction="vertical" />
+                <el-link
+                  href="https://youlai.blog.csdn.net/article/details/130191394"
+                  target="_blank"
+                >
+                  <div class="i-svg:csdn text-lg" />
+                </el-link>
+                <el-divider direction="vertical" />
+                <el-link href="https://www.cnblogs.com/haoxianrui/p/17331952.html" target="_blank">
+                  <div class="i-svg:cnblogs text-lg" />
+                </el-link>
+              </div>
+            </el-col>
+
+            <el-col :span="4">
+              <div class="font-bold color-#f76560 text-sm flex-y-center">
+                <el-icon class="mr-2px"><VideoCamera /></el-icon>
+                视频
+              </div>
+              <div class="mt-3">
+                <el-link href="https://www.bilibili.com/video/BV1eFUuYyEFj" target="_blank">
+                  <div class="i-svg:bilibili text-lg" />
+                </el-link>
+              </div>
+            </el-col>
+          </el-row>
+        </el-col>
       </el-row>
     </el-card>
 
@@ -25,8 +84,7 @@
               <span class="font-bold">vue3-element-template</span>
             </el-descriptions-item>
             <el-descriptions-item label="项目描述">
-              🚀 vue3-element-admin 的 RBAC 权限管理系统模板，移除国际化、WebSocket
-              和代码生成等功能。
+              🚀 基于vue3-element-admin核心的RBAC权限开发模板，精简国际化等非核心功能。
             </el-descriptions-item>
             <el-descriptions-item label="项目源码">
               <el-link
@@ -44,7 +102,7 @@
                 target="_blank"
                 type="primary"
               >
-                Node后端（youlai-nest）
+                Node 后端（youlai-nest）
                 <el-icon><Link /></el-icon>
               </el-link>
 
@@ -54,7 +112,7 @@
                 type="success"
                 class="ml-2"
               >
-                Java后端（youlai-boot）
+                Java 后端（youlai-boot）
                 <el-icon><Link /></el-icon>
               </el-link>
             </el-descriptions-item>
@@ -96,8 +154,7 @@
               <span class="font-bold">vue3-element-admin</span>
             </el-descriptions-item>
             <el-descriptions-item label="项目描述">
-              🔥Vue3 + Vite5 + TypeScript + Element-Plus 构建的后台管理框架。vue-element-admin 的
-              Vue3 版本。
+              🔥Vue3 + Vite6 + TypeScript + Element-Plus 构建企业级中后台全栈解决方案。
             </el-descriptions-item>
             <el-descriptions-item label="项目源码">
               <el-link
@@ -148,8 +205,7 @@
               <span class="font-bold">vue3-element-admin-thin</span>
             </el-descriptions-item>
             <el-descriptions-item label="项目描述">
-              🌈基于 vue3-element-admin
-              的精简版，仅包含主体功能（登录和菜单路由），更适合实际项目开发。
+              🌈 vue3-element-admin 的精简版，仅包含主体功能（登录和菜单路由)。
             </el-descriptions-item>
             <el-descriptions-item label="项目源码">
               <el-link
@@ -209,8 +265,4 @@ const greetings = computed(() => {
 });
 </script>
 
-<style lang="scss" scoped>
-.dashboard {
-  padding: 10px;
-}
-</style>
+<style lang="scss" scoped></style>

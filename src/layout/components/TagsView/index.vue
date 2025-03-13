@@ -1,6 +1,6 @@
 <template>
   <div class="tags-container">
-    <el-scrollbar class="scroll-container" :vertical="false" @wheel.prevent="handleScroll">
+    <el-scrollbar class="scroll-container" :vertical="false" @wheel="handleScroll">
       <router-link
         v-for="tag in visitedViews"
         ref="tagRef"
@@ -28,27 +28,27 @@
       :style="{ left: left + 'px', top: top + 'px' }"
     >
       <li @click="refreshSelectedTag(selectedTag)">
-        <svg-icon icon-class="refresh" />
+        <div class="i-svg:refresh" />
         刷新
       </li>
       <li v-if="!isAffix(selectedTag)" @click="closeSelectedTag(selectedTag)">
-        <svg-icon icon-class="close" />
+        <div class="i-svg:close" />
         关闭
       </li>
       <li @click="closeOtherTags">
-        <svg-icon icon-class="close_other" />
+        <div class="i-svg:close_other" />
         关闭其它
       </li>
       <li v-if="!isFirstView()" @click="closeLeftTags">
-        <svg-icon icon-class="close_left" />
+        <div class="i-svg:close_left" />
         关闭左侧
       </li>
       <li v-if="!isLastView()" @click="closeRightTags">
-        <svg-icon icon-class="close_right" />
+        <div class="i-svg:close_right" />
         关闭右侧
       </li>
       <li @click="closeAllTags(selectedTag)">
-        <svg-icon icon-class="close_all" />
+        <div class="i-svg:close_all" />
         关闭所有
       </li>
     </ul>
@@ -186,25 +186,17 @@ function isAffix(tag: TagView) {
 }
 
 function isFirstView() {
-  try {
-    return (
-      selectedTag.value.path === "/dashboard" ||
-      selectedTag.value.fullPath === tagsViewStore.visitedViews[1].fullPath
-    );
-  } catch (err) {
-    return false;
-  }
+  return (
+    selectedTag.value.path === "/dashboard" ||
+    selectedTag.value.fullPath === tagsViewStore.visitedViews[1]?.fullPath
+  );
 }
 
 function isLastView() {
-  try {
-    return (
-      selectedTag.value.fullPath ===
-      tagsViewStore.visitedViews[tagsViewStore.visitedViews.length - 1].fullPath
-    );
-  } catch (err) {
-    return false;
-  }
+  return (
+    selectedTag.value.fullPath ===
+    tagsViewStore.visitedViews[tagsViewStore.visitedViews.length - 1]?.fullPath
+  );
 }
 
 function refreshSelectedTag(view: TagView) {
@@ -348,7 +340,7 @@ onMounted(() => {
 <style lang="scss" scoped>
 .tags-container {
   width: 100%;
-  height: 34px;
+  height: $tags-view-height;
   background-color: var(--el-bg-color);
   border: 1px solid var(--el-border-color-light);
   box-shadow: 0 1px 1px var(--el-box-shadow-light);

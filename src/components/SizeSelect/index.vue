@@ -1,9 +1,8 @@
 <template>
-  <!-- 布局大小 -->
   <el-tooltip content="布局大小" effect="dark" placement="bottom">
     <el-dropdown trigger="click" @command="handleSizeChange">
       <div>
-        <svg-icon icon-class="size" />
+        <div class="i-svg:size" />
       </div>
       <template #dropdown>
         <el-dropdown-menu>

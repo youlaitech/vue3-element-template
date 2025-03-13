@@ -2,10 +2,10 @@ import { store } from "@/store";
 import { usePermissionStoreHook } from "@/store/modules/permission";
 import { useDictStoreHook } from "@/store/modules/dict";
 
-import AuthAPI, { type LoginData } from "@/api/auth";
+import AuthAPI, { type LoginFormData } from "@/api/auth";
 import UserAPI, { type UserInfo } from "@/api/system/user";
 
-import { setToken, setRefreshToken, getRefreshToken, clearToken } from "@/utils/auth";
+import { setAccessToken, clearToken } from "@/utils/auth";
 
 export const useUserStore = defineStore("user", () => {
   const userInfo = useStorage<UserInfo>("userInfo", {} as UserInfo);
@@ -13,16 +13,15 @@ export const useUserStore = defineStore("user", () => {
   /**
    * 登录
    *
-   * @param {LoginData}
+   * @param {LoginFormData}
    * @returns
    */
-  function login(loginData: LoginData) {
+  function login(loginData: LoginFormData) {
     return new Promise<void>((resolve, reject) => {
       AuthAPI.login(loginData)
         .then((data) => {
-          const { tokenType, accessToken, refreshToken } = data;
-          setToken(tokenType + " " + accessToken); // Bearer eyJhbGciOiJIUzI1NiJ9.xxx.xxx
-          setRefreshToken(refreshToken);
+          const { accessToken } = data;
+          setAccessToken(accessToken);
           resolve();
         })
         .catch((error) => {
@@ -70,27 +69,7 @@ export const useUserStore = defineStore("user", () => {
   }
 
   /**
-   * 刷新 token
-   */
-  function refreshToken() {
-    const refreshToken = getRefreshToken();
-    return new Promise<void>((resolve, reject) => {
-      AuthAPI.refreshToken(refreshToken)
-        .then((data) => {
-          const { tokenType, accessToken, refreshToken } = data;
-          setToken(tokenType + " " + accessToken);
-          setRefreshToken(refreshToken);
-          resolve();
-        })
-        .catch((error) => {
-          console.log(" refreshToken  刷新失败", error);
-          reject(error);
-        });
-    });
-  }
-
-  /**
-   * 清理用户数据
+   * 重置用户会话
    *
    * @returns
    */
@@ -109,7 +88,6 @@ export const useUserStore = defineStore("user", () => {
     login,
     logout,
     resetUserSession,
-    refreshToken,
   };
 });
 

@@ -2,7 +2,7 @@ import axios, { type InternalAxiosRequestConfig, type AxiosResponse } from "axio
 import qs from "qs";
 import { useUserStoreHook } from "@/store/modules/user";
 import { ResultEnum } from "@/enums/ResultEnum";
-import { getToken } from "@/utils/auth";
+import { getAccessToken } from "@/utils/auth";
 
 // 创建 axios 实例
 const service = axios.create({
@@ -15,10 +15,10 @@ const service = axios.create({
 // 请求拦截器
 service.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    const accessToken = getToken();
-    // 如果 Authorization 设置为 no-auth，则不携带 Token，用于登录、刷新 Token 等接口
+    const accessToken = getAccessToken();
+    // 如果 Authorization 设置为 no-auth，则不携带 Token
     if (config.headers.Authorization !== "no-auth" && accessToken) {
-      config.headers.Authorization = accessToken;
+      config.headers.Authorization = `Bearer ${accessToken}`;
     } else {
       delete config.headers.Authorization;
     }

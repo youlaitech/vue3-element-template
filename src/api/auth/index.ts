@@ -4,7 +4,7 @@ const AUTH_BASE_URL = "/api/v1/auth";
 
 const AuthAPI = {
   /** 登录接口*/
-  login(data: LoginData) {
+  login(data: LoginFormData) {
     const formData = new FormData();
     formData.append("username", data.username);
     formData.append("password", data.password);
@@ -52,7 +52,7 @@ const AuthAPI = {
 export default AuthAPI;
 
 /** 登录请求参数 */
-export interface LoginData {
+export interface LoginFormData {
   /** 用户名 */
   username: string;
   /** 密码 */
@@ -67,8 +67,6 @@ export interface LoginData {
 export interface LoginResult {
   /** 访问令牌 */
   accessToken: string;
-  /** 刷新令牌 */
-  refreshToken: string;
   /** 令牌类型 */
   tokenType: string;
   /** 过期时间(秒) */

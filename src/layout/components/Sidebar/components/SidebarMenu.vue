@@ -1,4 +1,3 @@
-<!-- 菜单组件 -->
 <template>
   <el-menu
     ref="menuRef"
@@ -13,9 +12,8 @@
     @open="onMenuOpen"
     @close="onMenuClose"
   >
-    <!-- 菜单项 -->
     <SidebarMenuItem
-      v-for="route in menuList"
+      v-for="route in data"
       :key="route.path"
       :item="route"
       :base-path="resolveFullPath(route.path)"
@@ -34,7 +32,7 @@ import { isExternal } from "@/utils/index";
 import variables from "@/styles/variables.module.scss";
 
 const props = defineProps({
-  menuList: {
+  data: {
     type: Array<any>,
     required: true,
     default: () => [],
