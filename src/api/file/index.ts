@@ -6,7 +6,21 @@ const FileAPI = {
    *
    * @param file
    */
-  upload(file: File) {
+  upload(formData: FormData) {
+    return request<any, FileInfo>({
+      url: "/api/v1/files",
+      method: "post",
+      data: formData,
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+  },
+
+  /**
+   * 上传文件
+   */
+  uploadFile(file: File) {
     const formData = new FormData();
     formData.append("file", file);
     return request<any, FileInfo>({

@@ -295,10 +295,10 @@ const mobileBindingForm = reactive<MobileBindingForm>({});
 const emailBindingForm = reactive<EmailBindingForm>({});
 
 const mobileCountdown = ref(0);
-const mobileTimer = ref<NodeJS.Timeout | null>(null);
+const mobileTimer = ref();
 
 const emailCountdown = ref(0);
-const emailTimer = ref<NodeJS.Timeout | null>(null);
+const emailTimer = ref();
 
 // 修改密码校验规则
 const passwordChangeRules = {
@@ -455,7 +455,7 @@ const handleFileChange = async (event: Event) => {
   if (file) {
     // 调用文件上传API
     try {
-      const data = await FileAPI.upload(file);
+      const data = await FileAPI.uploadFile(file);
       // 更新用户头像
       userProfile.value.avatar = data.url;
       // 更新用户信息
@@ -463,6 +463,7 @@ const handleFileChange = async (event: Event) => {
         avatar: data.url,
       });
     } catch (error) {
+      console.error("头像上传失败：" + error);
       ElMessage.error("头像上传失败");
     }
   }

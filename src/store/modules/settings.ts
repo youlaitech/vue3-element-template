@@ -55,7 +55,7 @@ export const useSettingsStore = defineStore("setting", () => {
     themeColor.value = color;
   }
 
-  function changeLayout(val: string) {
+  function changeLayout(val: LayoutEnum) {
     layout.value = val;
   }
 
