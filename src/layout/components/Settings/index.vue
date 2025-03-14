@@ -48,8 +48,6 @@
 </template>
 
 <script setup lang="ts">
-import type { RouteRecordRaw } from "vue-router";
-
 import { LayoutEnum } from "@/enums/LayoutEnum";
 import { ThemeEnum } from "@/enums/ThemeEnum";
 import { useSettingsStore, usePermissionStore, useAppStore } from "@/store";
@@ -99,45 +97,46 @@ const handleThemeChange = (isDark: string | number | boolean) => {
  */
 const handleLayoutChange = (layout: LayoutEnum) => {
   settingsStore.changeLayout(layout);
-
   if (layout === LayoutEnum.MIX && route.name) {
-    const topLevelRoute = findTopLevelRoute(route.name.toString());
-    if (topLevelRoute?.path !== appStore.activeTopMenuPath) {
-      appStore.activeTopMenu(topLevelRoute?.path || "");
+    const topLevelRoute = findTopLevelRoute(permissionStore.routes, route.name as string);
+    if (appStore.activeTopMenuPath !== topLevelRoute.path) {
+      appStore.activeTopMenu(topLevelRoute.path);
     }
   }
 };
 
 /**
  * 查找路由的顶层父路由
- * @param targetRouteName - 目标路由名称
- * @returns 顶层父路由对象或 null
+ *
+ * @param tree 树形数据
+ * @param findName 查找的名称
  */
-const findTopLevelRoute = (targetRouteName: string): RouteRecordRaw | null => {
-  const routeMap = new Map<string, RouteRecordRaw | null>();
+function findTopLevelRoute(tree: any[], findName: string) {
+  let parentMap: any = {};
 
-  const buildRouteMap = (routes: RouteRecordRaw[], parent: RouteRecordRaw | null) => {
-    routes.forEach((route) => {
-      routeMap.set(route.name as string, parent);
-      if (route.children) {
-        buildRouteMap(route.children, route);
+  function buildParentMap(node: any, parent: any) {
+    parentMap[node.name] = parent;
+
+    if (node.children) {
+      for (let i = 0; i < node.children.length; i++) {
+        buildParentMap(node.children[i], node);
       }
-    });
-  };
-
-  buildRouteMap(permissionStore.routes, null);
-
-  let currentParent = routeMap.get(targetRouteName);
-  while (
-    currentParent?.name &&
-    typeof currentParent.name === "string" &&
-    routeMap.has(currentParent.name)
-  ) {
-    currentParent = routeMap.get(currentParent.name);
+    }
   }
 
-  return currentParent || null;
-};
+  for (let i = 0; i < tree.length; i++) {
+    buildParentMap(tree[i], null);
+  }
+
+  let currentNode = parentMap[findName];
+  while (currentNode) {
+    if (!parentMap[currentNode.name]) {
+      return currentNode;
+    }
+    currentNode = parentMap[currentNode.name];
+  }
+  return null;
+}
 
 /**
  * 关闭抽屉前的回调
