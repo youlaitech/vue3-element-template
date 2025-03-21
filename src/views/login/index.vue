@@ -10,7 +10,6 @@
           inactive-icon="Sunny"
           @change="toggleTheme"
         />
-        <lang-select class="ml-2 cursor-pointer" />
       </div>
     </div>
 
@@ -133,7 +132,7 @@
 <script setup lang="ts">
 import { LocationQuery, useRoute } from "vue-router";
 
-import AuthAPI, { type LoginFormData } from "@/api/auth";
+import AuthAPI, { type LoginFormData } from "@/api/auth.api";
 import router from "@/router";
 
 import type { FormInstance } from "element-plus";
@@ -141,11 +140,10 @@ import type { FormInstance } from "element-plus";
 import defaultSettings from "@/settings";
 import { ThemeEnum } from "@/enums/ThemeEnum";
 
-import { useSettingsStore, useUserStore, useDictStore } from "@/store";
+import { useSettingsStore, useUserStore } from "@/store";
 
 const userStore = useUserStore();
 const settingsStore = useSettingsStore();
-const dictStore = useDictStore();
 
 const route = useRoute();
 const loginFormRef = ref<FormInstance>();
@@ -210,10 +208,9 @@ async function handleLoginSubmit() {
         .login(loginFormData.value)
         .then(async () => {
           await userStore.getUserInfo();
-          // 需要在路由跳转前加载字典数据，否则会出现字典数据未加载完成导致页面渲染异常
-          await dictStore.loadDictionaries();
           // 跳转到登录前的页面
           const { path, queryParams } = parseRedirect();
+          console.log("跳转到登录前的页面", path, queryParams);
           router.push({ path: path, query: queryParams });
         })
         .catch(() => {

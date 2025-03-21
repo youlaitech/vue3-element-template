@@ -22,7 +22,7 @@
 
 <script setup lang="ts">
 import { SizeEnum } from "@/enums/SizeEnum";
-import { useAppStore } from "@/store/modules/app";
+import { useAppStore } from "@/store/modules/app.store";
 
 const sizeOptions = computed(() => {
   return [

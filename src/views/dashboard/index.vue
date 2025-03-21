@@ -245,7 +245,7 @@ defineOptions({
   name: "Dashboard",
   inheritAttrs: false,
 });
-import { useUserStore } from "@/store/modules/user";
+import { useUserStore } from "@/store/modules/user.store";
 
 const userStore = useUserStore();
 const date: Date = new Date();

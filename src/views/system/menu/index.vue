@@ -131,10 +131,10 @@
 
         <el-form-item label="菜单类型" prop="type">
           <el-radio-group v-model="formData.type" @change="handleMenuTypeChange">
-            <el-radio value="CATALOG">目录</el-radio>
-            <el-radio value="MENU">菜单</el-radio>
-            <el-radio value="BUTTON">按钮</el-radio>
-            <el-radio value="EXTLINK">外链</el-radio>
+            <el-radio :value="1">目录</el-radio>
+            <el-radio :value="2">菜单</el-radio>
+            <el-radio :value="3">按钮</el-radio>
+            <el-radio :value="4">外链</el-radio>
           </el-radio-group>
         </el-form-item>
 
@@ -335,7 +335,7 @@ defineOptions({
   inheritAttrs: false,
 });
 
-import MenuAPI, { MenuQuery, MenuForm, MenuVO } from "@/api/system/menu";
+import MenuAPI, { MenuQuery, MenuForm, MenuVO } from "@/api/system/menu.api";
 import { MenuTypeEnum } from "@/enums/MenuTypeEnum";
 
 const queryFormRef = ref();

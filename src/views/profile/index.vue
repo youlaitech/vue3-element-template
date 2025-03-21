@@ -268,9 +268,9 @@ import UserAPI, {
   MobileBindingForm,
   EmailBindingForm,
   UserProfileForm,
-} from "@/api/system/user";
+} from "@/api/system/user.api";
 
-import FileAPI from "@/api/file";
+import FileAPI from "@/api/file.api";
 
 import { Camera } from "@element-plus/icons-vue";
 

@@ -1,6 +1,6 @@
 import axios, { type InternalAxiosRequestConfig, type AxiosResponse } from "axios";
 import qs from "qs";
-import { useUserStoreHook } from "@/store/modules/user";
+import { useUserStoreHook } from "@/store/modules/user.store";
 import { ResultEnum } from "@/enums/ResultEnum";
 import { getAccessToken } from "@/utils/auth";
 
@@ -55,7 +55,7 @@ service.interceptors.response.use(
           type: "warning",
         }).then(() => {
           const userStore = useUserStoreHook();
-          userStore.resetUserSession().then(() => {
+          userStore.clearSessionAndCache().then(() => {
             location.reload();
           });
         });

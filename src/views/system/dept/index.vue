@@ -158,7 +158,7 @@ defineOptions({
   inheritAttrs: false,
 });
 
-import DeptAPI, { DeptVO, DeptForm, DeptQuery } from "@/api/system/dept";
+import DeptAPI, { DeptVO, DeptForm, DeptQuery } from "@/api/system/dept.api";
 
 const queryFormRef = ref();
 const deptFormRef = ref();
