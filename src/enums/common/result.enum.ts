@@ -1,7 +1,7 @@
 /**
  * 响应码枚举
  */
-export const enum ResultEnum {
+export const enum ResultCode {
   /**
    * 成功
    */

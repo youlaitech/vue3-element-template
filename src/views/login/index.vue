@@ -138,7 +138,7 @@ import router from "@/router";
 import type { FormInstance } from "element-plus";
 
 import defaultSettings from "@/settings";
-import { ThemeEnum } from "@/enums/ThemeEnum";
+import { ThemeMode } from "@/enums/settings/theme.enum";
 
 import { useSettingsStore, useUserStore } from "@/store";
 
@@ -148,7 +148,7 @@ const settingsStore = useSettingsStore();
 const route = useRoute();
 const loginFormRef = ref<FormInstance>();
 
-const isDark = ref(settingsStore.theme === ThemeEnum.DARK); // 是否暗黑模式
+const isDark = ref(settingsStore.theme === ThemeMode.DARK); // 是否暗黑模式
 const loading = ref(false); // 按钮 loading 状态
 const isCapslock = ref(false); // 是否大写锁定
 const captchaBase64 = ref(); // 验证码图片Base64字符串
@@ -248,7 +248,7 @@ function parseRedirect(): {
 
 // 主题切换
 const toggleTheme = () => {
-  const newTheme = settingsStore.theme === ThemeEnum.DARK ? ThemeEnum.LIGHT : ThemeEnum.DARK;
+  const newTheme = settingsStore.theme === ThemeMode.DARK ? ThemeMode.LIGHT : ThemeMode.DARK;
   settingsStore.changeTheme(newTheme);
 };
 

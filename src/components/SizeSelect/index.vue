@@ -21,14 +21,14 @@
 </template>
 
 <script setup lang="ts">
-import { SizeEnum } from "@/enums/SizeEnum";
+import { ComponentSize } from "@/enums/settings/layout.enum";
 import { useAppStore } from "@/store/modules/app.store";
 
 const sizeOptions = computed(() => {
   return [
-    { label: "默认", value: SizeEnum.DEFAULT },
-    { label: "大型", value: SizeEnum.LARGE },
-    { label: "小型", value: SizeEnum.SMALL },
+    { label: "默认", value: ComponentSize.DEFAULT },
+    { label: "大型", value: ComponentSize.LARGE },
+    { label: "小型", value: ComponentSize.SMALL },
   ];
 });
 

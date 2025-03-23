@@ -6,8 +6,8 @@
 
 <script setup lang="ts">
 import { useSettingsStore } from "@/store";
-import { ThemeEnum } from "@/enums/ThemeEnum";
-import { LayoutEnum } from "@/enums/LayoutEnum";
+import { ThemeMode } from "@/enums/settings/theme.enum";
+import { LayoutMode } from "@/enums/settings/layout.enum";
 
 defineProps({
   isActive: { type: Boolean, required: true },
@@ -20,12 +20,12 @@ const layout = computed(() => settingsStore.layout);
 
 const hamburgerClass = computed(() => {
   // 如果暗黑主题
-  if (settingsStore.theme === ThemeEnum.DARK) {
+  if (settingsStore.theme === ThemeMode.DARK) {
     return "hamburger--white";
   }
 
   // 如果是混合布局 && 侧边栏配色方案是经典蓝
-  if (layout.value === LayoutEnum.MIX) {
+  if (layout.value === LayoutMode.MIX) {
     return "hamburger--white";
   }
 });

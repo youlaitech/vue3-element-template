@@ -1,7 +1,7 @@
 /**
  * 主题枚举
  */
-export const enum ThemeEnum {
+export const enum ThemeMode {
   /**
    * 明亮主题
    */

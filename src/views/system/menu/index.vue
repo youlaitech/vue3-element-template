@@ -76,7 +76,7 @@
         <el-table-column fixed="right" align="center" label="操作" width="220">
           <template #default="scope">
             <el-button
-              v-if="scope.row.type == 'CATALOG' || scope.row.type == 'MENU'"
+              v-if="scope.row.type == MenuTypeEnum.CATALOG || scope.row.type == MenuTypeEnum.MENU"
               v-hasPerm="['sys:menu:add']"
               type="primary"
               link
@@ -131,14 +131,13 @@
 
         <el-form-item label="菜单类型" prop="type">
           <el-radio-group v-model="formData.type" @change="handleMenuTypeChange">
-            <el-radio :value="1">目录</el-radio>
-            <el-radio :value="2">菜单</el-radio>
-            <el-radio :value="3">按钮</el-radio>
-            <el-radio :value="4">外链</el-radio>
+            <el-radio v-for="config in MenuTypeConfig" :key="config.value" :value="config.value">
+              {{ config.label }}
+            </el-radio>
           </el-radio-group>
         </el-form-item>
 
-        <el-form-item v-if="formData.type == 'EXTLINK'" label="外链地址" prop="path">
+        <el-form-item v-if="formData.type == MenuTypeEnum.EXTLINK" label="外链地址" prop="path">
           <el-input v-model="formData.routePath" placeholder="请输入外链完整路径" />
         </el-form-item>
 
@@ -336,7 +335,7 @@ defineOptions({
 });
 
 import MenuAPI, { MenuQuery, MenuForm, MenuVO } from "@/api/system/menu.api";
-import { MenuTypeEnum } from "@/enums/MenuTypeEnum";
+import { MenuTypeEnum, MenuTypeConfig } from "@/enums/system/menu.enum";
 
 const queryFormRef = ref();
 const menuFormRef = ref();

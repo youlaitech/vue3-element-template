@@ -31,8 +31,8 @@
 </template>
 <script setup lang="ts">
 import defaultSettings from "@/settings";
-import { DeviceEnum } from "@/enums/DeviceEnum";
-import { ThemeEnum } from "@/enums/ThemeEnum";
+import { DeviceEnum } from "@/enums/settings/device.enum";
+import { ThemeMode } from "@/enums/settings/theme.enum";
 import { useAppStore, useSettingsStore, useUserStore, useTagsViewStore } from "@/store";
 
 const appStore = useAppStore();
@@ -54,7 +54,7 @@ function handleProfileClick() {
 // 根据主题和侧边栏配色方案选择 navbar 右侧的样式类
 const navbarRightClass = computed(() => {
   // 如果暗黑主题
-  if (settingStore.theme === ThemeEnum.DARK) {
+  if (settingStore.theme === ThemeMode.DARK) {
     return "navbar__right--white";
   }
 });

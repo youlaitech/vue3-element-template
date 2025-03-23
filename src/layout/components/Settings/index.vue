@@ -48,8 +48,8 @@
 </template>
 
 <script setup lang="ts">
-import { LayoutEnum } from "@/enums/LayoutEnum";
-import { ThemeEnum } from "@/enums/ThemeEnum";
+import { LayoutMode } from "@/enums/settings/layout.enum";
+import { ThemeMode } from "@/enums/settings/theme.enum";
 import { useSettingsStore, usePermissionStore, useAppStore } from "@/store";
 
 // 颜色预设
@@ -70,7 +70,7 @@ const appStore = useAppStore();
 const settingsStore = useSettingsStore();
 const permissionStore = usePermissionStore();
 
-const isDarkTheme = ref<boolean>(settingsStore.theme === ThemeEnum.DARK);
+const isDarkTheme = ref<boolean>(settingsStore.theme === ThemeMode.DARK);
 
 const selectedThemeColor = computed({
   get: () => settingsStore.themeColor,
@@ -88,16 +88,16 @@ const drawerVisible = computed({
  * @param isDark 是否启用暗黑模式
  */
 const handleThemeChange = (isDark: string | number | boolean) => {
-  settingsStore.changeTheme(isDark ? ThemeEnum.DARK : ThemeEnum.LIGHT);
+  settingsStore.changeTheme(isDark ? ThemeMode.DARK : ThemeMode.LIGHT);
 };
 
 /**
  * 处理布局切换
  * @param layout - 新布局模式
  */
-const handleLayoutChange = (layout: LayoutEnum) => {
+const handleLayoutChange = (layout: LayoutMode) => {
   settingsStore.changeLayout(layout);
-  if (layout === LayoutEnum.MIX && route.name) {
+  if (layout === LayoutMode.MIX && route.name) {
     const topLevelRoute = findTopLevelRoute(permissionStore.routes, route.name as string);
     if (appStore.activeTopMenuPath !== topLevelRoute.path) {
       appStore.activeTopMenu(topLevelRoute.path);

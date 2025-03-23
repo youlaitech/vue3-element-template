@@ -21,7 +21,7 @@
 </template>
 
 <script setup lang="ts">
-import { LayoutEnum } from "@/enums/LayoutEnum";
+import { LayoutMode } from "@/enums/settings/layout.enum";
 import { useSettingsStore, usePermissionStore, useAppStore } from "@/store";
 
 import NavbarRight from "../NavBar/components/NavbarRight.vue";
@@ -33,8 +33,8 @@ const permissionStore = usePermissionStore();
 const sidebarLogo = computed(() => settingsStore.sidebarLogo);
 const layout = computed(() => settingsStore.layout);
 
-const isMixLayout = computed(() => layout.value === LayoutEnum.MIX);
-const isTopLayout = computed(() => layout.value === LayoutEnum.TOP);
+const isMixLayout = computed(() => layout.value === LayoutMode.MIX);
+const isTopLayout = computed(() => layout.value === LayoutMode.TOP);
 const isSidebarCollapsed = computed(() => !appStore.sidebar.opened);
 </script>
 

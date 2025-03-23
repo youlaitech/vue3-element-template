@@ -25,7 +25,7 @@
 import path from "path-browserify";
 import type { MenuInstance } from "element-plus";
 
-import { LayoutEnum } from "@/enums/LayoutEnum";
+import { LayoutMode } from "@/enums/settings/layout.enum";
 import { useSettingsStore, useAppStore } from "@/store";
 import { isExternal } from "@/utils/index";
 
@@ -54,7 +54,7 @@ const expandedMenuIndexes = ref<string[]>([]);
 
 // 根据布局模式设置菜单的显示方式：顶部布局使用水平模式，其他使用垂直模式
 const menuMode = computed(() => {
-  return settingsStore.layout === LayoutEnum.TOP ? "horizontal" : "vertical";
+  return settingsStore.layout === LayoutMode.TOP ? "horizontal" : "vertical";
 });
 
 /**
