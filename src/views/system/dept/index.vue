@@ -213,7 +213,7 @@ function handleSelectionChange(selection: any) {
  * @param parentId 父部门ID
  * @param deptId 部门ID
  */
-async function handleOpenDialog(parentId?: string, deptId?: number) {
+async function handleOpenDialog(parentId?: string, deptId?: string) {
   // 加载部门下拉数据
   const data = await DeptAPI.getOptions();
   deptOptions.value = [
@@ -264,7 +264,7 @@ function handleSubmit() {
 }
 
 // 删除部门
-function handleDelete(deptId?: number) {
+function handleDelete(deptId?: string) {
   const deptIds = [deptId || selectIds.value].join(",");
 
   if (!deptIds) {

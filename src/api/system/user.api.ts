@@ -34,7 +34,7 @@ const UserAPI = {
    * @param userId 用户ID
    * @returns 用户表单详情
    */
-  getFormData(userId: number) {
+  getFormData(userId: string) {
     return request<any, UserForm>({
       url: `${USER_BASE_URL}/${userId}/form`,
       method: "get",
@@ -60,7 +60,7 @@ const UserAPI = {
    * @param id 用户ID
    * @param data 用户表单数据
    */
-  update(id: number, data: UserForm) {
+  update(id: string, data: UserForm) {
     return request({
       url: `${USER_BASE_URL}/${id}`,
       method: "put",
@@ -74,7 +74,7 @@ const UserAPI = {
    * @param id 用户ID
    * @param password 新密码
    */
-  resetPassword(id: number, password: string) {
+  resetPassword(id: string, password: string) {
     return request({
       url: `${USER_BASE_URL}/${id}/password/reset`,
       method: "put",
@@ -209,7 +209,7 @@ export default UserAPI;
 /** 登录用户信息 */
 export interface UserInfo {
   /** 用户ID */
-  userId?: number;
+  userid?: string;
 
   /** 用户名 */
   username?: string;
@@ -238,7 +238,7 @@ export interface UserPageQuery extends PageQuery {
   status?: number;
 
   /** 部门ID */
-  deptId?: number;
+  deptId?: string;
 
   /** 开始时间 */
   createTime?: [string, string];
@@ -247,7 +247,7 @@ export interface UserPageQuery extends PageQuery {
 /** 用户分页对象 */
 export interface UserPageVO {
   /** 用户ID */
-  id: number;
+  id: string;
   /** 用户头像URL */
   avatar?: string;
   /** 创建时间 */
@@ -275,13 +275,13 @@ export interface UserForm {
   /** 用户头像 */
   avatar?: string;
   /** 部门ID */
-  deptId?: number;
+  deptId?: string;
   /** 邮箱 */
   email?: string;
   /** 性别 */
   gender?: number;
   /** 用户ID */
-  id?: number;
+  id?: string;
   /** 手机号 */
   mobile?: string;
   /** 昵称 */
@@ -297,7 +297,7 @@ export interface UserForm {
 /** 个人中心用户信息 */
 export interface UserProfileVO {
   /** 用户ID */
-  id?: number;
+  id?: string;
 
   /** 用户名 */
   username?: string;
@@ -330,7 +330,7 @@ export interface UserProfileVO {
 /** 个人中心用户信息表单 */
 export interface UserProfileForm {
   /** 用户ID */
-  id?: number;
+  id?: string;
 
   /** 用户名 */
   username?: string;

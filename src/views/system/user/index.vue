@@ -353,7 +353,7 @@ function hancleResetPassword(row: UserPageVO) {
  *
  * @param id 用户ID
  */
-async function handleOpenDialog(id?: number) {
+async function handleOpenDialog(id?: string) {
   dialog.visible = true;
   // 加载角色下拉数据源
   roleOptions.value = await RoleAPI.getOptions();
@@ -412,7 +412,7 @@ const handleSubmit = useDebounceFn(() => {
  *
  * @param id  用户ID
  */
-function handleDelete(id?: number) {
+function handleDelete(id?: string) {
   const userIds = [id || selectIds.value].join(",");
   if (!userIds) {
     ElMessage.warning("请勾选删除项");

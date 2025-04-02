@@ -27,7 +27,7 @@ const DictAPI = {
    * @param id 字典ID
    * @returns 字典表单数据
    */
-  getFormData(id: number) {
+  getFormData(id: string) {
     return request<any, ResponseData<DictForm>>({
       url: `${DICT_BASE_URL}/${id}/form`,
       method: "get",
@@ -53,7 +53,7 @@ const DictAPI = {
    * @param id 字典ID
    * @param data 字典表单数据
    */
-  update(id: number, data: DictForm) {
+  update(id: string, data: DictForm) {
     return request({
       url: `${DICT_BASE_URL}/${id}`,
       method: "put",
@@ -117,7 +117,7 @@ const DictAPI = {
    * @param id 字典项ID
    * @returns 字典项表单数据
    */
-  getDictItemFormData(dictCode: string, id: number) {
+  getDictItemFormData(dictCode: string, id: string) {
     return request<any, ResponseData<DictItemForm>>({
       url: `${DICT_BASE_URL}/${dictCode}/items/${id}/form`,
       method: "get",
@@ -127,7 +127,7 @@ const DictAPI = {
   /**
    * 修改字典项
    */
-  updateDictItem(dictCode: string, id: number, data: DictItemForm) {
+  updateDictItem(dictCode: string, id: string, data: DictItemForm) {
     return request({
       url: `${DICT_BASE_URL}/${dictCode}/items/${id}`,
       method: "put",
@@ -170,7 +170,7 @@ export interface DictPageVO {
   /**
    * 字典ID
    */
-  id: number;
+  id: string;
   /**
    * 字典名称
    */
@@ -192,7 +192,7 @@ export interface DictForm {
   /**
    * 字典ID
    */
-  id?: number;
+  id?: string;
   /**
    * 字典名称
    */
@@ -229,7 +229,7 @@ export interface DictItemPageVO {
   /**
    * 字典ID
    */
-  id: number;
+  id: string;
   /**
    * 字典编码
    */
@@ -259,7 +259,7 @@ export interface DictItemForm {
   /**
    * 字典ID
    */
-  id?: number;
+  id?: string;
   /**
    * 字典编码
    */

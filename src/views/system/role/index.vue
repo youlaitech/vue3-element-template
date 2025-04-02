@@ -107,10 +107,10 @@
 
         <el-form-item label="数据权限" prop="dataScope">
           <el-select v-model="formData.dataScope">
-            <el-option :key="0" label="全部数据" :value="0" />
-            <el-option :key="1" label="部门及子部门数据" :value="1" />
-            <el-option :key="2" label="本部门数据" :value="2" />
-            <el-option :key="3" label="本人数据" :value="3" />
+            <el-option :key="1" label="全部数据" :value="1" />
+            <el-option :key="2" label="部门及子部门数据" :value="2" />
+            <el-option :key="3" label="本部门数据" :value="3" />
+            <el-option :key="4" label="本人数据" :value="4" />
           </el-select>
         </el-form-item>
 
@@ -249,7 +249,7 @@ const rules = reactive({
 
 // 选中的角色
 interface CheckedRole {
-  id?: number;
+  id?: string;
   name?: string;
 }
 const checkedRole = ref<CheckedRole>({});
@@ -286,7 +286,7 @@ function handleSelectionChange(selection: any) {
 }
 
 // 打开角色弹窗
-function handleOpenDialog(roleId?: number) {
+function handleOpenDialog(roleId?: string) {
   dialog.visible = true;
   if (roleId) {
     dialog.title = "修改角色";
@@ -338,7 +338,7 @@ function handleCloseDialog() {
 }
 
 // 删除角色
-function handleDelete(roleId?: number) {
+function handleDelete(roleId?: string) {
   const roleIds = [roleId || ids.value].join(",");
   if (!roleIds) {
     ElMessage.warning("请勾选删除项");

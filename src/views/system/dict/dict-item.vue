@@ -250,7 +250,7 @@ function handleCloseDialog() {
  *
  * @param id 字典ID
  */
-function handleDelete(id?: number) {
+function handleDelete(id?: string) {
   const itemIds = [id || ids.value].join(",");
   if (!itemIds) {
     ElMessage.warning("请勾选删除项");
