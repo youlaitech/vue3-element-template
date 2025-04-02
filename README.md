@@ -58,14 +58,16 @@
 | **精简版**     | 🔐 基础登录 + 🧩 最小功能集                  | [vue3-element-admin-thin](https://gitee.com/cshaptx4869/vue3-element-admin-thin) | [vue3-element-admin-thin](https://github.com/youlaitech/vue3-element-admin-thin) | -                                                                         |
 | **Java 后端**  | 🏗️ SpringBoot 全栈解决方案                | [youlai-boot](https://gitee.com/youlaiorg/youlai-boot)                     | [youlai-boot](https://github.com/haoxianrui/youlai-boot)                  | [youlai-boot](https://gitcode.com/youlai/youlai-boot)                    |
 | **Node 后端**  | 🚀 NestJS 全栈解决方案                    | [youlai-nest](https://gitee.com/youlaiorg/youlai-nest)                     | [youlai-nest](https://github.com/youlaitech/youlai-nest)                  | [youlai-nest](https://gitcode.com/youlai/youlai-nest)                    |
-```
+
 
 ## 环境准备
+
 
 | 环境                 | 名称版本                                                     | 下载地址                                                     |
 | -------------------- | :----------------------------------------------------------- | ------------------------------------------------------------ |
 | **开发工具**         | VSCode    | [下载](https://code.visualstudio.com/Download)           |
 | **运行环境**         | Node ≥18 (其中 20.6.0 版本不可用)    | [下载](http://nodejs.cn/download)                        |
+
 
 
 
