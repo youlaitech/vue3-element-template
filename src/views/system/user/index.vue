@@ -395,7 +395,7 @@ const handleSubmit = useDebounceFn(() => {
           })
           .finally(() => (loading.value = false));
       } else {
-        UserAPI.add(formData)
+        UserAPI.create(formData)
           .then(() => {
             ElMessage.success("新增用户成功");
             handleCloseDialog();

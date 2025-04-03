@@ -62,7 +62,7 @@ const MenuAPI = {
    * @param data 菜单表单数据
    * @returns 请求结果
    */
-  add(data: MenuForm) {
+  create(data: MenuForm) {
     return request({
       url: `${MENU_BASE_URL}`,
       method: "post",

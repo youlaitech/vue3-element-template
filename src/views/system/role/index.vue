@@ -313,7 +313,7 @@ function handleSubmit() {
           })
           .finally(() => (loading.value = false));
       } else {
-        RoleAPI.add(formData)
+        RoleAPI.create(formData)
           .then(() => {
             ElMessage.success("新增成功");
             handleCloseDialog();

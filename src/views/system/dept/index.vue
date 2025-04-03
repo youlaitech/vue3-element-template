@@ -251,7 +251,7 @@ function handleSubmit() {
           })
           .finally(() => (loading.value = false));
       } else {
-        DeptAPI.add(formData)
+        DeptAPI.create(formData)
           .then(() => {
             ElMessage.success("新增成功");
             handleCloseDialog();
