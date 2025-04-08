@@ -88,7 +88,7 @@ export default defineMock([
             {
               path: "dict-data",
               component: "system/dict/data",
-              name: "DictData",
+              name: "DictItem",
               meta: {
                 title: "字典数据",
                 icon: "",
