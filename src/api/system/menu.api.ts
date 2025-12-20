@@ -28,7 +28,7 @@ const MenuAPI = {
       url: `${MENU_BASE_URL}`,
       method: "get",
       params: queryParams,
-    });
+    }).then((data) => mapMenuListFromBackend(data));
   },
 
   /**
@@ -53,7 +53,7 @@ const MenuAPI = {
     return request<any, MenuForm>({
       url: `${MENU_BASE_URL}/${id}/form`,
       method: "get",
-    });
+    }).then((data) => mapMenuFormFromBackend(data));
   },
 
   /**
@@ -66,7 +66,7 @@ const MenuAPI = {
     return request({
       url: `${MENU_BASE_URL}`,
       method: "post",
-      data: data,
+      data: mapMenuFormToBackend(data),
     });
   },
 
@@ -81,7 +81,7 @@ const MenuAPI = {
     return request({
       url: `${MENU_BASE_URL}/${id}`,
       method: "put",
-      data: data,
+      data: mapMenuFormToBackend(data),
     });
   },
 
@@ -175,6 +175,61 @@ interface KeyValue {
   key: string;
   value: string;
 }
+
+type BackendMenuType = "C" | "M" | "B";
+
+const isExternalLink = (routePath?: string) => {
+  if (!routePath) return false;
+  return /^https?:\/\//i.test(routePath);
+};
+
+const mapTypeFromBackend = (type: BackendMenuType, routePath?: string): number => {
+  if (type === "C") return 2;
+  if (type === "B") return 3;
+  return isExternalLink(routePath) ? 4 : 1;
+};
+
+const mapTypeToBackend = (type?: number): BackendMenuType | undefined => {
+  if (type === undefined || type === null) return undefined;
+  if (type === 2) return "C";
+  if (type === 3) return "B";
+  return "M";
+};
+
+const mapMenuItemFromBackend = (item: MenuVO): MenuVO => {
+  const mapped: MenuVO = {
+    ...item,
+    type: item.type ? item.type : (item as any).type,
+  };
+  if (typeof (item as any).type === "string") {
+    mapped.type = mapTypeFromBackend((item as any).type as BackendMenuType, item.routePath);
+  }
+  if (item.children?.length) {
+    mapped.children = item.children.map(mapMenuItemFromBackend);
+  }
+  return mapped;
+};
+
+const mapMenuListFromBackend = (data: MenuVO[]) => {
+  return (data || []).map(mapMenuItemFromBackend);
+};
+
+const mapMenuFormFromBackend = (data: MenuForm): MenuForm => {
+  if (!data) return data;
+  if (typeof (data as any).type === "string") {
+    return {
+      ...data,
+      type: mapTypeFromBackend((data as any).type as BackendMenuType, (data as any).routePath),
+    };
+  }
+  return data;
+};
+
+const mapMenuFormToBackend = (data: MenuForm): Record<string, any> => {
+  const payload: Record<string, any> = { ...data };
+  payload.type = mapTypeToBackend(data.type);
+  return payload;
+};
 
 /** RouteVO，路由对象 */
 export interface RouteVO {

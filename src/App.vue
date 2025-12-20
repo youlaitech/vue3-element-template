@@ -1,5 +1,5 @@
 <template>
-  <el-config-provider :locale="locale" :size="size">
+  <el-config-provider :size="size">
     <!-- 开启水印 -->
     <el-watermark
       v-if="watermarkEnabled"
@@ -24,7 +24,6 @@ import { ComponentSize } from "@/enums/settings/layout.enum";
 const appStore = useAppStore();
 const settingsStore = useSettingsStore();
 
-const locale = computed(() => appStore.locale);
 const size = computed(() => appStore.size as ComponentSize);
 const watermarkEnabled = computed(() => settingsStore.watermarkEnabled);
 

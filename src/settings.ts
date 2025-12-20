@@ -1,4 +1,4 @@
-import { AppLanguage, ThemeMode, LayoutMode, ComponentSize } from "./enums";
+import { ThemeMode, LayoutMode, ComponentSize } from "./enums";
 
 const { pkg } = __APP_INFO__;
 
@@ -22,8 +22,6 @@ const defaultSettings: AppSettings = {
   theme: mediaQueryList.matches ? ThemeMode.DARK : ThemeMode.LIGHT,
   // 组件大小 default | medium | small | large
   size: ComponentSize.DEFAULT,
-  // 语言
-  language: AppLanguage.ZH_CN,
   // 主题颜色
   themeColor: "#4080FF",
   // 是否开启水印

@@ -101,9 +101,7 @@
         </el-form-item>
 
         <div class="flex-x-between w-full py-1">
-          <el-checkbox>记住我</el-checkbox>
-
-          <el-link type="primary" href="/forget-password">忘记密码</el-link>
+          <el-checkbox v-model="loginFormData.rememberMe">记住我</el-checkbox>
         </div>
 
         <!-- 登录按钮 -->
@@ -132,8 +130,9 @@
 <script setup lang="ts">
 import { LocationQuery, useRoute } from "vue-router";
 
-import AuthAPI, { type LoginFormData } from "@/api/auth.api";
+import AuthAPI from "@/api/auth.api";
 import router from "@/router";
+import type { CaptchaInfo, LoginRequest } from "@/types/api/auth";
 
 import type { FormInstance } from "element-plus";
 
@@ -153,11 +152,12 @@ const loading = ref(false); // 按钮 loading 状态
 const isCapslock = ref(false); // 是否大写锁定
 const captchaBase64 = ref(); // 验证码图片Base64字符串
 
-const loginFormData = ref<LoginFormData>({
+const loginFormData = ref<LoginRequest>({
   username: "admin",
   password: "123456",
-  captchaKey: "",
+  captchaId: "",
   captchaCode: "",
+  rememberMe: false,
 });
 
 const loginRules = computed(() => {
@@ -193,8 +193,8 @@ const loginRules = computed(() => {
 
 // 获取验证码
 function getCaptcha() {
-  AuthAPI.getCaptcha().then((data) => {
-    loginFormData.value.captchaKey = data.captchaKey;
+  AuthAPI.getCaptcha().then((data: CaptchaInfo) => {
+    loginFormData.value.captchaId = data.captchaId;
     captchaBase64.value = data.captchaBase64;
   });
 }

@@ -70,8 +70,6 @@ declare global {
     theme: string;
     /** 布局大小(default |large |small) */
     size: string;
-    /** 语言( zh-cn| en) */
-    language: string;
     /** 是否开启水印 */
     watermarkEnabled: boolean;
     /** 水印内容 */

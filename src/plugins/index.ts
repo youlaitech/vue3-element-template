@@ -1,10 +1,10 @@
 import type { App } from "vue";
 
-import { setupDirective } from "@/directive";
+import { setupDirective } from "@/directives";
 import { setupRouter } from "@/router";
 import { setupStore } from "@/store";
 import { setupElIcons } from "./icons";
-import { setupPermission } from "./permission";
+import { setupPermissionGuard } from "@/router/guards/permission";
 
 export default {
   install(app: App<Element>) {
@@ -17,6 +17,6 @@ export default {
     // Element-plus图标
     setupElIcons(app);
     // 路由守卫
-    setupPermission();
+    setupPermissionGuard();
   },
 };

@@ -1,5 +1,6 @@
 import type { Directive, DirectiveBinding } from "vue";
 
+import { ROLE_ROOT } from "@/constants";
 import { useUserStore } from "@/store";
 
 /**
@@ -12,14 +13,14 @@ export const hasPerm: Directive = {
     // 校验传入的权限值是否合法
     if (!requiredPerms || (typeof requiredPerms !== "string" && !Array.isArray(requiredPerms))) {
       throw new Error(
-        "需要提供权限标识！例如：v-has-perm=\"'sys:user:add'\" 或 v-has-perm=\"['sys:user:add', 'sys:user:edit']\""
+        "需要提供权限标识！例如：v-has-perm=\"'sys:user:create'\" 或 v-has-perm=\"['sys:user:create', 'sys:user:update']\""
       );
     }
 
     const { roles, perms } = useUserStore().userInfo;
 
-    // 超级管理员拥有所有权限
-    if (roles.includes("ROOT")) {
+    // 超级管理员拥有所有权限，如果是"*:*:*"权限标识，则不需要进行权限校验
+    if (roles.includes(ROLE_ROOT) || requiredPerms.includes("*:*:*")) {
       return;
     }
 
