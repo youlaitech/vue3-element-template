@@ -5,9 +5,19 @@
 export * from "./auth";
 export * from "./common";
 
-// System 模块（template 目前用到的）
+// System 模块
+export * from "./user";
+export * from "./role";
 export * from "./menu";
+export * from "./dept";
 export * from "./dict";
+export * from "./config";
+export * from "./log";
+export * from "./statistics";
+export * from "./notice";
+export * from "./tenant";
 
-// 其他模块（template 本次需要的）
+// 其他模块
+export * from "./ai";
+export * from "./file";
 export * from "./codegen";

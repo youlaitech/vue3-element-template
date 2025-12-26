@@ -1,5 +1,5 @@
 import request from "@/utils/request";
-import type { MenuQuery, MenuVo, MenuForm, RouteVo } from "@/types/api/menu";
+import type { MenuQuery, MenuVo, MenuForm, RouteVo, OptionType } from "@/types/api";
 
 const MENU_BASE_URL = "/api/v1/menus";
 

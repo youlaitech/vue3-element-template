@@ -7,7 +7,7 @@ import type {
   DictItemPageVo,
   DictItemForm,
   DictItemOption,
-} from "@/types/api/dict";
+} from "@/types/api";
 
 const DICT_BASE_URL = "/api/v1/dicts";
 

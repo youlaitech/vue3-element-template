@@ -3,6 +3,7 @@
  */
 
 /** 字典分页查询参数 */
+
 export interface DictPageQuery extends PageQuery {
   /** 搜索关键字 */
   keywords?: string;
