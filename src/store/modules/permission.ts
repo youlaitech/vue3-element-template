@@ -35,7 +35,7 @@ export const usePermissionStore = defineStore("permission", () => {
 
   /** 设置混合布局左侧菜单 */
   const setMixLayoutSideMenus = (parentPath: string) => {
-    const parentMenu = routes.value.find((item) => item.path === parentPath);
+    const parentMenu = routes.value.find((item: RouteRecordRaw) => item.path === parentPath);
     mixLayoutSideMenus.value = parentMenu?.children || [];
   };
 
@@ -43,7 +43,7 @@ export const usePermissionStore = defineStore("permission", () => {
   const resetRouter = () => {
     // 移除动态添加的路由
     const constantRouteNames = new Set(constantRoutes.map((route) => route.name).filter(Boolean));
-    routes.value.forEach((route) => {
+    routes.value.forEach((route: RouteRecordRaw) => {
       if (route.name && !constantRouteNames.has(route.name)) {
         router.removeRoute(route.name);
       }
