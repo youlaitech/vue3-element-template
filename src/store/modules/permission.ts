@@ -11,6 +11,18 @@ const Layout = () => import("../../layouts/index.vue");
 const EXCLUDED_ROUTE_PREFIXES = ["/demo"];
 const EXCLUDED_COMPONENT_PREFIXES = ["demo/"];
 
+function resolveViewComponent(componentPath: string) {
+  const normalized = componentPath
+    .trim()
+    .replace(/^\/+/, "")
+    .replace(/\.vue$/i, "");
+  return (
+    modules[`../../views/${normalized}.vue`] ||
+    modules[`../../views/${normalized}/index.vue`] ||
+    modules[`../../views/error/404.vue`]
+  );
+}
+
 function filterRouteVoList(list: RouteVo[] = []): RouteVo[] {
   return list
     .filter((item) => {
@@ -102,10 +114,7 @@ const transformRoutes = (routes: RouteVo[], isTopLevel: boolean = true): RouteRe
     } else {
       // 动态导入组件，Layout特殊处理，找不到组件时返回404
       normalizedRoute.component =
-        processedComponent === "Layout"
-          ? Layout
-          : modules[`../../views/${processedComponent}.vue`] ||
-            modules[`../../views/error/404.vue`];
+        processedComponent === "Layout" ? Layout : resolveViewComponent(processedComponent);
     }
 
     // 递归处理子路由

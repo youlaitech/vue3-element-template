@@ -289,7 +289,7 @@ function handleDelete(id?: number) {
 // 打开字典值"
 function handleOpenDictData(row: DictPageVo) {
   router.push({
-    path: "/system/dict-item",
+    name: "DictItem",
     query: { dictCode: row.dictCode, title: `【${row.name}】字典数据` },
   });
 }
