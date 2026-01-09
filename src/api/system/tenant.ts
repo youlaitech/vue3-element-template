@@ -6,6 +6,7 @@ import type {
   TenantInfo,
   TenantPageQuery,
   TenantPageVo,
+  PageResult,
 } from "@/types/api";
 
 const TENANT_BASE_URL = "/api/v1/tenants";
@@ -20,7 +21,7 @@ const TenantAPI = {
    */
   getTenantList() {
     return request<any, TenantInfo[]>({
-      url: `${TENANT_BASE_URL}`,
+      url: `${TENANT_BASE_URL}/options`,
       method: "get",
     });
   },
@@ -49,8 +50,8 @@ const TenantAPI = {
 
   /** 获取租户分页数据（平台租户管理） */
   getPage(queryParams?: TenantPageQuery) {
-    return request<any, PageResult<TenantPageVo[]>>({
-      url: `${TENANT_BASE_URL}/page`,
+    return request<any, PageResult<TenantPageVo>>({
+      url: `${TENANT_BASE_URL}`,
       method: "get",
       params: queryParams,
     });

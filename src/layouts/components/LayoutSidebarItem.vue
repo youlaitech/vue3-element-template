@@ -23,9 +23,17 @@
           :class="{ 'submenu-title-noDropdown': !isNest }"
         >
           <template v-if="onlyOneChild.meta">
-            <MenuIcon :icon="onlyOneChild.meta.icon || item.meta?.icon" />
+            <MenuIcon
+              :icon="
+                typeof onlyOneChild.meta.icon === 'string'
+                  ? onlyOneChild.meta.icon
+                  : typeof item.meta?.icon === 'string'
+                    ? item.meta.icon
+                    : ''
+              "
+            />
             <span v-if="onlyOneChild.meta.title" class="ml-1">
-              {{ translateRouteTitle(onlyOneChild.meta.title) }}
+              {{ onlyOneChild.meta.title }}
             </span>
           </template>
         </el-menu-item>
@@ -36,9 +44,9 @@
     <el-sub-menu v-else :index="resolvePath(item.path)" :data-path="item.path" teleported>
       <template #title>
         <template v-if="item.meta">
-          <MenuIcon :icon="item.meta.icon" />
+          <MenuIcon :icon="typeof item.meta.icon === 'string' ? item.meta.icon : ''" />
           <span v-if="item.meta.title" class="ml-1">
-            {{ translateRouteTitle(item.meta.title) }}
+            {{ item.meta.title }}
           </span>
         </template>
       </template>
@@ -58,7 +66,6 @@
 import path from "path-browserify";
 import { RouteRecordRaw } from "vue-router";
 import { isExternal } from "@/utils";
-import { translateRouteTitle } from "@/lang/utils";
 import { ElIcon } from "element-plus";
 
 defineOptions({

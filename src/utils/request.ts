@@ -3,6 +3,7 @@ import qs from "qs";
 import { ApiCodeEnum } from "@/enums/api";
 import { useUserStoreHook } from "@/store/modules/user";
 import { AuthStorage, redirectToLogin } from "@/utils/auth";
+import type { ApiResponse } from "@/types/api";
 
 // ============================================
 // HTTP 请求实例
@@ -49,6 +50,9 @@ http.interceptors.response.use(
     const { code, data, msg } = response.data;
 
     if (code === ApiCodeEnum.SUCCESS) {
+      // 分页接口需要同时返回 data 与 page 元信息
+      const page = (response.data as any)?.page;
+      if (page != null) return { data, page };
       return data;
     }
 

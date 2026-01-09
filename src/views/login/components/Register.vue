@@ -1,10 +1,10 @@
 ﻿<template>
   <div>
-    <h3 text-center m-0 mb-20px>{{ t("login.reg") }}</h3>
+    <h3 text-center m-0 mb-20px>注 册</h3>
     <el-form ref="formRef" :model="model" :rules="rules" size="large">
       <!-- 用户名 -->
       <el-form-item prop="username">
-        <el-input v-model.trim="model.username" :placeholder="t('login.username')">
+        <el-input v-model.trim="model.username" placeholder="用户名">
           <template #prefix>
             <el-icon><User /></el-icon>
           </template>
@@ -12,11 +12,11 @@
       </el-form-item>
 
       <!-- 密码 -->
-      <el-tooltip :visible="isCapsLock" :content="t('login.capsLock')" placement="right">
+      <el-tooltip :visible="isCapsLock" content="大写锁定已打开" placement="right">
         <el-form-item prop="password">
           <el-input
             v-model.trim="model.password"
-            :placeholder="t('login.password')"
+            placeholder="密码"
             type="password"
             show-password
             @keyup="checkCapsLock"
@@ -29,11 +29,11 @@
         </el-form-item>
       </el-tooltip>
 
-      <el-tooltip :visible="isCapsLock" :content="t('login.capsLock')" placement="right">
+      <el-tooltip :visible="isCapsLock" content="大写锁定已打开" placement="right">
         <el-form-item prop="confirmPassword">
           <el-input
             v-model.trim="model.confirmPassword"
-            :placeholder="t('login.message.password.confirm')"
+            placeholder="请再次确认密码"
             type="password"
             show-password
             @keyup="checkCapsLock"
@@ -49,11 +49,7 @@
       <!-- 验证码 -->
       <el-form-item prop="captchaCode">
         <div flex>
-          <el-input
-            v-model.trim="model.captchaCode"
-            :placeholder="t('login.captchaCode')"
-            @keyup.enter="submit"
-          >
+          <el-input v-model.trim="model.captchaCode" placeholder="验证码" @keyup.enter="submit">
             <template #prefix>
               <div class="i-svg:captcha" />
             </template>
@@ -63,6 +59,9 @@
 
             <img
               v-else
+              h-full
+              w-full
+              block
               object-cover
               border-rd-4px
               p-1px
@@ -76,32 +75,29 @@
 
       <el-form-item>
         <div class="flex-y-center w-full gap-10px">
-          <el-checkbox v-model="isRead">{{ t("login.agree") }}</el-checkbox>
-          <el-link type="primary" underline="never">{{ t("login.userAgreement") }}</el-link>
+          <el-checkbox v-model="isRead">我已同意并阅读</el-checkbox>
+          <el-link type="primary" underline="never">用户协议</el-link>
         </div>
       </el-form-item>
 
       <!-- 注册按钮 -->
       <el-form-item>
         <el-button :loading="loading" type="success" class="w-full" @click="submit">
-          {{ t("login.register") }}
+          注册账号
         </el-button>
       </el-form-item>
     </el-form>
     <div flex-center gap-10px>
-      <el-text size="default">{{ t("login.haveAccount") }}</el-text>
-      <el-link type="primary" underline="never" @click="toLogin">{{ t("login.login") }}</el-link>
+      <el-text size="default">已有账号？</el-text>
+      <el-link type="primary" underline="never" @click="toLogin">登 录</el-link>
     </div>
   </div>
 </template>
 <script setup lang="ts">
 import type { FormInstance } from "element-plus";
 import { Lock } from "@element-plus/icons-vue";
-import { useI18n } from "vue-i18n";
 import AuthAPI from "@/api/auth";
 import type { LoginRequest } from "@/types/api";
-
-const { t } = useI18n();
 
 const emit = defineEmits(["update:modelValue"]);
 const toLogin = () => emit("update:modelValue", "login");
@@ -133,18 +129,18 @@ const rules = computed(() => {
       {
         required: true,
         trigger: "blur",
-        message: t("login.message.username.required"),
+        message: "请输入用户名",
       },
     ],
     password: [
       {
         required: true,
         trigger: "blur",
-        message: t("login.message.password.required"),
+        message: "请输入密码",
       },
       {
         min: 6,
-        message: t("login.message.password.min"),
+        message: "密码不能少于6位",
         trigger: "blur",
       },
     ],
@@ -152,26 +148,32 @@ const rules = computed(() => {
       {
         required: true,
         trigger: "blur",
-        message: t("login.message.password.required"),
+        message: "请输入密码",
       },
       {
         min: 6,
-        message: t("login.message.password.min"),
+        message: "密码不能少于6位",
         trigger: "blur",
       },
       {
-        validator: (_: any, value: string) => {
-          return value === model.value.password;
+        validator: (rule: any, value: any, callback: any) => {
+          if (value === "") {
+            callback(new Error("请输入密码"));
+          } else if (value !== model.value.password) {
+            callback(new Error("两次密码输入不一致"));
+          } else {
+            callback();
+          }
         },
         trigger: "blur",
-        message: t("login.message.password.inconformity"),
+        message: "两次密码输入不一致",
       },
     ],
     captchaCode: [
       {
         required: true,
         trigger: "blur",
-        message: t("login.message.captchaCode.required"),
+        message: "请输入验证码",
       },
     ],
   };

@@ -1,6 +1,6 @@
 <template>
   <div class="auth-panel-form">
-    <h3 class="auth-panel-form__title" text-center>{{ t("login.login") }}</h3>
+    <h3 class="auth-panel-form__title" text-center>登 录</h3>
     <el-form
       ref="loginFormRef"
       :model="loginFormData"
@@ -10,7 +10,7 @@
     >
       <!-- 用户名 -->
       <el-form-item prop="username">
-        <el-input v-model.trim="loginFormData.username" :placeholder="t('login.username')">
+        <el-input v-model.trim="loginFormData.username" placeholder="用户名">
           <template #prefix>
             <el-icon><User /></el-icon>
           </template>
@@ -18,11 +18,11 @@
       </el-form-item>
 
       <!-- 密码 -->
-      <el-tooltip :visible="isCapsLock" :content="t('login.capsLock')" placement="right">
+      <el-tooltip :visible="isCapsLock" content="大写锁定已打开" placement="right">
         <el-form-item prop="password">
           <el-input
             v-model.trim="loginFormData.password"
-            :placeholder="t('login.password')"
+            placeholder="密码"
             type="password"
             show-password
             @keyup="checkCapsLock"
@@ -40,7 +40,7 @@
         <div flex items-center gap-10px>
           <el-input
             v-model.trim="loginFormData.captchaCode"
-            :placeholder="t('login.captchaCode')"
+            placeholder="验证码"
             clearable
             class="flex-1"
             @keyup.enter="handleLoginSubmit"
@@ -53,6 +53,9 @@
             <el-icon v-if="codeLoading" class="is-loading" size="20"><Loading /></el-icon>
             <img
               v-else-if="captchaBase64"
+              h-full
+              w-full
+              block
               border-rd-4px
               object-cover
               shadow="[0_0_0_1px_var(--el-border-color)_inset]"
@@ -65,25 +68,23 @@
       </el-form-item>
 
       <div class="flex-x-between w-full">
-        <el-checkbox v-model="loginFormData.rememberMe">{{ t("login.rememberMe") }}</el-checkbox>
+        <el-checkbox v-model="loginFormData.rememberMe">记住我</el-checkbox>
         <el-link type="primary" underline="never" @click="toOtherForm('resetPwd')">
-          {{ t("login.forgetPassword") }}
+          忘记密码？
         </el-link>
       </div>
 
       <!-- 登录按钮 -->
       <el-form-item>
         <el-button :loading="loading" type="primary" class="w-full" @click="handleLoginSubmit">
-          {{ t("login.login") }}
+          登 录
         </el-button>
       </el-form-item>
     </el-form>
 
     <div flex-center gap-10px>
-      <el-text size="default">{{ t("login.noAccount") }}</el-text>
-      <el-link type="primary" underline="never" @click="toOtherForm('register')">
-        {{ t("login.reg") }}
-      </el-link>
+      <el-text size="default">您没有账号？</el-text>
+      <el-link type="primary" underline="never" @click="toOtherForm('register')">注 册</el-link>
     </div>
 
     <!-- 租户选择对话框 -->
@@ -100,7 +101,19 @@
     >
       <div class="tenant-select-content" :style="tenantDialogBodyStyle">
         <p class="tenant-select-tip">检测到你的账号属于多个租户，请选择登录租户：</p>
-        <TenantSwitcher @change="handleTenantSwitcherChange" />
+        <el-select
+          v-model="selectedTenantId"
+          class="w-full"
+          placeholder="请选择租户"
+          @change="(id: any) => handleTenantSwitcherChange(Number(id))"
+        >
+          <el-option
+            v-for="t in tenantStore.tenantList"
+            :key="t.id"
+            :label="t.name"
+            :value="t.id"
+          />
+        </el-select>
       </div>
       <template #footer>
         <el-button @click="tenantDialogVisible = false">取消</el-button>
@@ -114,7 +127,7 @@
     <div class="third-party-login">
       <div class="divider-container">
         <div class="divider-line"></div>
-        <span class="divider-text">{{ t("login.otherLoginMethods") }}</span>
+        <span class="divider-text">其他</span>
         <div class="divider-line"></div>
       </div>
       <div class="social-login">
@@ -141,16 +154,12 @@ import type { LoginRequest } from "@/types/api";
 import router from "@/router";
 import { useUserStore } from "@/store";
 import { useTenantStoreHook } from "@/store/modules/tenant";
-import TenantSwitcher from "@/components/TenantSwitcher/index.vue";
 import { AuthStorage } from "@/utils/auth";
 import { ApiCodeEnum } from "@/enums";
 
-const { t } = useI18n();
 const userStore = useUserStore();
 const tenantStore = useTenantStoreHook();
 const route = useRoute();
-
-onMounted(() => getCaptcha());
 
 const loginFormRef = ref<FormInstance>();
 const loading = ref(false);
@@ -193,24 +202,26 @@ const loginFormData = ref<LoginRequest>({
   rememberMe,
 });
 
+onMounted(() => getCaptcha());
+
 const loginRules = computed(() => {
   return {
     username: [
       {
         required: true,
         trigger: "blur",
-        message: t("login.message.username.required"),
+        message: "请输入用户名",
       },
     ],
     password: [
       {
         required: true,
         trigger: "blur",
-        message: t("login.message.password.required"),
+        message: "请输入密码",
       },
       {
         min: 6,
-        message: t("login.message.password.min"),
+        message: "密码不能少于6位",
         trigger: "blur",
       },
     ],
@@ -218,7 +229,7 @@ const loginRules = computed(() => {
       {
         required: true,
         trigger: "blur",
-        message: t("login.message.captchaCode.required"),
+        message: "请输入验证码",
       },
     ],
   };
@@ -244,6 +255,12 @@ async function handleLoginSubmit() {
     // 1. 表单验证
     const valid = await loginFormRef.value?.validate();
     if (!valid) return;
+
+    if (!loginFormData.value.captchaId) {
+      getCaptcha();
+      ElMessage.warning("验证码已刷新，请重新输入");
+      return;
+    }
 
     loading.value = true;
 

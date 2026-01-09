@@ -216,7 +216,7 @@ import { useAppStore } from "@/store/modules/app";
 import { DeviceEnum } from "@/enums/settings";
 
 import RoleAPI from "@/api/system/role";
-import type { RolePageVo, RoleForm, RolePageQuery } from "@/types/api";
+import type { RolePageVo, RoleForm, RolePageQuery, OptionItem } from "@/types/api";
 import MenuAPI from "@/api/system/menu";
 
 defineOptions({
@@ -242,7 +242,7 @@ const queryParams = reactive<RolePageQuery>({
 // 角色表格数据
 const roleList = ref<RolePageVo[]>();
 // 菜单权限下拉
-const menuPermOptions = ref<OptionType[]>([]);
+const menuPermOptions = ref<OptionItem[]>([]);
 
 // 弹窗
 const dialog = reactive({
@@ -283,8 +283,8 @@ function fetchData() {
   loading.value = true;
   RoleAPI.getPage(queryParams)
     .then((data) => {
-      roleList.value = data.list;
-      total.value = data.total;
+      roleList.value = data.data;
+      total.value = data.page?.total ?? 0;
     })
     .finally(() => {
       loading.value = false;

@@ -1,33 +1,28 @@
 ﻿<template>
   <div>
-    <h3 text-center m-0 mb-20px>{{ t("login.resetPassword") }}</h3>
+    <h3 text-center m-0 mb-20px>重置密码</h3>
     <el-form ref="formRef" :model="model" :rules="rules" size="large">
       <!-- 用户名"-->
       <el-form-item prop="username">
-        <el-input v-model.trim="model.username" :placeholder="t('login.username')">
+        <el-input v-model.trim="model.username" placeholder="用户名">
           <template #prefix>
             <el-icon><User /></el-icon>
           </template>
         </el-input>
       </el-form-item>
       <el-form-item>
-        <el-button type="warning" class="w-full" @click="submit">
-          {{ t("login.resetPassword") }}
-        </el-button>
+        <el-button type="warning" class="w-full" @click="submit">重置密码</el-button>
       </el-form-item>
     </el-form>
 
     <div flex-center gap-10px>
-      <el-text size="default">{{ t("login.thinkOfPasswd") }}</el-text>
-      <el-link type="primary" underline="never" @click="toLogin">{{ t("login.login") }}</el-link>
+      <el-text size="default">想起密码？</el-text>
+      <el-link type="primary" underline="never" @click="toLogin">登 录</el-link>
     </div>
   </div>
 </template>
 <script setup lang="ts">
-import { useI18n } from "vue-i18n";
 import type { FormInstance } from "element-plus";
-
-const { t } = useI18n();
 
 const emit = defineEmits(["update:modelValue"]);
 const toLogin = () => emit("update:modelValue", "login");
@@ -42,7 +37,7 @@ const rules = computed(() => {
       {
         required: true,
         trigger: "blur",
-        message: t("login.message.username.required"),
+        message: "请输入用户名",
       },
     ],
   };

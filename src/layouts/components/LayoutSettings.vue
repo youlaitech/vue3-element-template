@@ -2,13 +2,13 @@
   <el-drawer
     v-model="drawerVisible"
     size="380"
-    :title="t('settings.project')"
+    title="项目配置"
     :before-close="handleCloseDrawer"
     class="settings-drawer"
   >
     <div class="settings-content">
       <section class="config-section">
-        <el-divider>{{ t("settings.theme") }}</el-divider>
+        <el-divider>主题设置</el-divider>
 
         <div class="flex-center">
           <el-switch
@@ -23,10 +23,10 @@
 
       <!-- 界面设置 -->
       <section class="config-section">
-        <el-divider>{{ t("settings.interface") }}</el-divider>
+        <el-divider>界面设置</el-divider>
 
         <div class="config-item flex-x-between">
-          <span class="text-xs">{{ t("settings.themeColor") }}</span>
+          <span class="text-xs">主题颜色</span>
           <el-color-picker
             v-model="selectedThemeColor"
             :predefine="colorPresets"
@@ -35,17 +35,17 @@
         </div>
 
         <div class="config-item flex-x-between">
-          <span class="text-xs">{{ t("settings.showTagsView") }}</span>
+          <span class="text-xs">显示页签</span>
           <el-switch v-model="settingsStore.showTagsView" />
         </div>
 
         <div class="config-item flex-x-between">
-          <span class="text-xs">{{ t("settings.showAppLogo") }}</span>
+          <span class="text-xs">显示Logo</span>
           <el-switch v-model="settingsStore.showAppLogo" />
         </div>
 
         <div class="config-item flex-x-between">
-          <span class="text-xs">{{ t("settings.showWatermark") }}</span>
+          <span class="text-xs">显示水印</span>
           <el-switch v-model="settingsStore.showWatermark" />
         </div>
 
@@ -59,27 +59,18 @@
           <el-switch v-model="settingsStore.colorWeak" />
         </div>
 
-        <div v-if="aiSystemEnabled" class="config-item flex-x-between">
-          <span class="text-xs">AI 助手</span>
-          <el-switch v-model="settingsStore.userEnableAi" />
-        </div>
-
         <div v-if="!isDark" class="config-item flex-x-between">
-          <span class="text-xs">{{ t("settings.sidebarColorScheme") }}</span>
+          <span class="text-xs">侧边栏配色</span>
           <el-radio-group v-model="sidebarColor" @change="changeSidebarColor">
-            <el-radio :value="SidebarColor.CLASSIC_BLUE">
-              {{ t("settings.classicBlue") }}
-            </el-radio>
-            <el-radio :value="SidebarColor.MINIMAL_WHITE">
-              {{ t("settings.minimalWhite") }}
-            </el-radio>
+            <el-radio :value="SidebarColor.CLASSIC_BLUE">经典蓝</el-radio>
+            <el-radio :value="SidebarColor.MINIMAL_WHITE">极简白</el-radio>
           </el-radio-group>
         </div>
       </section>
 
       <!-- 布局设置 -->
       <section class="config-section">
-        <el-divider>{{ t("settings.navigation") }}</el-divider>
+        <el-divider>导航设置</el-divider>
 
         <!-- 整合的布局选择 -->
         <div class="layout-select">
@@ -136,7 +127,7 @@
             :loading="copyLoading"
             @click="handleCopySettings"
           >
-            {{ copyLoading ? "复制中..." : t("settings.copyConfig") }}
+            {{ copyLoading ? "复制中..." : "复制配置" }}
           </el-button>
         </el-tooltip>
         <el-tooltip content="重置将恢复所有设置为默认值" placement="top">
@@ -147,7 +138,7 @@
             :loading="resetLoading"
             @click="handleResetSettings"
           >
-            {{ resetLoading ? "重置中..." : t("settings.resetConfig") }}
+            {{ resetLoading ? "重置中..." : "重置默认" }}
           </el-button>
         </el-tooltip>
       </div>
@@ -157,18 +148,13 @@
 
 <script setup lang="ts">
 import { DocumentCopy, RefreshLeft, Check } from "@element-plus/icons-vue";
-
-const { t } = useI18n();
 import { LayoutMode, SidebarColor, ThemeMode } from "@/enums";
 import { useSettingsStore } from "@/store";
-import { themeColorPresets, appConfig } from "@/settings";
+import { themeColorPresets } from "@/settings";
 
 // 按钮图标
 const copyIcon = markRaw(DocumentCopy);
 const resetIcon = markRaw(RefreshLeft);
-
-// AI 系统级开关
-const aiSystemEnabled = appConfig.aiEnabled;
 
 // 加载状态
 const copyLoading = ref(false);
@@ -182,9 +168,9 @@ interface LayoutOption {
 }
 
 const layoutOptions: LayoutOption[] = [
-  { value: LayoutMode.LEFT, label: t("settings.leftLayout"), className: "left" },
-  { value: LayoutMode.TOP, label: t("settings.topLayout"), className: "top" },
-  { value: LayoutMode.MIX, label: t("settings.mixLayout"), className: "mix" },
+  { value: LayoutMode.LEFT, label: "左侧模式", className: "left" },
+  { value: LayoutMode.TOP, label: "顶部模式", className: "top" },
+  { value: LayoutMode.MIX, label: "混合模式", className: "mix" },
 ];
 
 // 使用统一的颜色预设配置（复制为可变数组以兼容组件 prop）
@@ -251,7 +237,7 @@ const handleCopySettings = async () => {
 
     // 显示成功消息
     ElMessage.success({
-      message: t("settings.copySuccess"),
+      message: "配置已复制到剪贴板",
       duration: 3000,
     });
   } catch {
@@ -274,7 +260,7 @@ const handleResetSettings = async () => {
     isDark.value = settingsStore.theme === ThemeMode.DARK;
     sidebarColor.value = settingsStore.sidebarColorScheme;
 
-    ElMessage.success(t("settings.resetSuccess"));
+    ElMessage.success("已重置为默认配置");
   } catch {
     ElMessage.error("重置配置失败");
   } finally {

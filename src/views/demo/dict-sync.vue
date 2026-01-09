@@ -143,7 +143,6 @@ import { useDictStoreHook } from "@/store/modules/dict";
 import { useDateFormat } from "@vueuse/core";
 import DictAPI from "@/api/system/dict";
 import type { DictItemForm } from "@/types/api";
-import { useDictSync, DictMessage } from "@/composables";
 
 // 性别字典编码
 const DICT_CODE = "gender";
@@ -161,43 +160,15 @@ const dictForm = ref<DictItemForm | null>(null);
 // 选中的性别
 const selectedGender = ref("");
 
-// 初始化WebSocket
-const dictWebSocket = useDictSync();
-
-// 获取连接状态
-const wsConnected = computed(() => dictWebSocket.isConnected);
-
-// WebSocket连接状态显示文本
-const wsStatusText = computed(() => (wsConnected.value ? "已连接" : "未连接"));
-
-// 保存WebSocket清理函数
-let unregisterCallback: (() => void) | null = null;
+// WebSocket 已移除：改为静态展示
+const wsConnected = computed(() => false);
+const wsStatusText = computed(() => "未连接");
 
 // 当前选中字典的缓存状态
 const dictCacheStatus = computed(() => {
   // 检查字典是否在缓存中
   return dictStore.getDictItems(DICT_CODE).length > 0;
 });
-
-// 设置WebSocket
-const setupWebSocket = () => {
-  // 初始化WebSocket连接
-  dictWebSocket.initialize();
-
-  // 注册字典消息回调
-  unregisterCallback = dictWebSocket.onDictChange((message: DictMessage) => {
-    // 只有当消息是关于性别字典的更新时才处理
-    if (message.dictCode === DICT_CODE) {
-      // 更新最后更新时间
-      lastUpdateTime.value = useDateFormat(new Date(), "YYYY-MM-DD HH:mm:ss").value;
-
-      // 触发字典组件重新加载
-      nextTick(() => {
-        refreshDictComponent();
-      });
-    }
-  });
-};
 
 // 刷新字典组件，强制重新加载字典数据
 const refreshDictComponent = async () => {
@@ -225,7 +196,7 @@ const saveDict = async () => {
     // 更新时间
     lastUpdateTime.value = useDateFormat(new Date(), "YYYY-MM-DD HH:mm:ss").value;
 
-    ElMessage.success("保存成功，后端将通过WebSocket通知所有客户端");
+    ElMessage.success("保存成功");
   } catch (error) {
     console.error("保存字典项失败", error);
     ElMessage.error("保存失败");
@@ -241,13 +212,6 @@ onMounted(async () => {
   await dictStore.loadDictItems(DICT_CODE);
   // 初始化选中性别为男
   selectedGender.value = "1";
-  // 设置WebSocket
-  setupWebSocket();
-});
-
-// 组件卸载时清理WebSocket
-onUnmounted(() => {
-  unregisterCallback?.();
 });
 </script>
 

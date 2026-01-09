@@ -8,6 +8,24 @@ import { RouteVo } from "@/types";
 const modules = import.meta.glob("../../views/**/**.vue");
 const Layout = () => import("../../layouts/index.vue");
 
+const EXCLUDED_ROUTE_PREFIXES = ["/demo"];
+const EXCLUDED_COMPONENT_PREFIXES = ["demo/"];
+
+function filterRouteVoList(list: RouteVo[] = []): RouteVo[] {
+  return list
+    .filter((item) => {
+      const routePath = item.path || "";
+      const component = item.component || "";
+      if (EXCLUDED_ROUTE_PREFIXES.some((prefix) => routePath.startsWith(prefix))) return false;
+      if (EXCLUDED_COMPONENT_PREFIXES.some((prefix) => component.startsWith(prefix))) return false;
+      return true;
+    })
+    .map((item) => {
+      const children = item.children?.length ? filterRouteVoList(item.children) : [];
+      return { ...item, children };
+    });
+}
+
 export const usePermissionStore = defineStore("permission", () => {
   // 所有路由（静态路由 + 动态路由）
   const routes = ref<RouteRecordRaw[]>([]);
@@ -20,7 +38,7 @@ export const usePermissionStore = defineStore("permission", () => {
   async function generateRoutes(): Promise<RouteRecordRaw[]> {
     try {
       const data = await MenuAPI.getRoutes(); // 获取当前登录人的菜单路由
-      const dynamicRoutes = transformRoutes(data);
+      const dynamicRoutes = transformRoutes(filterRouteVoList(data));
 
       routes.value = [...constantRoutes, ...dynamicRoutes];
       isRouteGenerated.value = true;

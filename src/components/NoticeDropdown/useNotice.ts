@@ -4,20 +4,15 @@
 import { ref, onMounted, onBeforeUnmount } from "vue";
 import type { NoticePageVo, NoticeDetailVo, NoticePageQuery } from "@/types/api";
 import NoticeAPI from "@/api/system/notice";
-import { useStomp } from "@/composables";
 import router from "@/router";
 
 const PAGE_SIZE = 5;
 
 export function useNotice() {
-  const { subscribe, unsubscribe, isConnected } = useStomp();
-
   // 状态
   const list = ref<NoticePageVo[]>([]);
   const detail = ref<NoticeDetailVo | null>(null);
   const dialogVisible = ref(false);
-
-  let subscribed = false;
 
   // ============================================
   // 数据获取
@@ -31,7 +26,7 @@ export function useNotice() {
       ...params,
     } as NoticePageQuery;
     const page = await NoticeAPI.getMyNoticePage(query);
-    list.value = page.list || [];
+    list.value = page.data || [];
   }
 
   async function read(id: string) {
@@ -53,53 +48,15 @@ export function useNotice() {
   }
 
   // ============================================
-  // WebSocket 订阅
-  // ============================================
-
-  function setupSubscription() {
-    if (subscribed || !isConnected.value) return;
-
-    subscribe("/user/queue/message", (message: any) => {
-      try {
-        const data = JSON.parse(message.body || "{}");
-        if (!data.id) return;
-
-        // 避免重复
-        if (list.value.some((item: NoticePageVo) => item.id === data.id)) return;
-
-        list.value.unshift({
-          id: data.id,
-          title: data.title,
-          type: data.type,
-          publishTime: data.publishTime,
-        } as NoticePageVo);
-
-        ElNotification({
-          title: "您收到一条新的通知消息！",
-          message: data.title,
-          type: "success",
-          position: "bottom-right",
-        });
-      } catch (e) {
-        console.error("解析通知消息失败", e);
-      }
-    });
-
-    subscribed = true;
-  }
-
-  // ============================================
   // 生命周期
   // ============================================
 
   onMounted(() => {
     fetchList();
-    setupSubscription();
   });
 
   onBeforeUnmount(() => {
-    unsubscribe("/user/queue/message");
-    subscribed = false;
+    return;
   });
 
   return {

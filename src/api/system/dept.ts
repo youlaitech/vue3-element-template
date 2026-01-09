@@ -1,5 +1,5 @@
 import request from "@/utils/request";
-import type { DeptQuery, DeptVo, DeptForm } from "@/types/api";
+import type { DeptQuery, DeptVo, DeptForm, OptionItem } from "@/types/api";
 
 const DEPT_BASE_URL = "/api/v1/depts";
 
@@ -10,7 +10,7 @@ const DeptAPI = {
   },
   /** 获取部门下拉数据源 */
   getOptions() {
-    return request<any, OptionType[]>({ url: `${DEPT_BASE_URL}/options`, method: "get" });
+    return request<any, OptionItem[]>({ url: `${DEPT_BASE_URL}/options`, method: "get" });
   },
   /** 获取部门表单数据 */
   getFormData(id: string) {

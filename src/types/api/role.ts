@@ -2,8 +2,10 @@
  * Role 角色类型定义
  */
 
+import type { BaseQueryParams } from "./common";
+
 /** 角色分页查询参数 */
-export interface RolePageQuery extends PageQuery {
+export interface RolePageQuery extends BaseQueryParams {
   /** 搜索关键字 */
   keywords?: string;
 }

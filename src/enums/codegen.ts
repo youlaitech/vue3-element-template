@@ -5,10 +5,12 @@
  * 包含表单类型、查询类型等代码生成功能的枚举定义
  */
 
+import type { OptionItem } from "@/types/api";
+
 /**
  * 表单类型枚举
  */
-export const FormTypeEnum: Record<string, OptionType> = {
+export const FormTypeEnum: Record<string, OptionItem> = {
   INPUT: { value: 1, label: "输入框" },
   SELECT: { value: 2, label: "下拉框" },
   RADIO: { value: 3, label: "单选框" },
@@ -24,7 +26,7 @@ export const FormTypeEnum: Record<string, OptionType> = {
 /**
  * 查询类型枚举
  */
-export const QueryTypeEnum: Record<string, OptionType> = {
+export const QueryTypeEnum: Record<string, OptionItem> = {
   /** 等于 */
   EQ: { value: 1, label: "=" },
 

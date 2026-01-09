@@ -1,13 +1,13 @@
 import request from "@/utils/request";
-import type { ConfigPageQuery, ConfigForm, ConfigPageVo } from "@/types/api";
+import type { ConfigPageQuery, ConfigForm, ConfigPageVo, PageResult } from "@/types/api";
 
 const CONFIG_BASE_URL = "/api/v1/configs";
 
 const ConfigAPI = {
   /** 获取配置分页数据 */
   getPage(queryParams?: ConfigPageQuery) {
-    return request<any, PageResult<ConfigPageVo[]>>({
-      url: `${CONFIG_BASE_URL}/page`,
+    return request<any, PageResult<ConfigPageVo>>({
+      url: `${CONFIG_BASE_URL}`,
       method: "get",
       params: queryParams,
     });

@@ -18,6 +18,5 @@ export * from "./notice";
 export * from "./tenant";
 
 // 其他模块
-export * from "./ai";
 export * from "./file";
 export * from "./codegen";

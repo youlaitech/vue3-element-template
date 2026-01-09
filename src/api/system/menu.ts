@@ -1,5 +1,5 @@
 import request from "@/utils/request";
-import type { MenuQuery, MenuVo, MenuForm, RouteVo, OptionType } from "@/types/api";
+import type { MenuQuery, MenuVo, MenuForm, RouteVo, OptionItem } from "@/types/api";
 
 const MENU_BASE_URL = "/api/v1/menus";
 
@@ -14,7 +14,7 @@ const MenuAPI = {
   },
   /** 获取菜单下拉数据源 */
   getOptions(onlyParent?: boolean) {
-    return request<any, OptionType[]>({
+    return request<any, OptionItem[]>({
       url: `${MENU_BASE_URL}/options`,
       method: "get",
       params: { onlyParent },

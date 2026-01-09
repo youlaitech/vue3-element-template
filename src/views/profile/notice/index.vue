@@ -135,8 +135,8 @@ async function handleQuery() {
   loading.value = true;
   try {
     const data = await NoticeAPI.getMyNoticePage(queryParams);
-    pageData.value = data.list;
-    total.value = data.total;
+    pageData.value = data.data;
+    total.value = data.page?.total ?? 0;
   } catch (error) {
     ElMessage.error("获取通知列表失败");
     console.error("获取我的通知失败", error);

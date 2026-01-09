@@ -1,14 +1,9 @@
 <template>
   <div class="auth-view">
     <div class="auth-view__toolbar">
-      <el-tooltip :content="t('login.themeToggle')" placement="bottom">
+      <el-tooltip content="主题切换" placement="bottom">
         <div class="toolbar-item">
           <ThemeSwitch />
-        </div>
-      </el-tooltip>
-      <el-tooltip :content="t('login.languageToggle')" placement="bottom">
-        <div class="toolbar-item">
-          <LangSelect size="text-20px" />
         </div>
       </el-tooltip>
     </div>
@@ -87,7 +82,6 @@ import ThemeSwitch from "@/components/ThemeSwitch/index.vue";
 
 type LayoutMap = "login" | "register" | "resetPwd";
 
-const { t } = useI18n();
 const component = ref<LayoutMap>("login");
 
 const tenantEnabled = appConfig.tenantEnabled;

@@ -8,7 +8,6 @@ import { AuthStorage } from "@/utils/auth";
 import { usePermissionStoreHook } from "@/store/modules/permission";
 import { useDictStoreHook } from "@/store/modules/dict";
 import { useTagsViewStore } from "@/store";
-import { cleanupWebSocket } from "@/composables";
 
 export const useUserStore = defineStore("user", () => {
   // 用户信息
@@ -92,10 +91,6 @@ export const useUserStore = defineStore("user", () => {
     useDictStoreHook().clearDictCache();
     // 清除标签视图
     useTagsViewStore().delAllViews();
-
-    // 3. 清理 WebSocket 连接
-    cleanupWebSocket();
-    console.log("[UserStore] WebSocket connections cleaned up");
 
     return Promise.resolve();
   }

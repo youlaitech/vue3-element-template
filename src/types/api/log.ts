@@ -2,8 +2,10 @@
  * Log 日志类型定义
  */
 
+import type { BaseQueryParams } from "./common";
+
 /** 日志分页查询参数 */
-export interface LogPageQuery extends PageQuery {
+export interface LogPageQuery extends BaseQueryParams {
   /** 搜索关键字 */
   keywords?: string;
   /** 操作时间 */

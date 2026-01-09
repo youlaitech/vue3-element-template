@@ -21,7 +21,7 @@
               <template v-if="item.meta">
                 <MenuIcon :icon="item.meta.icon" />
                 <span v-if="item.meta.title" class="ml-1">
-                  {{ translateRouteTitle(item.meta.title) }}
+                  {{ item.meta.title }}
                 </span>
               </template>
             </el-menu-item>
@@ -75,8 +75,7 @@ import type { LocationQueryRaw, RouteRecordRaw } from "vue-router";
 import { useWindowSize } from "@vueuse/core";
 import { useLayout } from "./useLayout";
 import { useAppStore, usePermissionStore, useSettingsStore } from "@/store";
-import { isExternal } from "@/utils/index";
-import { translateRouteTitle } from "@/lang/utils";
+import { isExternal } from "@/utils";
 import { SidebarColor } from "@/enums/settings";
 import { ElIcon } from "element-plus";
 import BaseLayout from "./BaseLayout.vue";

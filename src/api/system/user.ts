@@ -9,6 +9,8 @@ import type {
   PasswordChangeForm,
   MobileUpdateForm,
   EmailUpdateForm,
+  PageResult,
+  OptionItem,
 } from "@/types/api";
 
 const USER_BASE_URL = "/api/v1/users";
@@ -32,8 +34,8 @@ const UserAPI = {
    * @param queryParams 查询参数
    */
   getPage(queryParams: UserPageQuery) {
-    return request<any, PageResult<UserPageVo[]>>({
-      url: `${USER_BASE_URL}/page`,
+    return request<any, PageResult<UserPageVo>>({
+      url: `${USER_BASE_URL}`,
       method: "get",
       params: queryParams,
     });
@@ -214,7 +216,7 @@ const UserAPI = {
    *  获取用户下拉列表
    */
   getOptions() {
-    return request<any, OptionType[]>({
+    return request<any, OptionItem[]>({
       url: `${USER_BASE_URL}/options`,
       method: "get",
     });

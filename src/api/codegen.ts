@@ -1,13 +1,19 @@
 import request from "@/utils/request";
-import type { GeneratorPreviewVo, TablePageQuery, TablePageVo, GenConfigForm } from "@/types/api";
+import type {
+  GeneratorPreviewVo,
+  TablePageQuery,
+  TablePageVo,
+  GenConfigForm,
+  PageResult,
+} from "@/types/api";
 
 const GENERATOR_BASE_URL = "/api/v1/codegen";
 
 const GeneratorAPI = {
   /** 获取数据表分页列表 */
   getTablePage(params: TablePageQuery) {
-    return request<any, PageResult<TablePageVo[]>>({
-      url: `${GENERATOR_BASE_URL}/table/page`,
+    return request<any, PageResult<TablePageVo>>({
+      url: `${GENERATOR_BASE_URL}/table`,
       method: "get",
       params,
     });

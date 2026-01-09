@@ -345,7 +345,7 @@ import { useAppStore } from "@/store/modules/app";
 import { DeviceEnum } from "@/enums/settings";
 
 import MenuAPI from "@/api/system/menu";
-import type { MenuQuery, MenuForm, MenuVo } from "@/types/api";
+import type { MenuQuery, MenuForm, MenuVo, OptionItem } from "@/types/api";
 import { MenuTypeEnum } from "@/enums/business";
 
 defineOptions({
@@ -370,7 +370,7 @@ const queryParams = reactive<MenuQuery>({});
 // 菜单表格数据
 const menuTableData = ref<MenuVo[]>([]);
 // 顶级菜单下拉选项
-const menuOptions = ref<OptionType[]>([]);
+const menuOptions = ref<OptionItem[]>([]);
 // 初始菜单表单数据
 const initialMenuFormData = ref<MenuForm>({
   id: undefined,
@@ -390,14 +390,14 @@ const isExternalLink = computed(
     !!formData.value.routePath &&
     /^https?:\/\//.test(formData.value.routePath)
 );
-const validateRouteName = (_: unknown, value: string, callback: (error?: Error) => void) => {
+const validateRouteName = (_: unknown, value: string, callback: () => void) => {
   if (formData.value.type === MenuTypeEnum.MENU && !isExternalLink.value && !value) {
     callback(new Error("请输入路由名称"));
     return;
   }
   callback();
 };
-const validateComponent = (_: unknown, value: string, callback: (error?: Error) => void) => {
+const validateComponent = (_: unknown, value: string, callback: () => void) => {
   if (formData.value.type === MenuTypeEnum.MENU && !isExternalLink.value && !value) {
     callback(new Error("请输入组件路径"));
     return;

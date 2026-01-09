@@ -262,7 +262,13 @@ defineOptions({
 
 import { ref, reactive } from "vue";
 import NoticeAPI from "@/api/system/notice";
-import type { NoticePageVo, NoticeForm, NoticePageQuery, NoticeDetailVo } from "@/types/api";
+import type {
+  NoticePageVo,
+  NoticeForm,
+  NoticePageQuery,
+  NoticeDetailVo,
+  OptionItem,
+} from "@/types/api";
 import UserAPI from "@/api/system/user";
 
 const queryFormRef = ref();
@@ -277,7 +283,7 @@ const queryParams = reactive<NoticePageQuery>({
   pageSize: 10,
 });
 
-const userOptions = ref<OptionType[]>([]);
+const userOptions = ref<OptionItem[]>([]);
 // 通知公告表格数据
 const pageData = ref<NoticePageVo[]>([]);
 
@@ -329,8 +335,8 @@ function fetchData() {
   loading.value = true;
   NoticeAPI.getPage(queryParams)
     .then((data) => {
-      pageData.value = data.list;
-      total.value = data.total;
+      pageData.value = data.data;
+      total.value = data.page?.total ?? 0;
     })
     .finally(() => {
       loading.value = false;

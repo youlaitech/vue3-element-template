@@ -71,7 +71,7 @@
 import UserAPI from "@/api/system/user";
 import DeptAPI from "@/api/system/dept";
 import RoleAPI from "@/api/system/role";
-import type { UserForm, UserPageQuery } from "@/types/api";
+import type { OptionItem, UserForm, UserPageQuery } from "@/types/api";
 import type { IObject, IModalConfig, IContentConfig, ISearchConfig } from "@/components/CURD/types";
 import { DeviceEnum } from "@/enums/settings";
 import { useAppStore } from "@/store";
@@ -83,16 +83,10 @@ defineOptions({
 });
 
 // ========================= 选项数据管理 =========================
-interface OptionType {
-  label: string;
-  value: any;
-  [key: string]: any;
-}
-
 // 共享选项数据
-const deptArr = ref<OptionType[]>([]);
-const roleArr = ref<OptionType[]>([]);
-const stateArr = ref<OptionType[]>([
+const deptArr = ref<OptionItem[]>([]);
+const roleArr = ref<OptionItem[]>([]);
+const stateArr = ref<OptionItem[]>([
   { label: "启用", value: 1 },
   { label: "禁用", value: 0 },
 ]);
@@ -179,8 +173,8 @@ const contentConfig: IContentConfig<UserPageQuery> = reactive({
   },
   parseData(res: any) {
     return {
-      total: res.total,
-      list: res.list,
+      total: res.page?.total ?? 0,
+      list: res.data ?? [],
     };
   },
   indexAction(params: any) {
@@ -198,8 +192,8 @@ const contentConfig: IContentConfig<UserPageQuery> = reactive({
   },
   async exportsAction(params: any) {
     const res = await UserAPI.getPage(params);
-    console.log("exportsAction", res.list);
-    return res.list;
+    console.log("exportsAction", res.data);
+    return res.data;
   },
   pk: "id",
   toolbar: [

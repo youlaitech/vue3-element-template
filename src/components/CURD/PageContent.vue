@@ -870,13 +870,19 @@ function fetchPageData(formData: IObject = {}, isRestart = false) {
     )
     .then((data) => {
       if (showPagination) {
+        let parsed: any = data;
         if (props.contentConfig.parseData) {
-          data = props.contentConfig.parseData(data);
+          parsed = props.contentConfig.parseData(data);
+        } else if ((data as any)?.data && Array.isArray((data as any).data)) {
+          parsed = {
+            list: (data as any).data,
+            total: (data as any)?.page?.total ?? 0,
+          };
         }
-        pagination.total = data.total;
-        pageData.value = data.list;
+        pagination.total = parsed?.total ?? 0;
+        pageData.value = parsed?.list ?? [];
       } else {
-        pageData.value = data;
+        pageData.value = (data as any)?.data ?? data;
       }
     })
     .finally(() => {

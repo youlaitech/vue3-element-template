@@ -1,4 +1,4 @@
-﻿<template>
+<template>
   <div class="app-container">
     <!-- 搜索区域 -->
     <div class="search-container">
@@ -526,6 +526,7 @@ import { FormTypeEnum, QueryTypeEnum } from "@/enums/codegen";
 
 import GeneratorAPI from "@/api/codegen";
 import type { FieldConfig, GenConfigForm, TablePageQuery, TablePageVo } from "@/api/types";
+import type { OptionItem } from "@/types/api";
 import { ElLoading } from "element-plus";
 
 import DictAPI from "@/api/system/dict";
@@ -585,10 +586,10 @@ const loadingText = ref("loading...");
 const pageData = ref<TablePageVo[]>([]);
 const total = ref(0);
 
-const formTypeOptions: Record<string, OptionType> = FormTypeEnum;
-const queryTypeOptions: Record<string, OptionType> = QueryTypeEnum;
-const dictOptions = ref<OptionType[]>();
-const menuOptions = ref<OptionType[]>([]);
+const formTypeOptions: Record<string, OptionItem> = FormTypeEnum;
+const queryTypeOptions: Record<string, OptionItem> = QueryTypeEnum;
+const dictOptions = ref<OptionItem[]>();
+const menuOptions = ref<OptionItem[]>([]);
 const genConfigFormData = ref<GenConfigForm>({
   fieldConfigs: [],
   pageType: "classic",
@@ -819,8 +820,8 @@ function handleQuery() {
   loading.value = true;
   GeneratorAPI.getTablePage(queryParams)
     .then((data) => {
-      pageData.value = data.list;
-      total.value = data.total;
+      pageData.value = data.data;
+      total.value = data.page?.total ?? 0;
     })
     .finally(() => {
       loading.value = false;

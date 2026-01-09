@@ -364,25 +364,16 @@ import { useUserStore } from "@/store/modules/user";
 import { formatGrowthRate } from "@/utils";
 import { useTransition, useDateFormat } from "@vueuse/core";
 import { Connection, Failed } from "@element-plus/icons-vue";
-import { useOnlineCount } from "@/composables";
 
-// 在线用户数量组件相关
-const { onlineUserCount, lastUpdateTime, isConnected } = useOnlineCount();
-
-// 记录上一次的用户数量用于计算趋势
-const previousCount = ref(0);
-
-// 监听用户数量变化，计算趋势
-watch(onlineUserCount, (newCount, oldCount) => {
-  if (oldCount > 0) {
-    previousCount.value = oldCount;
-  }
-});
+// 在线用户数量：移除 websocket 依赖后，改为静态展示
+const onlineUserCount = ref(0);
+const lastUpdateTime = ref<Date | null>(null);
+const isConnected = ref(false);
 
 // 格式化时间戳
 const formattedTime = computed(() => {
   if (!lastUpdateTime.value) return "--";
-  return useDateFormat(lastUpdateTime, "HH:mm:ss").value;
+  return useDateFormat(lastUpdateTime.value, "HH:mm:ss").value;
 });
 
 interface VersionItem {

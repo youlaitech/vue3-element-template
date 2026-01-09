@@ -11,7 +11,6 @@ export {};
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
-    AiAssistant: typeof import('./../components/AiAssistant/index.vue')['default']
     AppLink: typeof import('./../components/AppLink/index.vue')['default']
     Breadcrumb: typeof import('./../components/Breadcrumb/index.vue')['default']
     CommandPalette: typeof import('./../components/CommandPalette/index.vue')['default']
@@ -90,7 +89,6 @@ declare module 'vue' {
     Hamburger: typeof import('./../components/Hamburger/index.vue')['default']
     IconSelect: typeof import('./../components/IconSelect/index.vue')['default']
     InputTag: typeof import('./../components/InputTag/index.vue')['default']
-    LangSelect: typeof import('./../components/LangSelect/index.vue')['default']
     LayoutLogo: typeof import('./../layouts/components/LayoutLogo.vue')['default']
     LayoutMain: typeof import('./../layouts/components/LayoutMain.vue')['default']
     LayoutNavbar: typeof import('./../layouts/components/LayoutNavbar.vue')['default']

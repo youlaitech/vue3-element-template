@@ -17,19 +17,9 @@
         <SizeSelect />
       </div>
 
-      <!-- 语言选择 -->
-      <div class="navbar-actions__item">
-        <LangSelect />
-      </div>
-
       <!-- 通知 -->
       <div class="navbar-actions__item">
         <NoticeDropdown />
-      </div>
-
-      <!-- 租户选择（如果启用多租户）-->
-      <div v-if="showTenantSelect" class="navbar-actions__item">
-        <TenantSwitcher @change="handleTenantChange" />
       </div>
     </template>
 
@@ -48,12 +38,8 @@
         </div>
         <template #dropdown>
           <el-dropdown-menu>
-            <el-dropdown-item @click="handleProfileClick">
-              {{ t("navbar.profile") }}
-            </el-dropdown-item>
-            <el-dropdown-item divided @click="logout">
-              {{ t("navbar.logout") }}
-            </el-dropdown-item>
+            <el-dropdown-item @click="handleProfileClick">个人中心</el-dropdown-item>
+            <el-dropdown-item divided @click="logout">退出登录</el-dropdown-item>
           </el-dropdown-menu>
         </template>
       </el-dropdown>
@@ -67,7 +53,6 @@
 </template>
 
 <script setup lang="ts">
-import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 import { defaults } from "@/settings";
 import { DeviceEnum, SidebarColor, ThemeMode, LayoutMode } from "@/enums/settings";
@@ -77,49 +62,16 @@ import { useAppStore, useSettingsStore, useUserStore } from "@/store";
 import CommandPalette from "@/components/CommandPalette/index.vue";
 import Fullscreen from "@/components/Fullscreen/index.vue";
 import SizeSelect from "@/components/SizeSelect/index.vue";
-import LangSelect from "@/components/LangSelect/index.vue";
 import NoticeDropdown from "@/components/NoticeDropdown/index.vue";
-import TenantSwitcher from "@/components/TenantSwitcher/index.vue";
-import { useTenantStoreHook } from "@/store/modules/tenant";
-
-const { t } = useI18n();
 const appStore = useAppStore();
 const settingStore = useSettingsStore();
 const userStore = useUserStore();
-const tenantStore = useTenantStoreHook();
 
 const route = useRoute();
 const router = useRouter();
 
 // 是否为桌面设备
 const isDesktop = computed(() => appStore.device === DeviceEnum.DESKTOP);
-
-// 是否显示租户选择（如果用户有多个租户，则显示租户选择器）
-// 最小侵入：只有在多租户模式下（租户列表长度 > 1）才显示
-const showTenantSelect = computed(() => {
-  // 如果租户列表为空，不显示
-  if (tenantStore.tenantList.length === 0) {
-    return false;
-  }
-  // 如果只有一个租户，也不显示（单租户模式，用户无感知�?
-  if (tenantStore.tenantList.length === 1) {
-    return false;
-  }
-  // 多个租户时才显示
-  return true;
-});
-
-function handleTenantChange(tenantId: number) {
-  tenantStore
-    .switchTenant(tenantId)
-    .then(() => {
-      ElMessage.success("切换租户成功");
-      window.location.reload();
-    })
-    .catch((error: any) => {
-      ElMessage.error(error?.message || "切换租户失败");
-    });
-}
 
 /**
  * 打开个人中心页面

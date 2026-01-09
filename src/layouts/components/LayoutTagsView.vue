@@ -26,7 +26,7 @@
             })
           "
         >
-          {{ translateRouteTitle(tag.title) }}
+          {{ tag.title }}
         </el-tag>
       </div>
     </el-scrollbar>
@@ -70,7 +70,6 @@
 <script setup lang="ts">
 import { useRoute, useRouter, type RouteRecordRaw } from "vue-router";
 import { resolve } from "path-browserify";
-import { translateRouteTitle } from "@/lang/utils";
 import { usePermissionStore, useTagsViewStore } from "@/store";
 
 interface ContextMenu {
