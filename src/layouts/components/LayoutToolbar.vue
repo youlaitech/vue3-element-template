@@ -80,20 +80,20 @@ function handleProfileClick() {
   router.push({ name: "Profile" });
 }
 
-// 根据主题和侧边栏配色方案选择样式�?
+// 根据主题和侧边栏配色方案选择样式
 const navbarActionsClass = computed(() => {
   const { theme, sidebarColorScheme, layout } = settingStore;
 
-  // 暗黑主题下，所有布局都使用白色文�?
+  // 暗黑主题下，所有布局都使用白色文字
   if (theme === ThemeMode.DARK) {
     return "navbar-actions--white-text";
   }
 
-  // 明亮主题�?
+  // 明亮主题
   if (theme === ThemeMode.LIGHT) {
     // 顶部布局和混合布局的顶部区域：
-    // - 如果侧边栏是经典蓝色，使用白色文�?
-    // - 如果侧边栏是极简白色，使用深色文�?
+    // - 如果侧边栏是经典蓝色，使用白色文字
+    // - 如果侧边栏是极简白色，使用深色文字
     if (layout === LayoutMode.TOP || layout === LayoutMode.MIX) {
       if (sidebarColorScheme === SidebarColor.CLASSIC_BLUE) {
         return "navbar-actions--white-text";
@@ -107,7 +107,7 @@ const navbarActionsClass = computed(() => {
 });
 
 /**
- * 退出登�?
+ * 退出登录
  */
 function logout() {
   ElMessageBox.confirm("确定注销并退出系统吗？", "提示", {
@@ -141,14 +141,14 @@ function handleSettingsClick() {
     display: flex;
     align-items: center;
     justify-content: center;
-    min-width: 44px; /* 增加最小点击区域到44px，符合人机交互标�?*/
+    min-width: 44px; /* 增加最小点击区域到44px，符合人机交互标准 */
     height: 44px;
     padding: 0 8px;
     text-align: center;
     cursor: pointer;
     transition: all 0.3s;
 
-    // 确保子元素居�?
+    // 确保子元素居中
     > * {
       display: flex;
       align-items: center;
@@ -205,7 +205,7 @@ function handleSettingsClick() {
   }
 }
 
-// 白色文字样式（用于深色背景：暗黑主题、顶部布局、混合布局�?
+// 白色文字样式（用于深色背景：暗黑主题、顶部布局、混合布局）
 .navbar-actions--white-text {
   .navbar-actions__item {
     :deep([class^="i-svg:"]) {
@@ -241,7 +241,7 @@ function handleSettingsClick() {
   }
 }
 
-// 深色文字样式（用于浅色背景：明亮主题下的左侧布局�?
+// 深色文字样式（用于浅色背景：明亮主题下的左侧布局）
 .navbar-actions--dark-text {
   .navbar-actions__item {
     :deep([class^="i-svg:"]) {

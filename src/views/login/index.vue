@@ -54,7 +54,7 @@
                 {{ `v${appConfig.version}` }}
               </el-tag>
               <el-tag v-if="tenantEnabled" type="success" size="small" effect="light" round>
-                多租�?
+                多租户
               </el-tag>
             </div>
           </div>
@@ -194,7 +194,7 @@ onBeforeUnmount(() => {
   }
 }
 
-/* 应用内暗黑主题下顶部设置面板的深色样�?*/
+/* 应用内暗黑主题下顶部设置面板的深色样式 */
 .dark .auth-view__toolbar {
   background-color: rgba(24, 28, 43, 0.9);
   border-color: rgba(64, 128, 255, 0.35);
