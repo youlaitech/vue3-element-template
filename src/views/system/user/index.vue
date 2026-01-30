@@ -107,6 +107,7 @@
               </template>
             </el-table-column>
             <el-table-column label="部门" width="120" align="center" prop="deptName" />
+            <el-table-column label="角色" align="center" prop="roleNames" min-width="160" />
             <el-table-column label="手机号码" align="center" prop="mobile" width="120" />
             <el-table-column label="邮箱" align="center" prop="email" width="160" />
             <el-table-column label="状态" align="center" prop="status" width="80">
