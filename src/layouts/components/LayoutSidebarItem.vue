@@ -23,15 +23,7 @@
           :class="{ 'submenu-title-noDropdown': !isNest }"
         >
           <template v-if="onlyOneChild.meta">
-            <MenuIcon
-              :icon="
-                typeof onlyOneChild.meta.icon === 'string'
-                  ? onlyOneChild.meta.icon
-                  : typeof item.meta?.icon === 'string'
-                    ? item.meta.icon
-                    : ''
-              "
-            />
+            <MenuIcon :icon="onlyOneChild.meta.icon || item.meta?.icon" />
             <span v-if="onlyOneChild.meta.title" class="ml-1">
               {{ onlyOneChild.meta.title }}
             </span>
@@ -44,7 +36,7 @@
     <el-sub-menu v-else :index="resolvePath(item.path)" :data-path="item.path" teleported>
       <template #title>
         <template v-if="item.meta">
-          <MenuIcon :icon="typeof item.meta.icon === 'string' ? item.meta.icon : ''" />
+          <MenuIcon :icon="item.meta.icon" />
           <span v-if="item.meta.title" class="ml-1">
             {{ item.meta.title }}
           </span>

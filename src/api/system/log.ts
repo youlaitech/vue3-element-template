@@ -1,12 +1,12 @@
 import request from "@/utils/request";
-import type { LogPageQuery, LogPageVo, PageResult } from "@/types/api";
+import type { LogQueryParams, LogItem, PageResult } from "@/types/api";
 
 const LOG_BASE_URL = "/api/v1/logs";
 
 const LogAPI = {
   /** 获取日志分页列表 */
-  getPage(queryParams: LogPageQuery) {
-    return request<any, PageResult<LogPageVo>>({
+  getPage(queryParams: LogQueryParams) {
+    return request<any, PageResult<LogItem>>({
       url: `${LOG_BASE_URL}`,
       method: "get",
       params: queryParams,

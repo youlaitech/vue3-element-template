@@ -15,7 +15,7 @@ export interface ApiResponse<T = any> {
   page?: PageMeta | null;
 }
 
-/** 分页查询参数 */
+/** 基础查询参数 */
 export interface BaseQueryParams {
   /** 页码 */
   pageNum: number;
@@ -29,7 +29,14 @@ export interface BaseQueryParams {
   order?: string;
 }
 
-/** 分页响应结构 */
+/** 分页元信息 */
+export interface PageMeta {
+  pageNum: number;
+  pageSize: number;
+  total: number;
+}
+
+/** 列表响应结构（统一） */
 export interface PageResult<T> {
   /** 数据列表 */
   data: T[];
@@ -48,15 +55,9 @@ export interface OptionItem {
   children?: OptionItem[];
 }
 
-/** 分页元信息 */
-export interface PageMeta {
-  pageNum: number;
-  pageSize: number;
-  total: number;
-}
-
 /** Excel 导入结果 */
 export interface ExcelResult {
+  /** 响应码 */
   code: string;
   /** 无效数据数量 */
   invalidCount: number;

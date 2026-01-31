@@ -1,9 +1,9 @@
 import UserAPI from "@/api/system/user";
 import RoleAPI from "@/api/system/role";
-import type { UserPageQuery } from "@/types/api";
+import type { UserQueryParams, UserItem } from "@/types/api";
 import type { IContentConfig } from "@/components/CURD/types";
 
-const contentConfig: IContentConfig<UserPageQuery> = {
+const contentConfig: IContentConfig<UserQueryParams, UserItem> = {
   permPrefix: "sys:user", // 不写不进行按钮权限校验
   table: {
     border: true,
@@ -14,12 +14,6 @@ const contentConfig: IContentConfig<UserPageQuery> = {
     layout: "prev,pager,next,jumper,total,sizes",
     pageSize: 20,
     pageSizes: [10, 20, 30, 50],
-  },
-  parseData(res) {
-    return {
-      total: res.page?.total ?? 0,
-      list: res.data ?? [],
-    };
   },
   indexAction(params) {
     return UserAPI.getPage(params);

@@ -11,8 +11,6 @@
         <el-tag
           v-for="tag in visitedViews"
           :key="tag.fullPath"
-          h-26px
-          cursor-pointer
           :closable="!tag.affix"
           :effect="tagsViewStore.isActive(tag) ? 'dark' : 'light'"
           :type="tagsViewStore.isActive(tag) ? 'primary' : 'info'"

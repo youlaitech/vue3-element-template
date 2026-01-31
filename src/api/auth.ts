@@ -9,14 +9,9 @@ const AuthAPI = {
     const payload: Record<string, any> = {
       username: data.username,
       password: data.password,
-      captchaId: data.captchaId ?? "",
-      captchaCode: data.captchaCode ?? "",
+      captchaId: data.captchaId,
+      captchaCode: data.captchaCode,
     };
-
-    // tenantId is optional — include only when provided (multi-tenant feature)
-    if (typeof data.tenantId !== "undefined") {
-      payload.tenantId = data.tenantId;
-    }
 
     return request<any, LoginResponse>({
       url: `${AUTH_BASE_URL}/login`,

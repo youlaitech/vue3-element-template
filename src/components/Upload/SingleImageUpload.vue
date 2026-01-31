@@ -54,7 +54,7 @@ const props = defineProps({
     default: "file",
   },
   /**
-   * 最大文件大小（单位：M）
+   * 最大文件大小（单位：MB）
    */
   maxFileSize: {
     type: Number,
@@ -199,7 +199,7 @@ const onError = (error: any) => {
     font-size: 16px;
     color: #ff7901;
     cursor: pointer;
-    background: #fff;
+    background: var(--el-bg-color);
     border-radius: 100%;
 
     :hover {

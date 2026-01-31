@@ -112,7 +112,6 @@ declare module 'vue' {
     SingleImageUpload: typeof import('./../components/Upload/SingleImageUpload.vue')['default']
     SizeSelect: typeof import('./../components/SizeSelect/index.vue')['default']
     TableSelect: typeof import('./../components/TableSelect/index.vue')['default']
-    TenantSwitcher: typeof import('./../components/TenantSwitcher/index.vue')['default']
     TextScroll: typeof import('./../components/TextScroll/index.vue')['default']
     ThemeSwitch: typeof import('./../components/ThemeSwitch/index.vue')['default']
     UserDeptTree: typeof import('./../views/system/user/components/UserDeptTree.vue')['default']

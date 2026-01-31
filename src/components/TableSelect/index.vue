@@ -261,11 +261,9 @@ function fetchPageData(isRestart = false) {
   }
   props.selectConfig
     .indexAction(queryParams)
-    .then((data) => {
-      const list = (data as any)?.data ?? (data as any)?.list ?? [];
-      const totalVal = (data as any)?.page?.total ?? (data as any)?.total ?? 0;
-      total.value = totalVal;
-      pageData.value = list;
+    .then((res) => {
+      total.value = res.page?.total ?? 0;
+      pageData.value = res.data ?? [];
     })
     .finally(() => {
       loading.value = false;

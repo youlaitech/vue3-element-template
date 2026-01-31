@@ -270,7 +270,7 @@
 <script lang="ts" setup>
 import UserAPI from "@/api/system/user";
 import type {
-  UserProfileVo,
+  UserProfileDetail,
   PasswordChangeForm,
   MobileUpdateForm,
   EmailUpdateForm,
@@ -288,7 +288,7 @@ import { Camera } from "@element-plus/icons-vue";
 
 const userStore = useUserStoreHook();
 
-const userProfile = ref<UserProfileVo>({});
+const userProfile = ref<UserProfileDetail>({});
 
 const enum DialogType {
   ACCOUNT = "account",
@@ -325,7 +325,7 @@ const passwordChangeRules = {
   confirmPassword: [
     { required: true, message: "请再次输入新密码", trigger: "blur" },
     {
-      validator: (_rule: any, value: string, callback: () => void) => {
+      validator: (_rule: any, value: string, callback: (_error?: Error) => void) => {
         if (value !== passwordChangeForm.newPassword) {
           callback(new Error("两次输入的密码不一致"));
           return;

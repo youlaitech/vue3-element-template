@@ -5,7 +5,7 @@
 import type { BaseQueryParams } from "./common";
 
 /** 日志分页查询参数 */
-export interface LogPageQuery extends BaseQueryParams {
+export interface LogQueryParams extends BaseQueryParams {
   /** 搜索关键字 */
   keywords?: string;
   /** 操作时间 */
@@ -13,7 +13,7 @@ export interface LogPageQuery extends BaseQueryParams {
 }
 
 /** 日志分页对象 */
-export interface LogPageVo {
+export interface LogItem {
   /** 日志ID */
   id: string;
   /** 日志模块 */

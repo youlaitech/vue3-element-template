@@ -1,10 +1,10 @@
 import request from "@/utils/request";
 import type {
-  DictPageQuery,
-  DictPageVo,
-  DictForm,
-  DictItemPageQuery,
-  DictItemPageVo,
+  DictTypeQueryParams,
+  DictTypeItem,
+  DictTypeForm,
+  DictItemQueryParams,
+  DictItem,
   DictItemForm,
   DictItemOption,
   OptionItem,
@@ -61,8 +61,8 @@ const encodeDictTagType = (tagType?: unknown): DictTagTypeCode => {
 
 const DictAPI = {
   /** 字典分页列表 */
-  getPage(queryParams: DictPageQuery) {
-    return request<any, PageResult<DictPageVo>>({
+  getPage(queryParams: DictTypeQueryParams) {
+    return request<any, PageResult<DictTypeItem>>({
       url: `${DICT_BASE_URL}`,
       method: "get",
       params: queryParams,
@@ -74,14 +74,14 @@ const DictAPI = {
   },
   /** 字典表单数据 */
   getFormData(id: string) {
-    return request<any, DictForm>({ url: `${DICT_BASE_URL}/${id}/form`, method: "get" });
+    return request<any, DictTypeForm>({ url: `${DICT_BASE_URL}/${id}/form`, method: "get" });
   },
   /** 新增字典 */
-  create(data: DictForm) {
+  create(data: DictTypeForm) {
     return request({ url: `${DICT_BASE_URL}`, method: "post", data });
   },
   /** 修改字典 */
-  update(id: string, data: DictForm) {
+  update(id: string, data: DictTypeForm) {
     return request({ url: `${DICT_BASE_URL}/${id}`, method: "put", data });
   },
   /** 删除字典 */
@@ -90,8 +90,8 @@ const DictAPI = {
   },
 
   /** 获取字典项分页列表 */
-  getDictItemPage(dictCode: string, queryParams: DictItemPageQuery) {
-    return request<any, PageResult<DictItemPageVo>>({
+  getDictItemPage(dictCode: string, queryParams: DictItemQueryParams) {
+    return request<any, PageResult<DictItem>>({
       url: `${DICT_BASE_URL}/${dictCode}/items`,
       method: "get",
       params: queryParams,

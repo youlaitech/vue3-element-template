@@ -17,6 +17,11 @@
         <SizeSelect />
       </div>
 
+      <!-- 语言选择 -->
+      <div class="navbar-actions__item">
+        <LangSelect />
+      </div>
+
       <!-- 通知 -->
       <div class="navbar-actions__item">
         <NoticeDropdown />
@@ -62,6 +67,7 @@ import { useAppStore, useSettingsStore, useUserStore } from "@/store";
 import CommandPalette from "@/components/CommandPalette/index.vue";
 import Fullscreen from "@/components/Fullscreen/index.vue";
 import SizeSelect from "@/components/SizeSelect/index.vue";
+import LangSelect from "@/components/LangSelect/index.vue";
 import NoticeDropdown from "@/components/NoticeDropdown/index.vue";
 const appStore = useAppStore();
 const settingStore = useSettingsStore();
@@ -165,6 +171,15 @@ function handleSettingsClick() {
       height: 44px;
     }
 
+    :deep(.i-svg\:language) {
+      flex-shrink: 0;
+      width: 18px;
+      height: 18px;
+      font-size: 18px;
+      line-height: 18px;
+      background-size: 18px 18px;
+    }
+
     // 图标样式
     :deep([class^="i-svg:"]) {
       font-size: 18px;
@@ -174,7 +189,7 @@ function handleSettingsClick() {
     }
 
     &:hover {
-      background: rgba(0, 0, 0, 0.04);
+      background: var(--el-fill-color-light);
 
       :deep([class^="i-svg:"]) {
         color: var(--el-color-primary);
@@ -209,35 +224,20 @@ function handleSettingsClick() {
 .navbar-actions--white-text {
   .navbar-actions__item {
     :deep([class^="i-svg:"]) {
-      color: rgba(255, 255, 255, 0.85);
+      color: color-mix(in srgb, var(--el-color-white) 85%, transparent);
     }
 
     &:hover {
-      background: rgba(255, 255, 255, 0.1);
+      background: color-mix(in srgb, var(--el-color-white) 10%, transparent);
 
       :deep([class^="i-svg:"]) {
-        color: #fff;
+        color: var(--el-color-white);
       }
     }
   }
 
   .user-profile__name {
-    color: rgba(255, 255, 255, 0.85);
-  }
-
-  // 租户选择器在白色文字模式下的样式
-  ::v-deep(.tenant-switcher__trigger) {
-    color: rgba(255, 255, 255, 0.85);
-  }
-  ::v-deep(.tenant-switcher__trigger .tenant-switcher__icon) {
-    color: rgba(255, 255, 255, 0.85);
-  }
-  ::v-deep(.tenant-switcher__trigger:hover) {
-    color: #fff;
-    background: rgba(255, 255, 255, 0.1);
-  }
-  ::v-deep(.tenant-switcher__trigger:hover .tenant-switcher__icon) {
-    color: #fff;
+    color: color-mix(in srgb, var(--el-color-white) 85%, transparent);
   }
 }
 
@@ -259,21 +259,6 @@ function handleSettingsClick() {
 
   .user-profile__name {
     color: var(--el-text-color-regular) !important;
-  }
-
-  // 租户选择器在深色文字模式下的样式
-  ::v-deep(.tenant-switcher__trigger) {
-    color: var(--el-text-color-regular) !important;
-  }
-  ::v-deep(.tenant-switcher__trigger .tenant-switcher__icon) {
-    color: var(--el-text-color-regular) !important;
-  }
-  ::v-deep(.tenant-switcher__trigger:hover) {
-    color: var(--el-color-primary) !important;
-    background: rgba(0, 0, 0, 0.04);
-  }
-  ::v-deep(.tenant-switcher__trigger:hover .tenant-switcher__icon) {
-    color: var(--el-color-primary) !important;
   }
 }
 

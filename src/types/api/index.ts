@@ -15,7 +15,6 @@ export * from "./config";
 export * from "./log";
 export * from "./statistics";
 export * from "./notice";
-export * from "./tenant";
 
 // 其他模块
 export * from "./file";

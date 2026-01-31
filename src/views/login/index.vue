@@ -6,6 +6,11 @@
           <ThemeSwitch />
         </div>
       </el-tooltip>
+      <el-tooltip content="语言切换" placement="bottom">
+        <div class="toolbar-item">
+          <LangSelect size="text-20px" />
+        </div>
+      </el-tooltip>
     </div>
 
     <div class="auth-view__wrapper">
@@ -23,10 +28,6 @@
           <li>
             <span>✓</span>
             统一身份认证与权限管理
-          </li>
-          <li>
-            <span>✓</span>
-            支持多租户模式与租户隔离
           </li>
           <li>
             <span>✓</span>
@@ -48,13 +49,10 @@
             <div class="auth-panel__title-row">
               <span class="auth-panel__title">{{ appConfig.title }}</span>
             </div>
-            <div v-if="appConfig.version || tenantEnabled" class="auth-panel__version-row">
+            <div v-if="appConfig.version" class="auth-panel__version-row">
               <el-text size="small" type="info">VERSION</el-text>
               <el-tag v-if="appConfig.version" size="small" effect="light" round>
                 {{ `v${appConfig.version}` }}
-              </el-tag>
-              <el-tag v-if="tenantEnabled" type="success" size="small" effect="light" round>
-                多租户
               </el-tag>
             </div>
           </div>
@@ -79,42 +77,17 @@
 import logo from "@/assets/images/logo.png";
 import { appConfig } from "@/settings";
 import ThemeSwitch from "@/components/ThemeSwitch/index.vue";
+import LangSelect from "@/components/LangSelect/index.vue";
 
 type LayoutMap = "login" | "register" | "resetPwd";
 
 const component = ref<LayoutMap>("login");
-
-const tenantEnabled = appConfig.tenantEnabled;
 
 const formComponents = {
   login: defineAsyncComponent(() => import("./components/Login.vue")),
   register: defineAsyncComponent(() => import("./components/Register.vue")),
   resetPwd: defineAsyncComponent(() => import("./components/ResetPwd.vue")),
 };
-
-let notificationInstance: ReturnType<typeof ElNotification> | null = null;
-
-const showVoteNotification = () => {
-  notificationInstance = ElNotification({
-    title: "Gitee 2025 开源评选 · 诚邀支持",
-    message: `我正在参与 Gitee 2025 最受欢迎开源软件投票活动，欢迎支持！<br/><a href="https://gitee.com/activity/2025opensource?ident=I6VXEH" target="_blank" style="color: var(--el-color-primary); text-decoration: none; font-weight: 500;">点击投票</a>`,
-    type: "success",
-    position: "bottom-left",
-    duration: 0,
-    dangerouslyUseHTMLString: true,
-  });
-};
-
-onMounted(() => {
-  setTimeout(showVoteNotification, 500);
-});
-
-onBeforeUnmount(() => {
-  if (notificationInstance) {
-    notificationInstance.close();
-    notificationInstance = null;
-  }
-});
 </script>
 
 <style lang="scss" scoped>

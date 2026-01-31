@@ -4,12 +4,9 @@ import { store } from "@/store";
 import router from "@/router";
 
 import MenuAPI from "@/api/system/menu";
-import { RouteVo } from "@/types";
+import { RouteItem } from "@/types";
 const modules = import.meta.glob("../../views/**/**.vue");
 const Layout = () => import("../../layouts/index.vue");
-
-const EXCLUDED_ROUTE_PREFIXES = ["/demo"];
-const EXCLUDED_COMPONENT_PREFIXES = ["demo/"];
 
 function resolveViewComponent(componentPath: string) {
   const normalized = componentPath
@@ -21,21 +18,6 @@ function resolveViewComponent(componentPath: string) {
     modules[`../../views/${normalized}/index.vue`] ||
     modules[`../../views/error/404.vue`]
   );
-}
-
-function filterRouteVoList(list: RouteVo[] = []): RouteVo[] {
-  return list
-    .filter((item) => {
-      const routePath = item.path || "";
-      const component = item.component || "";
-      if (EXCLUDED_ROUTE_PREFIXES.some((prefix) => routePath.startsWith(prefix))) return false;
-      if (EXCLUDED_COMPONENT_PREFIXES.some((prefix) => component.startsWith(prefix))) return false;
-      return true;
-    })
-    .map((item) => {
-      const children = item.children?.length ? filterRouteVoList(item.children) : [];
-      return { ...item, children };
-    });
 }
 
 export const usePermissionStore = defineStore("permission", () => {
@@ -50,7 +32,7 @@ export const usePermissionStore = defineStore("permission", () => {
   async function generateRoutes(): Promise<RouteRecordRaw[]> {
     try {
       const data = await MenuAPI.getRoutes(); // 获取当前登录人的菜单路由
-      const dynamicRoutes = transformRoutes(filterRouteVoList(data));
+      const dynamicRoutes = transformRoutes(data);
 
       routes.value = [...constantRoutes, ...dynamicRoutes];
       isRouteGenerated.value = true;
@@ -65,7 +47,7 @@ export const usePermissionStore = defineStore("permission", () => {
 
   /** 设置混合布局左侧菜单 */
   const setMixLayoutSideMenus = (parentPath: string) => {
-    const parentMenu = routes.value.find((item) => item.path === parentPath);
+    const parentMenu = routes.value.find((item: RouteRecordRaw) => item.path === parentPath);
     mixLayoutSideMenus.value = parentMenu?.children || [];
   };
 
@@ -99,7 +81,7 @@ export const usePermissionStore = defineStore("permission", () => {
  * 转换后端路由数据为Vue Router配置
  * 处理组件路径映射和Layout层级嵌套
  */
-const transformRoutes = (routes: RouteVo[], isTopLevel: boolean = true): RouteRecordRaw[] => {
+const transformRoutes = (routes: RouteItem[], isTopLevel: boolean = true): RouteRecordRaw[] => {
   return routes.map((route) => {
     const { component, children, ...args } = route;
 

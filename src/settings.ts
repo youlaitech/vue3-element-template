@@ -15,9 +15,6 @@ export const appConfig = {
   name: pkg.name as string,
   version: pkg.version as string,
   title: (env.VITE_APP_TITLE as string) || pkg.name,
-
-  // 功能开关
-  tenantEnabled: env.VITE_APP_TENANT_ENABLED === "true",
 } as const;
 
 // ============================================
@@ -33,6 +30,7 @@ export const defaults = {
   showTagsView: true,
   showAppLogo: true,
   showWatermark: false,
+  pageSwitchingAnimation: "fade-slide",
   showSettings: true,
   watermarkContent: pkg.name,
 } as const;

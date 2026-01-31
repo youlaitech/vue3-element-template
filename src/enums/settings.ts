@@ -121,3 +121,17 @@ export const enum DeviceEnum {
    */
   MOBILE = "mobile",
 }
+
+export const enum PageSwitchingAnimationEnum {
+  NONE = "none",
+  FADE = "fade",
+  FADE_SLIDE = "fade-slide",
+  FADE_SCALE = "fade-scale",
+}
+
+export const PageSwitchingAnimationOptions: Record<string, OptionItem> = {
+  none: { value: "none", label: "无动画" },
+  fade: { value: "fade", label: "淡入淡出" },
+  "fade-slide": { value: "fade-slide", label: "平滑切换" },
+  "fade-scale": { value: "fade-scale", label: "缩放切换" },
+};

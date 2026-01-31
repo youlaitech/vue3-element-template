@@ -16,8 +16,6 @@ export interface LoginRequest {
   captchaCode?: string;
   /** 记住我 */
   rememberMe?: boolean;
-  /** 租户ID */
-  tenantId?: number;
 }
 
 /**

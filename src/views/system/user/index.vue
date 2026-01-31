@@ -100,7 +100,7 @@
           >
             <el-table-column type="selection" width="50" align="center" />
             <el-table-column label="用户名" prop="username" />
-            <el-table-column label="昵称" width="150" align="center" prop="nickname" />
+            <el-table-column label="昵称" width="200" align="center" prop="nickname" />
             <el-table-column label="性别" width="100" align="center">
               <template #default="scope">
                 <DictTag v-model="scope.row.gender" code="gender" />
@@ -117,7 +117,7 @@
                 </el-tag>
               </template>
             </el-table-column>
-            <el-table-column label="创建时间" align="center" prop="createTime" width="150" />
+            <el-table-column label="创建时间" align="center" prop="createTime" width="180" />
             <el-table-column label="操作" fixed="right" width="220">
               <template #default="scope">
                 <el-button
@@ -254,7 +254,7 @@ import { useDebounceFn } from "@vueuse/core";
 import { ElMessage, ElMessageBox, type FormInstance } from "element-plus";
 
 // ==================== 3. 类型定义 ====================
-import type { OptionItem, UserForm, UserPageQuery, UserPageVo } from "@/types/api";
+import type { OptionItem, UserForm, UserQueryParams, UserItem } from "@/types/api";
 
 // ==================== 3.5 工具函数 ====================
 import { downloadFile, VALIDATORS } from "@/utils";
@@ -293,13 +293,13 @@ const queryFormRef = ref<FormInstance>();
 const userFormRef = ref<FormInstance>();
 
 // 列表查询参数
-const queryParams = reactive<UserPageQuery>({
+const queryParams = reactive<UserQueryParams>({
   pageNum: 1,
   pageSize: 10,
 });
 
 // 列表数据
-const userList = ref<UserPageVo[]>([]);
+const userList = ref<UserItem[]>([]);
 const total = ref(0);
 const loading = ref(false);
 
@@ -363,7 +363,7 @@ async function fetchUserList(): Promise<void> {
 }
 
 // ==================== 表格选择 ====================
-const { selectedIds, hasSelection, handleSelectionChange } = useTableSelection<UserPageVo>();
+const { selectedIds, hasSelection, handleSelectionChange } = useTableSelection<UserItem>();
 
 // ==================== 查询操作 ====================
 
@@ -390,7 +390,7 @@ function handleResetQuery(): void {
  * 重置用户密码
  * @param row 用户数据
  */
-function handleResetPassword(row: UserPageVo): void {
+function handleResetPassword(row: UserItem): void {
   ElMessageBox.prompt(`请输入用户【${row.username}】的新密码`, "重置密码", {
     confirmButtonText: "确定",
     cancelButtonText: "取消",
@@ -560,8 +560,6 @@ async function handleExport(): Promise<void> {
     console.error("导出用户列表失败:", error);
   }
 }
-
-// ==================== AI 助手相关 ====================
 
 // ==================== 生命周期 ====================
 

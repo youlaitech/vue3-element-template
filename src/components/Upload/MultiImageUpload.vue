@@ -111,7 +111,7 @@ function handleRemove(imageUrl: string) {
  * 上传前校验
  */
 function handleBeforeUpload(file: UploadRawFile) {
-  // 校验文件类型：虽然 accept 属性限制了用户在文件选择器中可选的文件类型，但仍需在上传时再次校验文件实际类型，确保符合 accept 的规范
+  // 校验文件类型：虽然 accept 属性限制了用户在文件选择器中可选的文件类型，但仍需在上传时再次校验文件实际类型，确保符合 accept 的规则
   const acceptTypes = props.accept.split(",").map((type) => type.trim());
 
   // 检查文件格式是否符合 accept

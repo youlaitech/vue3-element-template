@@ -3,7 +3,7 @@
     <!-- 搜索区域 -->
     <div class="filter-section">
       <el-form ref="queryFormRef" :model="queryParams" :inline="true" label-suffix=":">
-        <el-form-item label="标题123" prop="title">
+        <el-form-item label="标题" prop="title">
           <el-input
             v-model="queryParams.title"
             placeholder="标题"
@@ -190,8 +190,8 @@
             <el-radio :value="2">指定</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item v-if="formData.targetType == 2" label="指定用户" prop="targetUserIds">
-          <el-select v-model="formData.targetUserIds" multiple search placeholder="请选择指定用户">
+        <el-form-item v-if="formData.targetType == 2" label="指定用户" prop="targetUsers">
+          <el-select v-model="formData.targetUsers" multiple search placeholder="请选择指定用户">
             <el-option
               v-for="item in userOptions"
               :key="item.value"
@@ -263,10 +263,10 @@ defineOptions({
 import { ref, reactive } from "vue";
 import NoticeAPI from "@/api/system/notice";
 import type {
-  NoticePageVo,
+  NoticeItem,
   NoticeForm,
-  NoticePageQuery,
-  NoticeDetailVo,
+  NoticeQueryParams,
+  NoticeDetail,
   OptionItem,
 } from "@/types/api";
 import UserAPI from "@/api/system/user";
@@ -278,14 +278,14 @@ const loading = ref(false);
 const selectIds = ref<number[]>([]);
 const total = ref(0);
 
-const queryParams = reactive<NoticePageQuery>({
+const queryParams = reactive<NoticeQueryParams>({
   pageNum: 1,
   pageSize: 10,
 });
 
 const userOptions = ref<OptionItem[]>([]);
 // 通知公告表格数据
-const pageData = ref<NoticePageVo[]>([]);
+const pageData = ref<NoticeItem[]>([]);
 
 // 弹窗
 const dialog = reactive({
@@ -322,7 +322,7 @@ const rules = reactive({
 const detailDialog = reactive({
   visible: false,
 });
-const currentNotice = ref<NoticeDetailVo>({});
+const currentNotice = ref<NoticeDetail>({});
 
 // 查询通知公告
 function handleQuery() {
@@ -334,9 +334,9 @@ function handleQuery() {
 function fetchData() {
   loading.value = true;
   NoticeAPI.getPage(queryParams)
-    .then((data) => {
-      pageData.value = data.data;
-      total.value = data.page?.total ?? 0;
+    .then((res) => {
+      pageData.value = res.data;
+      total.value = res.page?.total ?? 0;
     })
     .finally(() => {
       loading.value = false;
@@ -365,10 +365,15 @@ function handleOpenDialog(id?: string) {
   if (id) {
     dialog.title = "修改公告";
     NoticeAPI.getFormData(id).then((data) => {
-      Object.assign(formData, data);
+      Object.assign(formData, {
+        ...data,
+        targetUsers: normalizeTargetUsers(
+          (data as NoticeForm & { targetUserIds?: unknown }).targetUserIds
+        ),
+      });
     });
   } else {
-    Object.assign(formData, { level: 0, targetType: 0 });
+    Object.assign(formData, { level: "L", targetType: 1, targetUsers: [] });
     dialog.title = "新增公告";
   }
 }
@@ -394,9 +399,15 @@ function handleSubmit() {
   dataFormRef.value.validate((valid: any) => {
     if (valid) {
       loading.value = true;
+      const targetUserIds = formData.targetType === 2 ? (formData.targetUsers ?? []) : [];
+      const payload = {
+        ...formData,
+        targetUserIds,
+      } as NoticeForm & { targetUserIds: number[] };
+      delete (payload as NoticeForm).targetUsers;
       const id = formData.id;
       if (id) {
-        NoticeAPI.update(id, formData)
+        NoticeAPI.update(id, payload)
           .then(() => {
             ElMessage.success("修改成功");
             handleCloseDialog();
@@ -404,7 +415,7 @@ function handleSubmit() {
           })
           .finally(() => (loading.value = false));
       } else {
-        NoticeAPI.create(formData)
+        NoticeAPI.create(payload)
           .then(() => {
             ElMessage.success("新增成功");
             handleCloseDialog();
@@ -422,6 +433,8 @@ function resetForm() {
   dataFormRef.value.clearValidate();
   formData.id = undefined;
   formData.targetType = 1;
+  formData.targetUsers = [];
+  formData.content = "";
 }
 
 // 关闭通知公告弹窗
@@ -461,6 +474,24 @@ function handleDelete(id?: number) {
 const closeDetailDialog = () => {
   detailDialog.visible = false;
 };
+
+function normalizeTargetUsers(value?: unknown) {
+  if (!value) {
+    return [];
+  }
+  if (Array.isArray(value)) {
+    return value;
+  }
+  if (typeof value === "string") {
+    try {
+      const parsed = JSON.parse(value);
+      return Array.isArray(parsed) ? parsed : value.split(",").filter(Boolean);
+    } catch {
+      return value.split(",").filter(Boolean);
+    }
+  }
+  return [];
+}
 
 const openDetailDialog = async (id: string) => {
   const noticeDetail = await NoticeAPI.getDetail(id);

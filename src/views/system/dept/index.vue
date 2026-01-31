@@ -164,21 +164,21 @@ defineOptions({
 });
 
 import DeptAPI from "@/api/system/dept";
-import type { DeptVo, DeptForm, DeptQuery, OptionItem } from "@/types/api";
+import type { DeptItem, DeptForm, DeptQueryParams, OptionItem } from "@/types/api";
 
 const queryFormRef = ref();
 const deptFormRef = ref();
 
 const loading = ref(false);
 const selectIds = ref<number[]>([]);
-const queryParams = reactive<DeptQuery>({});
+const queryParams = reactive<DeptQueryParams>({});
 
 const dialog = reactive({
   title: "",
   visible: false,
 });
 
-const deptList = ref<DeptVo[]>();
+const deptList = ref<DeptItem[]>();
 const deptOptions = ref<OptionItem[]>();
 const formData = reactive<DeptForm>({
   status: 1,
@@ -196,10 +196,14 @@ const rules = reactive({
 // 查询部门
 function handleQuery() {
   loading.value = true;
-  DeptAPI.getList(queryParams).then((data) => {
-    deptList.value = data;
-    loading.value = false;
-  });
+  DeptAPI.getList(queryParams)
+
+    .then((data) => {
+      deptList.value = data;
+    })
+    .finally(() => {
+      loading.value = false;
+    });
 }
 
 // 重置查询

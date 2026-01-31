@@ -50,6 +50,18 @@
         </div>
 
         <div class="config-item flex-x-between">
+          <span class="text-xs">页面切换动画</span>
+          <el-select v-model="settingsStore.pageSwitchingAnimation" style="width: 150px">
+            <el-option
+              v-for="(item, key) in pageSwitchingAnimationOptions"
+              :key="key"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+        </div>
+
+        <div class="config-item flex-x-between">
           <span class="text-xs">灰色模式</span>
           <el-switch v-model="settingsStore.grayMode" />
         </div>
@@ -148,9 +160,11 @@
 
 <script setup lang="ts">
 import { DocumentCopy, RefreshLeft, Check } from "@element-plus/icons-vue";
-import { LayoutMode, SidebarColor, ThemeMode } from "@/enums";
+import { LayoutMode, PageSwitchingAnimationOptions, SidebarColor, ThemeMode } from "@/enums";
 import { useSettingsStore } from "@/store";
 import { themeColorPresets } from "@/settings";
+
+const pageSwitchingAnimationOptions: Record<string, OptionItem> = PageSwitchingAnimationOptions;
 
 // 按钮图标
 const copyIcon = markRaw(DocumentCopy);
@@ -318,6 +332,8 @@ const handleCloseDrawer = () => {
 .settings-drawer {
   :deep(.el-drawer__body) {
     position: relative;
+    display: flex;
+    flex-direction: column;
     height: 100%;
     padding: 0;
     overflow: hidden;
@@ -326,7 +342,7 @@ const handleCloseDrawer = () => {
 
 /* 设置内容区域 */
 .settings-content {
-  max-height: calc(100vh - 120px);
+  flex: 1 1 auto;
   padding: 20px;
   overflow-y: auto;
 }

@@ -153,8 +153,8 @@
             <el-col :span="12">
               <el-form-item label="页面类型">
                 <el-radio-group v-model="genConfigFormData.pageType">
-                  <el-radio-button label="classic">普通</el-radio-button>
-                  <el-radio-button label="curd">封装(CURD)</el-radio-button>
+                  <el-radio-button value="classic">普通</el-radio-button>
+                  <el-radio-button value="curd">封装(CURD)</el-radio-button>
                 </el-radio-group>
               </el-form-item>
             </el-col>
@@ -367,13 +367,13 @@
             <div class="flex-y-center gap-3">
               <span class="text-sm color-#909399">预览范围</span>
               <el-radio-group v-model="previewScope" size="small">
-                <el-radio-button label="all">全部</el-radio-button>
-                <el-radio-button label="frontend">前端</el-radio-button>
-                <el-radio-button label="backend">后端</el-radio-button>
+                <el-radio-button value="all">全部</el-radio-button>
+                <el-radio-button value="frontend">前端</el-radio-button>
+                <el-radio-button value="backend">后端</el-radio-button>
               </el-radio-group>
               <span class="ml-3 text-sm color-#909399">类型</span>
               <el-checkbox-group v-model="previewTypes" size="small">
-                <el-checkbox-button v-for="t in previewTypeOptions" :key="t" :label="t">
+                <el-checkbox-button v-for="t in previewTypeOptions" :key="t" :value="t">
                   {{ t }}
                 </el-checkbox-button>
               </el-checkbox-group>
@@ -388,7 +388,7 @@
                 @node-click="handleFileTreeNodeClick"
               >
                 <template #default="{ data }">
-                  <div :class="`i-svg:${getFileTreeNodeIcon(data.label)}`" />
+                  <div :class="`i-svg:${getFileTreeNodeIcon(data)}`" />
                   <span class="ml-1">{{ data.label }}</span>
                 </template>
               </el-tree>
@@ -475,16 +475,16 @@
           </el-form-item>
           <el-form-item label="写入范围">
             <el-radio-group v-model="writeScope">
-              <el-radio-button label="all">全部</el-radio-button>
-              <el-radio-button label="frontend">仅前端</el-radio-button>
-              <el-radio-button label="backend">仅后端</el-radio-button>
+              <el-radio-button value="all">全部</el-radio-button>
+              <el-radio-button value="frontend">仅前端</el-radio-button>
+              <el-radio-button value="backend">仅后端</el-radio-button>
             </el-radio-group>
           </el-form-item>
           <el-form-item label="覆盖策略">
             <el-radio-group v-model="overwriteMode">
-              <el-radio-button label="overwrite">覆盖</el-radio-button>
-              <el-radio-button label="skip">跳过已存在</el-radio-button>
-              <el-radio-button label="ifChanged">仅在变更时覆盖</el-radio-button>
+              <el-radio-button value="overwrite">覆盖</el-radio-button>
+              <el-radio-button value="skip">跳过已存在</el-radio-button>
+              <el-radio-button value="ifChanged">仅在变更时覆盖</el-radio-button>
             </el-radio-group>
           </el-form-item>
         </el-form>
@@ -525,8 +525,14 @@ import type { EditorConfiguration } from "codemirror";
 import { FormTypeEnum, QueryTypeEnum } from "@/enums/codegen";
 
 import GeneratorAPI from "@/api/codegen";
-import type { FieldConfig, GenConfigForm, TablePageQuery, TablePageVo } from "@/api/types";
-import type { OptionItem } from "@/types/api";
+import type {
+  GenConfigForm,
+  FieldConfig,
+  OptionItem,
+  GeneratorPreviewItem,
+  TableQueryParams,
+  TableItem,
+} from "@/types/api";
 import { ElLoading } from "element-plus";
 
 import DictAPI from "@/api/system/dict";
@@ -535,12 +541,14 @@ import MenuAPI from "@/api/system/menu";
 interface TreeNode {
   label: string;
   content?: string;
+  scope?: "frontend" | "backend";
+  language?: string;
   children?: TreeNode[];
 }
 const treeData = ref<TreeNode[]>([]);
 const previewScope = ref<"all" | "frontend" | "backend">("all");
-const previewTypeOptions = ["ts", "vue", "java", "xml"];
-const previewTypes = ref<string[]>([...previewTypeOptions]);
+const previewTypeOptions = ref<string[]>(["ts", "vue", "java", "xml"]);
+const previewTypes = ref<string[]>([...previewTypeOptions.value]);
 const frontendType = "ts";
 
 const filteredTreeData = computed<TreeNode[]>(() => {
@@ -576,7 +584,7 @@ const filteredTreeData = computed<TreeNode[]>(() => {
 });
 
 const queryFormRef = ref();
-const queryParams = reactive<TablePageQuery>({
+const queryParams = reactive<TableQueryParams>({
   pageNum: 1,
   pageSize: 10,
 });
@@ -584,7 +592,7 @@ const queryParams = reactive<TablePageQuery>({
 const loading = ref(false);
 const loadingText = ref("loading...");
 
-const pageData = ref<TablePageVo[]>([]);
+const pageData = ref<TableItem[]>([]);
 const total = ref(0);
 
 const formTypeOptions: Record<string, OptionItem> = FormTypeEnum;
@@ -648,12 +656,12 @@ const backendDirHandle = ref<any>(null);
 const frontendDirName = ref("");
 const backendDirName = ref("");
 // 预览的原始文件列表（用于写盘）
-const lastPreviewFiles = ref<{ path: string; fileName: string; content: string }[]>([]);
+const lastPreviewFiles = ref<GeneratorPreviewItem[]>([]);
 const needFrontend = computed(() =>
-  lastPreviewFiles.value.some((f) => resolveRootForPath(f.path) === "frontend")
+  lastPreviewFiles.value.some((f) => resolveRootForItem(f) === "frontend")
 );
 const needBackend = computed(() =>
-  lastPreviewFiles.value.some((f) => resolveRootForPath(f.path) === "backend")
+  lastPreviewFiles.value.some((f) => resolveRootForItem(f) === "backend")
 );
 const canWriteToLocal = computed(() => {
   if (!lastPreviewFiles.value.length) return false;
@@ -824,9 +832,9 @@ function handleNextClick() {
 function handleQuery() {
   loading.value = true;
   GeneratorAPI.getTablePage(queryParams)
-    .then((data) => {
-      pageData.value = data.data;
-      total.value = data.page?.total ?? 0;
+    .then((res) => {
+      pageData.value = res.data;
+      total.value = res.page?.total ?? 0;
     })
     .finally(() => {
       loading.value = false;
@@ -905,6 +913,23 @@ const checkAllSelected = (key: keyof FieldConfig, isCheckAllRef: any) => {
 };
 
 /** 获取生成预览 */
+function resolveRootForItem(item: GeneratorPreviewItem): "frontend" | "backend" {
+  if (item.scope === "backend") {
+    return "backend";
+  }
+  if (item.scope === "frontend") {
+    return "frontend";
+  }
+  const rawPath =
+    (item as { path?: string; filePath?: string }).path ??
+    (item as { path?: string; filePath?: string }).filePath ??
+    "";
+  if (rawPath.startsWith("src/views") || rawPath.startsWith("src/api")) {
+    return "frontend";
+  }
+  return "backend";
+}
+
 async function handlePreview(tableName: string) {
   treeData.value = [];
   try {
@@ -914,8 +939,19 @@ async function handlePreview(tableName: string) {
       frontendType
     );
     dialog.title = `代码生成 ${tableName}`;
-    const tree = buildTree(data);
-    lastPreviewFiles.value = data || [];
+    const previewList = data || [];
+    const typeOptions = Array.from(
+      new Set(
+        previewList
+          .map((item) => item.language || item.fileName.split(".").pop() || "")
+          .filter(Boolean)
+      )
+    );
+    previewTypeOptions.value = typeOptions.length ? typeOptions : previewTypeOptions.value;
+    previewTypes.value = [...previewTypeOptions.value];
+
+    const tree = buildTree(previewList);
+    lastPreviewFiles.value = previewList;
     treeData.value = tree?.children ? [...tree.children] : [];
 
     const firstLeafNode = findFirstLeafNode(tree);
@@ -934,53 +970,17 @@ async function handlePreview(tableName: string) {
  * @param data - 数据数组
  * @returns 树形结构根节点
  */
-function buildTree(data: { path: string; fileName: string; content: string }[]): TreeNode {
+function buildTree(data: GeneratorPreviewItem[]): TreeNode {
   // 动态获取根节点
   const root: TreeNode = { label: "前后端代码", children: [] };
 
   data.forEach((item) => {
-    // 将路径分成数组
-    const separator = item.path.includes("/") ? "/" : "\\";
-    const parts = item.path.split(separator);
-
-    // 定义特殊路径
-    const specialPaths = [
-      "src" + separator + "main",
-      "java",
-      genConfigFormData.value.backendAppName,
-      genConfigFormData.value.frontendAppName,
-      (genConfigFormData.value.packageName + "." + genConfigFormData.value.moduleName).replace(
-        /\./g,
-        separator
-      ),
-    ];
-
-    // 检查路径中的特殊部分并合并它们
-    const mergedParts: string[] = [];
-    let buffer: string[] = [];
-
-    parts.forEach((part) => {
-      buffer.push(part);
-      const currentPath = buffer.join(separator);
-      if (specialPaths.includes(currentPath)) {
-        mergedParts.push(currentPath);
-        buffer = [];
-      }
-    });
-
-    // 将 mergedParts 路径中的分隔符 \ 替换为 /
-    mergedParts.forEach((part, index) => {
-      mergedParts[index] = part.replace(/\\/g, "/");
-    });
-
-    if (buffer.length > 0) {
-      mergedParts.push(...buffer);
-    }
+    const normalizedPath = (item.path || "").replace(/\\/g, "/");
+    const parts = normalizedPath.split("/").filter(Boolean);
 
     let currentNode = root;
 
-    mergedParts.forEach((part) => {
-      // 查找或创建当前部分的子节点
+    parts.forEach((part) => {
       let node = currentNode.children?.find((child) => child.label === part);
       if (!node) {
         node = { label: part, children: [] };
@@ -993,6 +993,8 @@ function buildTree(data: { path: string; fileName: string; content: string }[]):
     currentNode.children?.push({
       label: item.fileName,
       content: item?.content,
+      scope: item.scope,
+      language: item.language,
     });
   });
 
@@ -1025,21 +1027,25 @@ function handleFileTreeNodeClick(data: TreeNode) {
 }
 
 /** 获取文件树节点图标 */
-function getFileTreeNodeIcon(label: string) {
-  if (label.endsWith(".java")) {
+function getFileTreeNodeIcon(node: TreeNode) {
+  const ext = (node.language || node.label.split(".").pop() || "").toLowerCase();
+  if (ext === "java") {
     return "java";
   }
-  if (label.endsWith(".html")) {
+  if (ext === "html") {
     return "html";
   }
-  if (label.endsWith(".vue")) {
+  if (ext === "vue") {
     return "vue";
   }
-  if (label.endsWith(".ts")) {
+  if (ext === "ts") {
     return "typescript";
   }
-  if (label.endsWith(".xml")) {
+  if (ext === "xml") {
     return "xml";
+  }
+  if (["cs", "go", "py", "php", "js"].includes(ext)) {
+    return "code";
   }
   return "file";
 }

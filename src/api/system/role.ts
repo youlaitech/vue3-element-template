@@ -1,12 +1,12 @@
 import request from "@/utils/request";
-import type { OptionItem, PageResult, RolePageQuery, RolePageVo, RoleForm } from "@/types/api";
+import type { OptionItem, PageResult, RoleQueryParams, RoleItem, RoleForm } from "@/types/api";
 
 const ROLE_BASE_URL = "/api/v1/roles";
 
 const RoleAPI = {
   /** 获取角色分页数据 */
-  getPage(queryParams?: RolePageQuery) {
-    return request<any, PageResult<RolePageVo>>({
+  getPage(queryParams?: RoleQueryParams) {
+    return request<any, PageResult<RoleItem>>({
       url: `${ROLE_BASE_URL}`,
       method: "get",
       params: queryParams,

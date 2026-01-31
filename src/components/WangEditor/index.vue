@@ -1,6 +1,6 @@
 <!--
  * 基于 wangEditor-next 的富文本编辑器组件二次封装
- * 版权所属 2021-present 有来开源组织
+ * 版权所属 © 2021-present 有来开源组织
  *
  * 开源协议：https://opensource.org/licenses/MIT
  * 项目地址：https://gitee.com/youlaiorg/vue3-element-admin
@@ -32,6 +32,7 @@
 import "@wangeditor-next/editor/dist/css/style.css";
 import { Toolbar, Editor } from "@wangeditor-next/editor-for-vue";
 import { IToolbarConfig, IEditorConfig } from "@wangeditor-next/editor";
+import { nextTick } from "vue";
 
 // 文件上传 API
 import FileAPI from "@/api/file";
@@ -45,6 +46,19 @@ defineProps({
     default: "500px",
   },
 });
+
+const safeSetHtml = (editor: any, html: string, retryTimes = 1) => {
+  if (!editor || editor.isDestroyed) return;
+  try {
+    editor.setHtml(html);
+  } catch {
+    if (retryTimes > 0) {
+      setTimeout(() => {
+        safeSetHtml(editor, html, retryTimes - 1);
+      }, 50);
+    }
+  }
+};
 // 双向绑定
 const modelValue = defineModel("modelValue", {
   type: String,
@@ -77,20 +91,26 @@ const editorConfig = ref<Partial<IEditorConfig>>({
 const handleCreated = (editor: any) => {
   editorRef.value = editor;
   const value = modelValue.value ?? "";
-  if (value) {
-    editor.setHtml(value);
-  }
+  nextTick(() => {
+    if (!editor || editor.isDestroyed) return;
+    if (value !== editor.getHtml()) {
+      safeSetHtml(editor, value);
+    }
+  });
 };
 
 watch(
   () => modelValue.value,
   (value) => {
     const editor = editorRef.value;
-    if (!editor) return;
+    if (!editor || editor.isDestroyed) return;
     const nextValue = value ?? "";
-    if (nextValue !== editor.getHtml()) {
-      editor.setHtml(nextValue);
-    }
+    nextTick(() => {
+      if (!editor || editor.isDestroyed) return;
+      if (nextValue !== editor.getHtml()) {
+        safeSetHtml(editor, nextValue);
+      }
+    });
   }
 );
 

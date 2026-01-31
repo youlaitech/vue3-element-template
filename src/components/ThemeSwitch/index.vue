@@ -23,13 +23,14 @@
 <script setup lang="ts">
 import { useSettingsStore } from "@/store";
 import { ThemeMode } from "@/enums";
-import { Moon, Sunny } from "@element-plus/icons-vue";
+import { Moon, Sunny, Monitor } from "@element-plus/icons-vue";
 
 const settingsStore = useSettingsStore();
 
 const theneList = [
   { label: "明亮", value: ThemeMode.LIGHT, component: Sunny },
   { label: "暗黑", value: ThemeMode.DARK, component: Moon },
+  { label: "自动", value: ThemeMode.AUTO, component: Monitor },
 ];
 
 const handleDarkChange = (theme: ThemeMode) => {

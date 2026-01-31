@@ -134,7 +134,25 @@
 
 <script setup lang="ts">
 import { useThrottleFn } from "@vueuse/core";
+import cloneDeep from "lodash-es/cloneDeep";
 import type { FormInstance, FormRules } from "element-plus";
+import {
+  ElInput,
+  ElSelect,
+  ElSwitch,
+  ElCascader,
+  ElInputNumber,
+  ElTimePicker,
+  ElTimeSelect,
+  ElDatePicker,
+  ElTreeSelect,
+  ElText,
+  ElRadioGroup,
+  ElCheckboxGroup,
+  ElOption,
+  ElRadio,
+  ElCheckbox,
+} from "element-plus";
 import type { IComponentType, IModalConfig, IObject } from "./types";
 import InputTag from "@/components/InputTag/index.vue";
 import IconSelect from "@/components/IconSelect/index.vue";
@@ -193,11 +211,11 @@ const handleClose = () => {
 const setFormData = (data: IObject) => {
   for (const key in formData) {
     if (Object.prototype.hasOwnProperty.call(formData, key) && key in data) {
-      formData[key] = data[key];
+      formData[key] = cloneDeep(data[key]);
     }
   }
   if (Object.prototype.hasOwnProperty.call(data, pk)) {
-    formData[pk] = data[pk];
+    formData[pk] = cloneDeep(data[pk]);
   }
 };
 // 表单提交

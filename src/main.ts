@@ -9,7 +9,9 @@ import { createApp } from "vue";
 import App from "./App.vue";
 
 // ===== 样式导入 =====
+import "element-plus/dist/index.css";
 import "element-plus/theme-chalk/dark/css-vars.css";
+import "vxe-table/lib/style.css";
 import "@/styles/index.scss";
 import "uno.css";
 import "animate.css";
@@ -23,7 +25,9 @@ import { setupStore } from "@/store";
 import * as ElementPlusIcons from "@element-plus/icons-vue";
 
 // ===== 第三方插件 =====
+import VXETable from "vxe-table";
 import { InstallCodeMirror } from "codemirror-editor-vue3";
+import { configureVxeTable } from "@/plugins/vxe-table";
 
 // ===== 路由守卫 =====
 import { setupPermissionGuard } from "@/router/guards/permission";
@@ -40,6 +44,8 @@ setupStore(app);
 Object.entries(ElementPlusIcons).forEach(([name, comp]) => app.component(name, comp));
 
 // 3️⃣ 第三方插件
+configureVxeTable();
+app.use(VXETable);
 app.use(InstallCodeMirror);
 
 // 4️⃣ 路由守卫

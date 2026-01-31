@@ -75,7 +75,7 @@ import type { LocationQueryRaw, RouteRecordRaw } from "vue-router";
 import { useWindowSize } from "@vueuse/core";
 import { useLayout } from "./useLayout";
 import { useAppStore, usePermissionStore, useSettingsStore } from "@/store";
-import { isExternal } from "@/utils";
+import { isExternal } from "@/utils/index";
 import { SidebarColor } from "@/enums/settings";
 import { ElIcon } from "element-plus";
 import BaseLayout from "./BaseLayout.vue";
@@ -206,8 +206,15 @@ watch(
   () => route.path,
   (newPath) => {
     const topMenuPath = extractTopMenuPath(newPath);
-    if (topMenuPath !== activeTopMenuPath.value) {
+    const isTopMenuChanged = topMenuPath !== activeTopMenuPath.value;
+
+    if (isTopMenuChanged) {
       appStore.activeTopMenu(topMenuPath);
+    }
+
+    // 切换布局（如左侧 -> 混合）时，activeTopMenuPath 可能已是正确值，
+    // 但 mixLayoutSideMenus 仍为空，需要补一次初始化。
+    if (isTopMenuChanged || permissionStore.mixLayoutSideMenus.length === 0) {
       permissionStore.setMixLayoutSideMenus(topMenuPath);
     }
   },

@@ -1,8 +1,8 @@
 import request from "@/utils/request";
 import type {
-  GeneratorPreviewVo,
-  TablePageQuery,
-  TablePageVo,
+  GeneratorPreviewItem,
+  TableQueryParams,
+  TableItem,
   GenConfigForm,
   PageResult,
 } from "@/types/api";
@@ -11,8 +11,8 @@ const GENERATOR_BASE_URL = "/api/v1/codegen";
 
 const GeneratorAPI = {
   /** 获取数据表分页列表 */
-  getTablePage(params: TablePageQuery) {
-    return request<any, PageResult<TablePageVo>>({
+  getTablePage(params: TableQueryParams) {
+    return request<any, PageResult<TableItem>>({
       url: `${GENERATOR_BASE_URL}/table`,
       method: "get",
       params,
@@ -45,7 +45,7 @@ const GeneratorAPI = {
     if (type) {
       params.type = type;
     }
-    return request<any, GeneratorPreviewVo[]>({
+    return request<any, GeneratorPreviewItem[]>({
       url: `${GENERATOR_BASE_URL}/${tableName}/preview`,
       method: "get",
       params: Object.keys(params).length ? params : undefined,
