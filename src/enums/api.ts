@@ -22,4 +22,9 @@ export const enum ApiCodeEnum {
    * 刷新令牌无效或过期
    */
   REFRESH_TOKEN_INVALID = "A0231",
+
+  /**
+   * 权限不足
+   */
+  PERMISSION_DENIED = "A0301",
 }

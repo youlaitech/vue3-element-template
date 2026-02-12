@@ -39,10 +39,10 @@ export interface PageMeta {
 /** 列表响应结构（统一） */
 export interface PageResult<T> {
   /** 数据列表 */
-  data: T[];
+  list: T[];
 
-  /** 分页信息，不分页时为 null */
-  page: PageMeta | null;
+  /** 总数 */
+  total: number;
 }
 
 /** 下拉选项 */

@@ -832,9 +832,9 @@ function handleNextClick() {
 function handleQuery() {
   loading.value = true;
   GeneratorAPI.getTablePage(queryParams)
-    .then((res) => {
-      pageData.value = res.data;
-      total.value = res.page?.total ?? 0;
+    .then((data) => {
+      pageData.value = data.list;
+      total.value = data.total ?? 0;
     })
     .finally(() => {
       loading.value = false;

@@ -78,7 +78,7 @@ export interface IContentConfig<TQuery = any, TItem = any> {
     pageName: string;
     limitName: string;
   };
-  // 分页接口统一返回 PageResult { data, page }
+  // 分页接口统一返回 PageResult { list, total }
   // 修改属性的网络请求函数(需返回promise)
   modifyAction?: (data: {
     [key: string]: any;

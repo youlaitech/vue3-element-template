@@ -37,6 +37,23 @@ export const useUserStore = defineStore("user", () => {
     });
   }
 
+  let refreshPromise: Promise<void> | null = null;
+
+  /**
+   * 刷新 token（单飞）。
+   *
+   * 多个并发请求遇到 token 过期时，共享同一次 refresh 请求。
+   */
+  function refreshTokenOnce() {
+    if (refreshPromise) return refreshPromise;
+
+    refreshPromise = refreshToken().finally(() => {
+      refreshPromise = null;
+    });
+
+    return refreshPromise;
+  }
+
   /**
    * 获取用户信息
    *
@@ -141,6 +158,7 @@ export const useUserStore = defineStore("user", () => {
     resetAllState,
     resetUserState,
     refreshToken,
+    refreshTokenOnce,
   };
 });
 

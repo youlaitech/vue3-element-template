@@ -214,7 +214,7 @@ export default defineMock([
   },
   // 获取角色拥有的菜单ID
   {
-    url: "roles/:id/menuIds",
+    url: "roles/:id/menu-ids",
     method: ["GET"],
     body: () => {
       return {

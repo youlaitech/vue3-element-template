@@ -352,11 +352,8 @@ async function fetchUserList(): Promise<void> {
   loading.value = true;
   try {
     const data = await UserAPI.getPage(queryParams);
-    userList.value = data.data;
-    total.value = data.page?.total ?? 0;
-  } catch (error) {
-    ElMessage.error("获取用户列表失败");
-    console.error("获取用户列表失败:", error);
+    userList.value = data.list;
+    total.value = data.total ?? 0;
   } finally {
     loading.value = false;
   }
