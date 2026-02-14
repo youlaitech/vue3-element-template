@@ -11,6 +11,7 @@ const PAGE_SIZE = 5;
 export function useNotice() {
   // 状态
   const list = ref<NoticeItem[]>([]);
+  const unreadTotal = ref(0);
   const detail = ref<NoticeDetail | null>(null);
   const dialogVisible = ref(false);
 
@@ -27,6 +28,7 @@ export function useNotice() {
     };
     const page = await NoticeAPI.getMyNoticePage(query);
     list.value = page.list || [];
+    unreadTotal.value = page.total ?? 0;
   }
 
   async function read(id: string) {
@@ -41,6 +43,7 @@ export function useNotice() {
   async function readAll() {
     await NoticeAPI.readAll();
     list.value = [];
+    unreadTotal.value = 0;
   }
 
   function goMore() {
@@ -61,6 +64,7 @@ export function useNotice() {
 
   return {
     list,
+    unreadTotal,
     detail,
     dialogVisible,
     fetchList,
