@@ -47,6 +47,8 @@
         <el-table-column label="角色名称" prop="name" min-width="100" />
         <el-table-column label="角色编码" prop="code" width="150" />
 
+        <el-table-column label="数据权限" align="center" width="140" prop="dataScopeLabel" />
+
         <el-table-column label="状态" align="center" width="100">
           <template #default="scope">
             <el-tag v-if="scope.row.status === 1" type="success">正常</el-tag>
@@ -103,7 +105,7 @@
     <el-dialog
       v-model="dialog.visible"
       :title="dialog.title"
-      width="500px"
+      width="600px"
       @close="handleCloseDialog"
     >
       <el-form ref="roleFormRef" :model="formData" :rules="rules" label-width="100px">
@@ -116,7 +118,7 @@
         </el-form-item>
 
         <el-form-item label="数据权限" prop="dataScope">
-          <el-select v-model="formData.dataScope">
+          <el-select v-model="formData.dataScope" placeholder="请选择数据权限" style="width: 100%">
             <el-option :key="1" label="全部数据" :value="1" />
             <el-option :key="2" label="部门及子部门数据" :value="2" />
             <el-option :key="3" label="本部门数据" :value="3" />

@@ -12,6 +12,8 @@
   <div style="z-index: 999; border: 1px solid var(--el-border-color)">
     <!-- 工具栏 -->
     <Toolbar
+      v-if="editorRef"
+      :key="editorKey"
       :editor="editorRef"
       mode="simple"
       :default-config="toolbarConfig"
@@ -19,11 +21,13 @@
     />
     <!-- 编辑器 -->
     <Editor
+      :key="editorKey"
       v-model="modelValue"
       :style="{ height: height, overflowY: 'hidden' }"
       :default-config="editorConfig"
       mode="simple"
       @on-created="handleCreated"
+      @on-change="handleChange"
     />
   </div>
 </template>
@@ -32,7 +36,6 @@
 import "@wangeditor-next/editor/dist/css/style.css";
 import { Toolbar, Editor } from "@wangeditor-next/editor-for-vue";
 import { IToolbarConfig, IEditorConfig } from "@wangeditor-next/editor";
-import { nextTick } from "vue";
 
 // 文件上传 API
 import FileAPI from "@/api/file";
@@ -47,32 +50,24 @@ defineProps({
   },
 });
 
-const safeSetHtml = (editor: any, html: string, retryTimes = 1) => {
-  if (!editor || editor.isDestroyed) return;
-  try {
-    editor.setHtml(html);
-  } catch {
-    if (retryTimes > 0) {
-      setTimeout(() => {
-        safeSetHtml(editor, html, retryTimes - 1);
-      }, 50);
-    }
-  }
-};
-// 双向绑定
-const modelValue = defineModel("modelValue", {
+// 双向绑定 - 直接使用 v-model，无需手动 setHtml
+const modelValue = defineModel<string>({
   type: String,
   required: false,
+  default: "",
 });
 
-// 编辑器实例，必须用 shallowRef，重要！
+// 编辑器实例，必须用 shallowRef
 const editorRef = shallowRef();
 
+const editorKey = ref(0);
+const innerUpdating = ref(false);
+
 // 工具栏配置
-const toolbarConfig = ref<Partial<IToolbarConfig>>({});
+const toolbarConfig: Partial<IToolbarConfig> = {};
 
 // 编辑器配置
-const editorConfig = ref<Partial<IEditorConfig>>({
+const editorConfig: Partial<IEditorConfig> = {
   placeholder: "请输入内容..",
   MENU_CONF: {
     uploadImage: {
@@ -85,32 +80,26 @@ const editorConfig = ref<Partial<IEditorConfig>>({
       },
     } as any,
   },
-});
+};
 
-// 记录 editor 实例，重要！
+// 记录 editor 实例
 const handleCreated = (editor: any) => {
   editorRef.value = editor;
-  const value = modelValue.value ?? "";
-  nextTick(() => {
-    if (!editor || editor.isDestroyed) return;
-    if (value !== editor.getHtml()) {
-      safeSetHtml(editor, value);
-    }
+};
+
+const handleChange = () => {
+  innerUpdating.value = true;
+  Promise.resolve().then(() => {
+    innerUpdating.value = false;
   });
 };
 
 watch(
   () => modelValue.value,
-  (value) => {
-    const editor = editorRef.value;
-    if (!editor || editor.isDestroyed) return;
-    const nextValue = value ?? "";
-    nextTick(() => {
-      if (!editor || editor.isDestroyed) return;
-      if (nextValue !== editor.getHtml()) {
-        safeSetHtml(editor, nextValue);
-      }
-    });
+  () => {
+    if (innerUpdating.value) return;
+    editorRef.value = null;
+    editorKey.value += 1;
   }
 );
 
