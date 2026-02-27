@@ -1,4 +1,4 @@
-﻿<!-- 字典 -->
+<!-- 字典 -->
 <template>
   <div class="app-container">
     <!-- 搜索区域 -->

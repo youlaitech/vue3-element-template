@@ -1,4 +1,4 @@
-﻿<template>
+<template>
   <div class="canvas-dom">
     <h3>基于canvas实现的签名组件</h3>
     <header>

@@ -1,4 +1,4 @@
-﻿<!-- 系统配置 -->
+<!-- 系统配置 -->
 <template>
   <div class="app-container">
     <!-- 搜索区域 -->

@@ -1,4 +1,4 @@
-﻿<template>
+<template>
   <div class="app-container h-full flex flex-1 flex-col">
     <div class="mb-10">
       <el-link

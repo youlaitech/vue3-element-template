@@ -1,4 +1,4 @@
-﻿<template>
+<template>
   <div class="profile-container">
     <el-row :gutter="20">
       <!-- 左侧个人信息卡片 -->

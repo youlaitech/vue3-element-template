@@ -1,4 +1,4 @@
-﻿<!-- 字典值 -->
+<!-- 字典值 -->
 <template>
   <div class="app-container">
     <div class="filter-section">

@@ -1,4 +1,4 @@
-﻿<template>
+<template>
   <div class="dashboard-container">
     <!-- github 角标 -->
     <github-corner class="github-corner" />

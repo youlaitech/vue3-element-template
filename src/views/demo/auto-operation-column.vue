@@ -1,4 +1,4 @@
-﻿<!-- 文件上传组件示例 -->
+<!-- 文件上传组件示例 -->
 <template>
   <div class="app-container">
     <el-link

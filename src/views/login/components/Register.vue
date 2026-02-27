@@ -1,4 +1,4 @@
-﻿<template>
+<template>
   <div>
     <h3 text-center m-0 mb-20px>注 册</h3>
     <el-form ref="formRef" :model="model" :rules="rules" size="large">

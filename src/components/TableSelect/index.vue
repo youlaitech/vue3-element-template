@@ -1,4 +1,4 @@
-﻿<template>
+<template>
   <div ref="tableSelectRef" :style="'width:' + width">
     <el-popover
       :visible="popoverVisible"
