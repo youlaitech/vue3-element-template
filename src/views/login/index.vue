@@ -97,7 +97,8 @@ const formComponents = {
   display: flex;
   flex-direction: column;
   width: 100%;
-  height: 100%;
+  height: auto;
+  min-height: 100vh;
   padding: clamp(1rem, 3vw, 2rem);
   overflow: hidden;
   background-color: #f5f7ff;
@@ -313,6 +314,7 @@ const formComponents = {
   justify-content: flex-start;
   justify-self: end;
   width: min(420px, 100%);
+  min-height: 560px;
   padding: clamp(1.5rem, 3vw, 2rem);
   margin-inline: auto;
   background: rgba(255, 255, 255, 0.95);
@@ -419,6 +421,7 @@ const formComponents = {
 .auth-panel__form {
   width: 100%;
   max-width: 100%;
+  min-height: 360px;
   margin-inline: auto;
 
   :deep(.el-form-item) {
