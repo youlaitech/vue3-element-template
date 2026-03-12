@@ -4,12 +4,7 @@
     <div class="filter-section">
       <el-form ref="queryFormRef" :model="queryParams" :inline="true">
         <el-form-item label="通知标题" prop="title">
-          <el-input
-            v-model="queryParams.title"
-            placeholder="关键字"
-            clearable
-            @keyup.enter="handleQuery"
-          />
+          <el-input v-model="queryParams.title" placeholder="关键字" clearable @keyup.enter="handleQuery" />
         </el-form-item>
 
         <el-form-item class="search-buttons">
@@ -30,13 +25,8 @@
     </div>
 
     <el-card shadow="hover" class="table-section">
-      <el-table
-        ref="dataTableRef"
-        v-loading="loading"
-        :data="pageData"
-        highlight-current-row
-        class="table-section__content"
-      >
+      <el-table ref="dataTableRef" v-loading="loading" :data="pageData" highlight-current-row
+        class="table-section__content">
         <el-table-column type="index" label="序号" width="60" />
         <el-table-column label="通知标题" prop="title" min-width="200" />
         <el-table-column align="center" label="通知类型" width="150">
@@ -49,13 +39,7 @@
             <DictTag v-model="scope.row.level" code="notice_level" />
           </template>
         </el-table-column>
-        <el-table-column
-          key="releaseTime"
-          align="center"
-          label="发布时间"
-          prop="publishTime"
-          width="150"
-        />
+        <el-table-column key="releaseTime" align="center" label="发布时间" prop="publishTime" width="150" />
         <el-table-column align="center" label="发布人" prop="publisherName" width="150" />
         <el-table-column align="center" label="状态" width="100">
           <template #default="scope">
@@ -72,29 +56,24 @@
         </el-table-column>
       </el-table>
 
-      <pagination
-        v-if="total > 0"
-        v-model:total="total"
-        v-model:page="queryParams.pageNum"
-        v-model:limit="queryParams.pageSize"
-        @pagination="handleQuery"
-      />
+      <pagination v-if="total > 0" v-model:total="total" v-model:page="queryParams.pageNum"
+        v-model:limit="queryParams.pageSize" @pagination="handleQuery" />
     </el-card>
 
-    <el-dialog
-      v-model="noticeDialogVisible"
-      :title="noticeDetail?.title ?? '通知详情'"
-      width="800px"
-      custom-class="notice-detail"
-    >
+    <el-dialog v-model="noticeDialogVisible" :title="noticeDetail?.title ?? '通知详情'" width="800px"
+      custom-class="notice-detail">
       <div v-if="noticeDetail" class="notice-detail__wrapper">
         <div class="notice-detail__meta">
           <span>
-            <el-icon><User /></el-icon>
+            <el-icon>
+              <User />
+            </el-icon>
             {{ noticeDetail.publisherName }}
           </span>
           <span class="ml-2">
-            <el-icon><Timer /></el-icon>
+            <el-icon>
+              <Timer />
+            </el-icon>
             {{ noticeDetail.publishTime }}
           </span>
         </div>
@@ -116,14 +95,14 @@ defineOptions({
 import { onMounted, reactive, ref } from "vue";
 import { ElMessage } from "element-plus";
 import NoticeAPI from "@/api/system/notice";
-import type { NoticePageVo, NoticePageQuery } from "@/types/api";
+import type { NoticeItem, NoticeQueryParams } from "@/types/api/notice";
 
 const queryFormRef = ref();
-const pageData = ref<NoticePageVo[]>([]);
+const pageData = ref<NoticeItem[]>([]);
 const loading = ref(false);
 const total = ref(0);
 
-const queryParams = reactive<NoticePageQuery>({
+const queryParams = reactive<NoticeQueryParams>({
   pageNum: 1,
   pageSize: 10,
 });
