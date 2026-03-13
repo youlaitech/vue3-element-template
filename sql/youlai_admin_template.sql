@@ -280,7 +280,7 @@ INSERT INTO `sys_role_menu` VALUES (2, 230), (2, 2301), (2, 2302), (2, 2303), (2
 INSERT INTO `sys_role_menu` VALUES (2, 240), (2, 2401), (2, 2402), (2, 2403), (2, 2404);
 INSERT INTO `sys_role_menu` VALUES (2, 250), (2, 2501), (2, 2502), (2, 2503), (2, 2504);
 INSERT INTO `sys_role_menu` VALUES (2, 251), (2, 2511), (2, 2512), (2, 2513), (2, 2514);
-INSERT INTO `sys_role_menu` VALUES (2, 260);
+INSERT INTO `sys_role_menu` VALUES (2, 260), (2, 2601);
 INSERT INTO `sys_role_menu` VALUES (2, 270), (2, 2701), (2, 2702), (2, 2703), (2, 2704), (2, 2705);
 INSERT INTO `sys_role_menu` VALUES (2, 280), (2, 2801), (2, 2802), (2, 2803), (2, 2804), (2, 2805), (2, 2806);
 
