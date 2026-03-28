@@ -13,7 +13,6 @@ export * from "./dept";
 export * from "./dict";
 export * from "./config";
 export * from "./log";
-export * from "./statistics";
 export * from "./notice";
 
 // 其他模块

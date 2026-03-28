@@ -8,6 +8,7 @@ import { AuthStorage } from "@/utils/auth";
 import { usePermissionStoreHook } from "@/store/modules/permission";
 import { useDictStoreHook } from "@/store/modules/dict";
 import { useTagsViewStore } from "@/store";
+import { cleanupSseServices } from "@/composables";
 
 export const useUserStore = defineStore("user", () => {
   // 用户信息
@@ -67,10 +68,13 @@ export const useUserStore = defineStore("user", () => {
    * 统一处理所有清理工作，包括用户凭证、路由、缓存等
    */
   function resetAllState(): void {
-    // 1. 重置用户状态
+    // 1. 清理 SSE 连接
+    cleanupSseServices();
+
+    // 2. 重置用户状态
     resetUserState();
 
-    // 2. 重置其他模块状态
+    // 3. 重置其他模块状态
     usePermissionStoreHook().resetRouter();
     useDictStoreHook().clearDictCache();
     useTagsViewStore().delAllViews();
