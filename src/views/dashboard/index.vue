@@ -465,12 +465,15 @@ const pvGrowthText = computed(() => {
   return formatGrowthRate(visitStatsData.value.pvGrowthRate);
 });
 
-// 数字过渡动画
+// 数字过渡动画（使用 easeInOutCubic 缓动函数）
+const easeInOutCubic = (t: number): number =>
+  t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+
 const transitionUvCount = useTransition(
   computed(() => visitStatsData.value.todayUvCount),
   {
     duration: 1000,
-    transition: [0.25, 0.1, 0.25, 1.0], // CSS cubic-bezier
+    transition: easeInOutCubic,
   }
 );
 
@@ -478,7 +481,7 @@ const transitionTotalUvCount = useTransition(
   computed(() => visitStatsData.value.totalUvCount),
   {
     duration: 1200,
-    transition: [0.25, 0.1, 0.25, 1.0],
+    transition: easeInOutCubic,
   }
 );
 
@@ -486,7 +489,7 @@ const transitionPvCount = useTransition(
   computed(() => visitStatsData.value.todayPvCount),
   {
     duration: 1000,
-    transition: [0.25, 0.1, 0.25, 1.0],
+    transition: easeInOutCubic,
   }
 );
 
@@ -494,7 +497,7 @@ const transitionTotalPvCount = useTransition(
   computed(() => visitStatsData.value.totalPvCount),
   {
     duration: 1200,
-    transition: [0.25, 0.1, 0.25, 1.0],
+    transition: easeInOutCubic,
   }
 );
 
@@ -565,7 +568,6 @@ const updateVisitTrendChartOptions = (data: VisitTrendDetail) => {
       left: "1%",
       right: "5%",
       bottom: "10%",
-      containLabel: true,
     },
     xAxis: {
       type: "category",

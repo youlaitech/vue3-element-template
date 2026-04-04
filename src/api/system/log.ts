@@ -23,7 +23,7 @@ const LogAPI = {
   /** 获取访问趋势统计 */
   getVisitTrend(queryParams: VisitTrendQueryParams) {
     return request<any, VisitTrendDetail>({
-      url: `${LOG_BASE_URL}/views/trend`,
+      url: `${LOG_BASE_URL}/analytics/trend`,
       method: "get",
       params: queryParams,
     });
@@ -32,7 +32,7 @@ const LogAPI = {
   /** 获取访问概览统计 */
   getVisitOverview() {
     return request<any, VisitStatsDetail>({
-      url: `${LOG_BASE_URL}/views`,
+      url: `${LOG_BASE_URL}/analytics/overview`,
       method: "get",
     });
   },

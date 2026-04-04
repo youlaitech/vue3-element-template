@@ -98,7 +98,6 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
         "@vueuse/core",
         "@element-plus/icons-vue",
         "codemirror-editor-vue3",
-        "default-passive-events",
         "nprogress",
         "qs",
         "path-to-regexp",
