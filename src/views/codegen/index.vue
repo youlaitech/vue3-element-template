@@ -382,9 +382,12 @@
           <el-col :span="6">
             <el-scrollbar max-height="72vh">
               <el-tree
+                ref="fileTreeRef"
                 :data="filteredTreeData"
+                node-key="key"
                 default-expand-all
                 highlight-current
+                :current-node-key="currentFileKey"
                 @node-click="handleFileTreeNodeClick"
               >
                 <template #default="{ data }">
