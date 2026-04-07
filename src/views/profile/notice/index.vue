@@ -119,8 +119,7 @@ defineOptions({
 
 import { onMounted, reactive, ref } from "vue";
 import { ElMessage } from "element-plus";
-import NoticeAPI from "@/api/system/notice";
-import type { NoticeItem, NoticeQueryParams } from "@/types/api/notice";
+import NoticeAPI, { type NoticeItem, type NoticeQueryParams } from "@/api/system/notice";
 
 const queryFormRef = ref();
 const pageData = ref<NoticeItem[]>([]);

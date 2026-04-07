@@ -2,8 +2,11 @@
  * 通知中心逻辑
  */
 import { ref, onMounted, onBeforeUnmount } from "vue";
-import type { NoticeItem, NoticeDetail, NoticeQueryParams } from "@/types/api";
-import NoticeAPI from "@/api/system/notice";
+import NoticeAPI, {
+  type NoticeItem,
+  type NoticeDetail,
+  type NoticeQueryParams,
+} from "@/api/system/notice";
 import { useSse } from "@/composables";
 import router from "@/router";
 

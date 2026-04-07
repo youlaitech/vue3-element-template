@@ -138,8 +138,11 @@ defineOptions({
   inheritAttrs: false,
 });
 
-import ConfigAPI from "@/api/system/config";
-import type { ConfigItem, ConfigForm, ConfigQueryParams } from "@/types/api";
+import ConfigAPI, {
+  type ConfigItem,
+  type ConfigForm,
+  type ConfigQueryParams,
+} from "@/api/system/config";
 import { ElMessage, ElMessageBox, type FormInstance, type FormRules } from "element-plus";
 import { useDebounceFn } from "@vueuse/core";
 

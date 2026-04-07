@@ -527,15 +527,14 @@ import type { EditorConfiguration } from "codemirror";
 
 import { FormTypeEnum, QueryTypeEnum } from "@/enums/codegen";
 
-import GeneratorAPI from "@/api/codegen";
-import type {
-  GenConfigForm,
-  FieldConfig,
-  OptionItem,
-  GeneratorPreviewItem,
-  TableQueryParams,
-  TableItem,
-} from "@/types/api";
+import GeneratorAPI, {
+  type GenConfigForm,
+  type FieldConfig,
+  type GeneratorPreviewItem,
+  type TableQueryParams,
+  type TableItem,
+} from "@/api/codegen";
+import type { OptionItem } from "@/api/common";
 import { ElLoading } from "element-plus";
 
 import DictAPI from "@/api/system/dict";

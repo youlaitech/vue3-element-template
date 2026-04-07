@@ -134,8 +134,11 @@ defineOptions({
   inheritAttrs: false,
 });
 
-import DictAPI from "@/api/system/dict";
-import type { DictTypeQueryParams, DictTypeItem, DictTypeForm } from "@/types/api";
+import DictAPI, {
+  type DictTypeQueryParams,
+  type DictTypeItem,
+  type DictTypeForm,
+} from "@/api/system/dict";
 import type { FormInstance, FormRules } from "element-plus";
 import router from "@/router";
 

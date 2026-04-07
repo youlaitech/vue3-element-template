@@ -376,8 +376,7 @@ defineOptions({
 import { dayjs } from "element-plus";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-import LogAPI from "@/api/system/log";
-import type { VisitOverviewDetail, VisitTrendDetail } from "@/types/api";
+import LogAPI, { type VisitOverviewDetail, type VisitTrendDetail } from "@/api/system/log";
 import { useUserStore } from "@/store/modules/user";
 import { formatGrowthRate } from "@/utils";
 import { useTransition, useDateFormat } from "@vueuse/core";

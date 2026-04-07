@@ -162,8 +162,7 @@ defineOptions({
   inheritAttrs: false,
 });
 
-import DeptAPI from "@/api/system/dept";
-import type { DeptItem, DeptForm, DeptQueryParams } from "@/types/api";
+import DeptAPI, { type DeptItem, type DeptForm, type DeptQueryParams } from "@/api/system/dept";
 import type { FormInstance, FormRules } from "element-plus";
 
 // 表单引用

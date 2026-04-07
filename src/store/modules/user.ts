@@ -1,8 +1,7 @@
 import { store } from "@/store";
 
-import AuthAPI from "@/api/auth";
-import UserAPI from "@/api/system/user";
-import type { LoginRequest, UserInfo } from "@/types/api";
+import AuthAPI, { type LoginRequest } from "@/api/auth";
+import UserAPI, { type UserInfo } from "@/api/system/user";
 
 import { AuthStorage } from "@/utils/auth";
 import { usePermissionStoreHook } from "@/store/modules/permission";

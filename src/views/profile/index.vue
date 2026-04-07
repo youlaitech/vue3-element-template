@@ -359,14 +359,13 @@
 </template>
 
 <script lang="ts" setup>
-import UserAPI from "@/api/system/user";
-import type {
-  UserProfileDetail,
-  PasswordChangeForm,
-  MobileUpdateForm,
-  EmailUpdateForm,
-  UserProfileForm,
-} from "@/types/api";
+import UserAPI, {
+  type UserProfileDetail,
+  type PasswordChangeForm,
+  type MobileUpdateForm,
+  type EmailUpdateForm,
+  type UserProfileForm,
+} from "@/api/system/user";
 
 import { computed, onBeforeUnmount, onMounted, reactive, ref } from "vue";
 import FileAPI from "@/api/file";

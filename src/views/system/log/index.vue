@@ -128,8 +128,7 @@ defineOptions({
   inheritAttrs: false,
 });
 
-import LogAPI from "@/api/system/log";
-import type { LogItem, LogQueryParams } from "@/types/api";
+import LogAPI, { type LogItem, type LogQueryParams } from "@/api/system/log";
 import type { FormInstance, TagProps } from "element-plus";
 
 function getMethodTagType(method: string): TagProps["type"] {

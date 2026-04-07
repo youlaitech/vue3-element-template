@@ -239,9 +239,8 @@
 import { computed, onMounted, reactive, ref } from "vue";
 import { useDebounceFn } from "@vueuse/core";
 import { ElMessage, ElMessageBox, type FormInstance, type FormRules } from "element-plus";
-import type { UserForm, UserQueryParams, UserItem } from "@/types/api";
+import UserAPI, { type UserForm, type UserQueryParams, type UserItem } from "@/api/system/user";
 import { downloadFile } from "@/utils";
-import UserAPI from "@/api/system/user";
 import DeptAPI from "@/api/system/dept";
 import RoleAPI from "@/api/system/role";
 import { useUserStore, useAppStore } from "@/store";

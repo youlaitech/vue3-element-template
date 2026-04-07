@@ -101,8 +101,7 @@
 <script setup lang="ts">
 import type { FormInstance } from "element-plus";
 import { Lock } from "@element-plus/icons-vue";
-import AuthAPI from "@/api/auth";
-import type { LoginRequest } from "@/types/api";
+import AuthAPI, { type LoginRequest } from "@/api/auth";
 
 const emit = defineEmits(["update:modelValue"]);
 const toLogin = () => emit("update:modelValue", "login");

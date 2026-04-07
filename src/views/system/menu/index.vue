@@ -341,8 +341,7 @@
 <script setup lang="ts">
 import { useAppStore } from "@/store/modules/app";
 import { DeviceEnum } from "@/enums/settings";
-import MenuAPI from "@/api/system/menu";
-import type { MenuQueryParams, MenuForm, MenuItem } from "@/types/api";
+import MenuAPI, { type MenuQueryParams, type MenuForm, type MenuItem } from "@/api/system/menu";
 import type { FormInstance, FormRules } from "element-plus";
 import { MenuTypeEnum } from "@/enums/business";
 

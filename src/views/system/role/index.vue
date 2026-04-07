@@ -229,8 +229,7 @@
 import { useAppStore } from "@/store/modules/app";
 import { DeviceEnum } from "@/enums/settings";
 
-import RoleAPI from "@/api/system/role";
-import type { RoleItem, RoleForm, RoleQueryParams } from "@/types/api";
+import RoleAPI, { type RoleItem, type RoleForm, type RoleQueryParams } from "@/api/system/role";
 import MenuAPI from "@/api/system/menu";
 import DeptAPI from "@/api/system/dept";
 

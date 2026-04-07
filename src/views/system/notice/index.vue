@@ -277,8 +277,12 @@ defineOptions({
   inheritAttrs: false,
 });
 
-import NoticeAPI from "@/api/system/notice";
-import type { NoticeItem, NoticeForm, NoticeQueryParams, NoticeDetail } from "@/types/api";
+import NoticeAPI, {
+  type NoticeItem,
+  type NoticeForm,
+  type NoticeQueryParams,
+  type NoticeDetail,
+} from "@/api/system/notice";
 import UserAPI from "@/api/system/user";
 import type { FormInstance, FormRules } from "element-plus";
 

@@ -151,8 +151,11 @@
 </template>
 
 <script setup lang="ts">
-import DictAPI from "@/api/system/dict";
-import type { DictItemQueryParams, DictItem, DictItemForm } from "@/types/api";
+import DictAPI, {
+  type DictItemQueryParams,
+  type DictItem,
+  type DictItemForm,
+} from "@/api/system/dict";
 import type { FormInstance, FormRules } from "element-plus";
 
 const route = useRoute();
