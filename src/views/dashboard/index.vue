@@ -508,7 +508,7 @@ const displayTransitionTotalPvCount = computed(() =>
 // 访问趋势日期范围（单位：天）
 const visitTrendDateRange = ref(7);
 // 访问趋势图表配置
-const visitTrendChartOptions = ref();
+const visitTrendChartOptions = ref({});
 
 /**
  * 获取访客统计数据
@@ -551,7 +551,7 @@ const updateVisitTrendChartOptions = (data: VisitTrendDetail) => {
       trigger: "axis",
     },
     legend: {
-      data: ["浏览量(PV)", "访客量UV)"],
+      data: ["浏览量(PV)", "访客量(UV)"],
       bottom: 0,
     },
     grid: {
