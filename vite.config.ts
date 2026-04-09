@@ -1,5 +1,5 @@
 import vue from "@vitejs/plugin-vue";
-import { type UserConfig, type ConfigEnv, loadEnv, defineConfig } from "vite";
+import { type ConfigEnv, type UserConfig, loadEnv, defineConfig } from "vite";
 
 import AutoImport from "unplugin-auto-import/vite";
 import Components from "unplugin-vue-components/vite";
@@ -18,15 +18,13 @@ const __APP_INFO__ = {
 };
 
 const pathSrc = resolve(__dirname, "src");
+
 // Vite配置  https://cn.vitejs.dev/config
 export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
   const env = loadEnv(mode, process.cwd());
-  const basePath = env.VITE_APP_BASE_PATH || "/";
-  const baseApi = env.VITE_APP_BASE_API || "/dev-api";
-  const apiUrl = env.VITE_APP_API_URL || "http://localhost:18080";
-  const port = Number(env.VITE_APP_PORT) || 18082;
+  const isProduction = mode === "production";
+
   return {
-    base: basePath,
     resolve: {
       alias: {
         "@": pathSrc,
@@ -36,24 +34,19 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
       preprocessorOptions: {
         // 定义全局 SCSS 变量
         scss: {
-          api: "modern-compiler",
-          additionalData: `
-            @use "@/styles/variables.scss" as *;
-          `,
+          additionalData: `@use "@/styles/base/variables.scss" as *;`,
         },
       },
     },
     server: {
       host: "0.0.0.0",
-      port,
+      port: +env.VITE_APP_PORT,
       open: true,
       proxy: {
-        // 代理 /dev-api 的请求
-        [baseApi]: {
+        [env.VITE_APP_BASE_API]: {
           changeOrigin: true,
-          // 代理目标地址：https://api.youlai.tech
-          target: apiUrl,
-          rewrite: (path) => path.replace(new RegExp("^" + baseApi), ""),
+          target: env.VITE_APP_API_URL,
+          rewrite: (path: string) => path.replace(new RegExp(`^${env.VITE_APP_BASE_API}`), ""),
         },
       },
     },
@@ -190,25 +183,31 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
     // 构建配置
     build: {
       chunkSizeWarningLimit: 2000, // 消除打包大小超过500kb警告
-      minify: "terser", // Vite 2.6.x 以上需要配置 minify: "terser", terserOptions 才能生效
-      terserOptions: {
-        compress: {
-          keep_infinity: true, // 防止 Infinity 被压缩成 1/0，这可能会导致 Chrome 上的性能问题
-          drop_console: true, // 生产环境去除 console
-          drop_debugger: true, // 生产环境去除 debugger
-        },
-        format: {
-          comments: false, // 删除注释
-        },
-      },
+      reportCompressedSize: false,
+      minify: isProduction ? "terser" : false, // Vite 8 推荐使用 terser 进行生产压缩
+      terserOptions: isProduction
+        ? {
+            compress: {
+              drop_console: true, // 生产环境移除 console
+              drop_debugger: true, // 生产环境移除 debugger
+            },
+          }
+        : undefined,
       rollupOptions: {
         output: {
+          // manualChunks: {
+          //   "vue-i18n": ["vue-i18n"],
+          // },
           // 用于从入口点创建的块的打包输出格式[name]表示文件名,[hash]表示该文件内容hash值
           entryFileNames: "js/[name].[hash].js",
           // 用于命名代码拆分时创建的共享块的输出命名
           chunkFileNames: "js/[name].[hash].js",
           // 用于输出静态资源的命名，[ext]表示文件扩展名
           assetFileNames: (assetInfo: any) => {
+            // Vite 8 / Rolldown: 添加空值保护
+            if (!assetInfo.name) {
+              return "assets/[name].[hash][extname]";
+            }
             const info = assetInfo.name.split(".");
             let extType = info[info.length - 1];
             // console.log('文件信息', assetInfo.name)
