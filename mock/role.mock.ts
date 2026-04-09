@@ -8,27 +8,27 @@ export default defineMock([
       code: "00000",
       data: [
         {
-          value: 2,
+          value: "2",
           label: "系统管理员",
         },
         {
-          value: 4,
+          value: "4",
           label: "部门主管",
         },
         {
-          value: 5,
+          value: "5",
           label: "部门成员",
         },
         {
-          value: 6,
+          value: "6",
           label: "普通员工",
         },
         {
-          value: 7,
+          value: "7",
           label: "自定义权限用户",
         },
         {
-          value: 3,
+          value: "3",
           label: "访问游客",
         },
       ],
@@ -44,7 +44,7 @@ export default defineMock([
       data: {
         list: [
           {
-            id: 2,
+            id: "2",
             name: "系统管理员",
             code: "ADMIN",
             status: 1,
@@ -54,7 +54,7 @@ export default defineMock([
             updateTime: null,
           },
           {
-            id: 3,
+            id: "3",
             name: "访问游客",
             code: "GUEST",
             status: 1,
@@ -64,7 +64,7 @@ export default defineMock([
             updateTime: "2019-05-05 16:00:00",
           },
           {
-            id: 4,
+            id: "4",
             name: "部门主管",
             code: "DEPT_MANAGER",
             status: 1,
@@ -74,7 +74,7 @@ export default defineMock([
             updateTime: null,
           },
           {
-            id: 5,
+            id: "5",
             name: "部门成员",
             code: "DEPT_MEMBER",
             status: 1,
@@ -84,7 +84,7 @@ export default defineMock([
             updateTime: null,
           },
           {
-            id: 6,
+            id: "6",
             name: "普通员工",
             code: "EMPLOYEE",
             status: 1,
@@ -94,7 +94,7 @@ export default defineMock([
             updateTime: null,
           },
           {
-            id: 7,
+            id: "7",
             name: "自定义权限用户",
             code: "CUSTOM_USER",
             status: 1,
@@ -205,7 +205,7 @@ export default defineMock([
 // 角色映射表数据
 const roleMap: Record<string, any> = {
   2: {
-    id: 2,
+    id: "2",
     name: "系统管理员",
     code: "ADMIN",
     status: 1,
@@ -215,7 +215,7 @@ const roleMap: Record<string, any> = {
     updateTime: null,
   },
   3: {
-    id: 3,
+    id: "3",
     name: "访问游客",
     code: "GUEST",
     status: 1,
@@ -225,7 +225,7 @@ const roleMap: Record<string, any> = {
     updateTime: "2019-05-05 16:00:00",
   },
   4: {
-    id: 4,
+    id: "4",
     name: "部门主管",
     code: "DEPT_MANAGER",
     status: 1,
@@ -235,7 +235,7 @@ const roleMap: Record<string, any> = {
     updateTime: null,
   },
   5: {
-    id: 5,
+    id: "5",
     name: "部门成员",
     code: "DEPT_MEMBER",
     status: 1,
@@ -245,7 +245,7 @@ const roleMap: Record<string, any> = {
     updateTime: null,
   },
   6: {
-    id: 6,
+    id: "6",
     name: "普通员工",
     code: "EMPLOYEE",
     status: 1,
@@ -255,7 +255,7 @@ const roleMap: Record<string, any> = {
     updateTime: null,
   },
   7: {
-    id: 7,
+    id: "7",
     name: "自定义权限用户",
     code: "CUSTOM_USER",
     status: 1,

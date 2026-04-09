@@ -8,7 +8,7 @@ export default defineMock([
       code: "00000",
       data: [
         {
-          id: 1,
+          id: "1",
           name: "性别",
           dictCode: "gender",
           status: 1,
@@ -102,7 +102,7 @@ export default defineMock([
       code: "00000",
       data: [
         {
-          id: 1,
+          id: "1",
           dictCode: "gender",
           label: "男",
           value: "1",
@@ -110,7 +110,7 @@ export default defineMock([
           status: 1,
         },
         {
-          id: 2,
+          id: "2",
           dictCode: "gender",
           label: "女",
           value: "2",
@@ -118,7 +118,7 @@ export default defineMock([
           status: 1,
         },
         {
-          id: 3,
+          id: "3",
           dictCode: "gender",
           label: "保密",
           value: "0",
@@ -276,7 +276,7 @@ const dictMap: Record<string, any> = {
   1: {
     code: "00000",
     data: {
-      id: 1,
+      id: "1",
       name: "性别",
       dictCode: "gender",
       status: 1,
@@ -290,7 +290,7 @@ const dictItemMap: Record<string, any> = {
   1: {
     code: "00000",
     data: {
-      id: 1,
+      id: "1",
       value: "1",
       label: "男",
       sort: 1,
@@ -302,7 +302,7 @@ const dictItemMap: Record<string, any> = {
   2: {
     code: "00000",
     data: {
-      id: 2,
+      id: "2",
       value: "2",
       label: "女",
       sort: 2,
@@ -314,7 +314,7 @@ const dictItemMap: Record<string, any> = {
   3: {
     code: "00000",
     data: {
-      id: 3,
+      id: "3",
       value: "0",
       label: "保密",
       sort: 3,

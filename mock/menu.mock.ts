@@ -1,5 +1,31 @@
 import { defineMock } from "./base";
 
+function normalizeMenuType(type: any) {
+  if (type === "CATALOG") return "C";
+  if (type === "MENU") return "M";
+  if (type === "BUTTON") return "F";
+  return type;
+}
+
+function normalizeMenuForm(menu: Record<string, any>, id: any) {
+  const normalized = { ...menu };
+  normalized.id = normalized.id != null ? String(normalized.id) : String(id);
+  normalized.parentId = normalized.parentId != null ? String(normalized.parentId) : "0";
+  normalized.type = normalizeMenuType(normalized.type) ?? "M";
+  normalized.alwaysShow = normalized.alwaysShow ?? 0;
+  normalized.keepAlive = normalized.keepAlive ?? 1;
+  normalized.params = normalized.params ?? [];
+  normalized.scope = normalized.scope ?? 2;
+  normalized.visible = normalized.visible ?? 1;
+  normalized.sort = normalized.sort ?? 1;
+  normalized.icon = normalized.icon ?? "";
+  normalized.redirect = normalized.redirect ?? "";
+  normalized.routeName = normalized.routeName ?? "";
+  normalized.routePath = normalized.routePath ?? "";
+  normalized.component = normalized.component ?? "";
+  return normalized;
+}
+
 export default defineMock([
   {
     url: "menus/routes",
@@ -198,6 +224,42 @@ export default defineMock([
     },
   },
 
+  // 获取菜单表单数据
+  {
+    url: "menus/:id/form",
+    method: ["GET"],
+    body: ({ params }) => {
+      const menu = (menuMap as any)[params.id];
+      return {
+        code: "00000",
+        data:
+          (menu ? normalizeMenuForm(menu, params.id) : undefined) ??
+          normalizeMenuForm(
+            {
+              id: params.id,
+              parentId: "0",
+              name: "",
+              type: "M",
+              routeName: "",
+              routePath: "",
+              component: "",
+              icon: "",
+              redirect: "",
+              perm: null,
+              visible: 1,
+              scope: 2,
+              sort: 1,
+              alwaysShow: 0,
+              keepAlive: 1,
+              params: [],
+            },
+            params.id
+          ),
+        msg: "一切ok",
+      };
+    },
+  },
+
   // 获取菜单树形列表
   {
     url: "menus",
@@ -206,8 +268,8 @@ export default defineMock([
       code: "00000",
       data: [
         {
-          id: 1,
-          parentId: 0,
+          id: "1",
+          parentId: "0",
           name: "系统管理",
           type: "CATALOG",
           routeName: "",
@@ -220,8 +282,8 @@ export default defineMock([
           perm: null,
           children: [
             {
-              id: 210,
-              parentId: 1,
+              id: "210",
+              parentId: "1",
               name: "用户管理",
               type: "MENU",
               routeName: "User",
@@ -234,8 +296,8 @@ export default defineMock([
               perm: null,
               children: [
                 {
-                  id: 2101,
-                  parentId: 210,
+                  id: "2101",
+                  parentId: "210",
                   name: "用户查询",
                   type: "BUTTON",
                   routeName: null,
@@ -249,8 +311,8 @@ export default defineMock([
                   children: [],
                 },
                 {
-                  id: 2102,
-                  parentId: 210,
+                  id: "2102",
+                  parentId: "210",
                   name: "用户新增",
                   type: "BUTTON",
                   routeName: null,
@@ -264,8 +326,8 @@ export default defineMock([
                   children: [],
                 },
                 {
-                  id: 2103,
-                  parentId: 210,
+                  id: "2103",
+                  parentId: "210",
                   name: "用户编辑",
                   type: "BUTTON",
                   routeName: null,
@@ -279,8 +341,8 @@ export default defineMock([
                   children: [],
                 },
                 {
-                  id: 2104,
-                  parentId: 210,
+                  id: "2104",
+                  parentId: "210",
                   name: "用户删除",
                   type: "BUTTON",
                   routeName: null,
@@ -294,8 +356,8 @@ export default defineMock([
                   children: [],
                 },
                 {
-                  id: 2105,
-                  parentId: 210,
+                  id: "2105",
+                  parentId: "210",
                   name: "重置密码",
                   type: "BUTTON",
                   routeName: null,
@@ -309,8 +371,8 @@ export default defineMock([
                   children: [],
                 },
                 {
-                  id: 2106,
-                  parentId: 210,
+                  id: "2106",
+                  parentId: "210",
                   name: "用户导入",
                   type: "BUTTON",
                   routeName: null,
@@ -324,8 +386,8 @@ export default defineMock([
                   children: [],
                 },
                 {
-                  id: 2107,
-                  parentId: 210,
+                  id: "2107",
+                  parentId: "210",
                   name: "用户导出",
                   type: "BUTTON",
                   routeName: null,
@@ -341,8 +403,8 @@ export default defineMock([
               ],
             },
             {
-              id: 220,
-              parentId: 1,
+              id: "220",
+              parentId: "1",
               name: "角色管理",
               type: "MENU",
               routeName: "Role",
@@ -355,8 +417,8 @@ export default defineMock([
               perm: null,
               children: [
                 {
-                  id: 2201,
-                  parentId: 220,
+                  id: "2201",
+                  parentId: "220",
                   name: "角色查询",
                   type: "BUTTON",
                   routeName: null,
@@ -370,8 +432,8 @@ export default defineMock([
                   children: [],
                 },
                 {
-                  id: 2202,
-                  parentId: 220,
+                  id: "2202",
+                  parentId: "220",
                   name: "角色新增",
                   type: "BUTTON",
                   routeName: null,
@@ -385,8 +447,8 @@ export default defineMock([
                   children: [],
                 },
                 {
-                  id: 2203,
-                  parentId: 220,
+                  id: "2203",
+                  parentId: "220",
                   name: "角色编辑",
                   type: "BUTTON",
                   routeName: null,
@@ -400,8 +462,8 @@ export default defineMock([
                   children: [],
                 },
                 {
-                  id: 2204,
-                  parentId: 220,
+                  id: "2204",
+                  parentId: "220",
                   name: "角色删除",
                   type: "BUTTON",
                   routeName: null,
@@ -415,8 +477,8 @@ export default defineMock([
                   children: [],
                 },
                 {
-                  id: 2205,
-                  parentId: 220,
+                  id: "2205",
+                  parentId: "220",
                   name: "角色分配权限",
                   type: "BUTTON",
                   routeName: null,
@@ -432,8 +494,8 @@ export default defineMock([
               ],
             },
             {
-              id: 230,
-              parentId: 1,
+              id: "230",
+              parentId: "1",
               name: "菜单管理",
               type: "MENU",
               routeName: "SysMenu",
@@ -446,8 +508,8 @@ export default defineMock([
               perm: null,
               children: [
                 {
-                  id: 2301,
-                  parentId: 230,
+                  id: "2301",
+                  parentId: "230",
                   name: "菜单查询",
                   type: "BUTTON",
                   routeName: null,
@@ -461,8 +523,8 @@ export default defineMock([
                   children: [],
                 },
                 {
-                  id: 2302,
-                  parentId: 230,
+                  id: "2302",
+                  parentId: "230",
                   name: "菜单新增",
                   type: "BUTTON",
                   routeName: null,
@@ -476,8 +538,8 @@ export default defineMock([
                   children: [],
                 },
                 {
-                  id: 2303,
-                  parentId: 230,
+                  id: "2303",
+                  parentId: "230",
                   name: "菜单编辑",
                   type: "BUTTON",
                   routeName: null,
@@ -491,8 +553,8 @@ export default defineMock([
                   children: [],
                 },
                 {
-                  id: 2304,
-                  parentId: 230,
+                  id: "2304",
+                  parentId: "230",
                   name: "菜单删除",
                   type: "BUTTON",
                   routeName: null,
@@ -508,8 +570,8 @@ export default defineMock([
               ],
             },
             {
-              id: 240,
-              parentId: 1,
+              id: "240",
+              parentId: "1",
               name: "部门管理",
               type: "MENU",
               routeName: "Dept",
@@ -522,8 +584,8 @@ export default defineMock([
               perm: null,
               children: [
                 {
-                  id: 2401,
-                  parentId: 240,
+                  id: "2401",
+                  parentId: "240",
                   name: "部门查询",
                   type: "BUTTON",
                   routeName: null,
@@ -537,8 +599,8 @@ export default defineMock([
                   children: [],
                 },
                 {
-                  id: 2402,
-                  parentId: 240,
+                  id: "2402",
+                  parentId: "240",
                   name: "部门新增",
                   type: "BUTTON",
                   routeName: null,
@@ -552,8 +614,8 @@ export default defineMock([
                   children: [],
                 },
                 {
-                  id: 2403,
-                  parentId: 240,
+                  id: "2403",
+                  parentId: "240",
                   name: "部门编辑",
                   type: "BUTTON",
                   routeName: null,
@@ -567,8 +629,8 @@ export default defineMock([
                   children: [],
                 },
                 {
-                  id: 2404,
-                  parentId: 240,
+                  id: "2404",
+                  parentId: "240",
                   name: "部门删除",
                   type: "BUTTON",
                   routeName: null,
@@ -584,8 +646,8 @@ export default defineMock([
               ],
             },
             {
-              id: 250,
-              parentId: 1,
+              id: "250",
+              parentId: "1",
               name: "字典管理",
               type: "MENU",
               routeName: "Dict",
@@ -598,8 +660,8 @@ export default defineMock([
               perm: null,
               children: [
                 {
-                  id: 2501,
-                  parentId: 250,
+                  id: "2501",
+                  parentId: "250",
                   name: "字典查询",
                   type: "BUTTON",
                   routeName: null,
@@ -613,8 +675,8 @@ export default defineMock([
                   children: [],
                 },
                 {
-                  id: 2502,
-                  parentId: 250,
+                  id: "2502",
+                  parentId: "250",
                   name: "字典新增",
                   type: "BUTTON",
                   routeName: null,
@@ -628,8 +690,8 @@ export default defineMock([
                   children: [],
                 },
                 {
-                  id: 2503,
-                  parentId: 250,
+                  id: "2503",
+                  parentId: "250",
                   name: "字典编辑",
                   type: "BUTTON",
                   routeName: null,
@@ -643,8 +705,8 @@ export default defineMock([
                   children: [],
                 },
                 {
-                  id: 2504,
-                  parentId: 250,
+                  id: "2504",
+                  parentId: "250",
                   name: "字典删除",
                   type: "BUTTON",
                   routeName: null,
@@ -660,8 +722,8 @@ export default defineMock([
               ],
             },
             {
-              id: 251,
-              parentId: 1,
+              id: "251",
+              parentId: "1",
               name: "字典项",
               type: "MENU",
               routeName: "DictItem",
@@ -674,8 +736,8 @@ export default defineMock([
               perm: null,
               children: [
                 {
-                  id: 2511,
-                  parentId: 251,
+                  id: "2511",
+                  parentId: "251",
                   name: "字典项查询",
                   type: "BUTTON",
                   routeName: null,
@@ -689,8 +751,8 @@ export default defineMock([
                   children: [],
                 },
                 {
-                  id: 2512,
-                  parentId: 251,
+                  id: "2512",
+                  parentId: "251",
                   name: "字典项新增",
                   type: "BUTTON",
                   routeName: null,
@@ -704,8 +766,8 @@ export default defineMock([
                   children: [],
                 },
                 {
-                  id: 2513,
-                  parentId: 251,
+                  id: "2513",
+                  parentId: "251",
                   name: "字典项编辑",
                   type: "BUTTON",
                   routeName: null,
@@ -719,8 +781,8 @@ export default defineMock([
                   children: [],
                 },
                 {
-                  id: 2514,
-                  parentId: 251,
+                  id: "2514",
+                  parentId: "251",
                   name: "字典项删除",
                   type: "BUTTON",
                   routeName: null,
@@ -736,8 +798,8 @@ export default defineMock([
               ],
             },
             {
-              id: 260,
-              parentId: 1,
+              id: "260",
+              parentId: "1",
               name: "系统日志",
               type: "MENU",
               routeName: "Log",
@@ -751,8 +813,8 @@ export default defineMock([
               children: [],
             },
             {
-              id: 270,
-              parentId: 1,
+              id: "270",
+              parentId: "1",
               name: "系统配置",
               type: "MENU",
               routeName: "Config",
@@ -765,8 +827,8 @@ export default defineMock([
               perm: null,
               children: [
                 {
-                  id: 2701,
-                  parentId: 270,
+                  id: "2701",
+                  parentId: "270",
                   name: "系统配置查询",
                   type: "BUTTON",
                   routeName: null,
@@ -780,8 +842,8 @@ export default defineMock([
                   children: [],
                 },
                 {
-                  id: 2702,
-                  parentId: 270,
+                  id: "2702",
+                  parentId: "270",
                   name: "系统配置新增",
                   type: "BUTTON",
                   routeName: null,
@@ -795,8 +857,8 @@ export default defineMock([
                   children: [],
                 },
                 {
-                  id: 2703,
-                  parentId: 270,
+                  id: "2703",
+                  parentId: "270",
                   name: "系统配置修改",
                   type: "BUTTON",
                   routeName: null,
@@ -810,8 +872,8 @@ export default defineMock([
                   children: [],
                 },
                 {
-                  id: 2704,
-                  parentId: 270,
+                  id: "2704",
+                  parentId: "270",
                   name: "系统配置删除",
                   type: "BUTTON",
                   routeName: null,
@@ -825,8 +887,8 @@ export default defineMock([
                   children: [],
                 },
                 {
-                  id: 2705,
-                  parentId: 270,
+                  id: "2705",
+                  parentId: "270",
                   name: "系统配置刷新",
                   type: "BUTTON",
                   routeName: null,
@@ -842,8 +904,8 @@ export default defineMock([
               ],
             },
             {
-              id: 280,
-              parentId: 1,
+              id: "280",
+              parentId: "1",
               name: "通知公告",
               type: "MENU",
               routeName: "Notice",
@@ -856,8 +918,8 @@ export default defineMock([
               perm: null,
               children: [
                 {
-                  id: 2801,
-                  parentId: 280,
+                  id: "2801",
+                  parentId: "280",
                   name: "通知查询",
                   type: "BUTTON",
                   routeName: null,
@@ -871,8 +933,8 @@ export default defineMock([
                   children: [],
                 },
                 {
-                  id: 2802,
-                  parentId: 280,
+                  id: "2802",
+                  parentId: "280",
                   name: "通知新增",
                   type: "BUTTON",
                   routeName: null,
@@ -886,8 +948,8 @@ export default defineMock([
                   children: [],
                 },
                 {
-                  id: 2803,
-                  parentId: 280,
+                  id: "2803",
+                  parentId: "280",
                   name: "通知编辑",
                   type: "BUTTON",
                   routeName: null,
@@ -901,8 +963,8 @@ export default defineMock([
                   children: [],
                 },
                 {
-                  id: 2804,
-                  parentId: 280,
+                  id: "2804",
+                  parentId: "280",
                   name: "通知删除",
                   type: "BUTTON",
                   routeName: null,
@@ -916,8 +978,8 @@ export default defineMock([
                   children: [],
                 },
                 {
-                  id: 2805,
-                  parentId: 280,
+                  id: "2805",
+                  parentId: "280",
                   name: "通知发布",
                   type: "BUTTON",
                   routeName: null,
@@ -931,8 +993,8 @@ export default defineMock([
                   children: [],
                 },
                 {
-                  id: 2806,
-                  parentId: 280,
+                  id: "2806",
+                  parentId: "280",
                   name: "通知撤回",
                   type: "BUTTON",
                   routeName: null,
@@ -950,8 +1012,8 @@ export default defineMock([
           ],
         },
         {
-          id: 2,
-          parentId: 0,
+          id: "2",
+          parentId: "0",
           name: "代码生成",
           type: "CATALOG",
           routeName: "",
@@ -964,8 +1026,8 @@ export default defineMock([
           perm: null,
           children: [
             {
-              id: 310,
-              parentId: 2,
+              id: "310",
+              parentId: "2",
               name: "代码生成",
               type: "MENU",
               routeName: "Codegen",
@@ -981,8 +1043,8 @@ export default defineMock([
           ],
         },
         {
-          id: 4,
-          parentId: 0,
+          id: "4",
+          parentId: "0",
           name: "平台文档",
           type: "CATALOG",
           routeName: null,
@@ -995,8 +1057,8 @@ export default defineMock([
           perm: null,
           children: [
             {
-              id: 501,
-              parentId: 4,
+              id: "501",
+              parentId: "4",
               name: "平台文档(外链)",
               type: "MENU",
               routeName: null,
@@ -1010,8 +1072,8 @@ export default defineMock([
               children: [],
             },
             {
-              id: 502,
-              parentId: 4,
+              id: "502",
+              parentId: "4",
               name: "后端文档",
               type: "MENU",
               routeName: null,
@@ -1025,8 +1087,8 @@ export default defineMock([
               children: [],
             },
             {
-              id: 503,
-              parentId: 4,
+              id: "503",
+              parentId: "4",
               name: "移动端文档",
               type: "MENU",
               routeName: null,
@@ -1040,8 +1102,8 @@ export default defineMock([
               children: [],
             },
             {
-              id: 504,
-              parentId: 4,
+              id: "504",
+              parentId: "4",
               name: "内部文档",
               type: "MENU",
               routeName: null,
@@ -1057,8 +1119,8 @@ export default defineMock([
           ],
         },
         {
-          id: 5,
-          parentId: 0,
+          id: "5",
+          parentId: "0",
           name: "接口文档",
           type: "CATALOG",
           routeName: null,
@@ -1071,8 +1133,8 @@ export default defineMock([
           perm: null,
           children: [
             {
-              id: 601,
-              parentId: 5,
+              id: "601",
+              parentId: "5",
               name: "Apifox",
               type: "MENU",
               routeName: "Apifox",
@@ -1231,19 +1293,6 @@ export default defineMock([
     },
   },
 
-  // 获取菜单表单数据
-  {
-    url: "menus/:id/form",
-    method: ["GET"],
-    body: ({ params }) => {
-      return {
-        code: "00000",
-        data: menuMap[params.id],
-        msg: "一切ok",
-      };
-    },
-  },
-
   // 修改菜单
   {
     url: "menus/:id",
@@ -1274,8 +1323,8 @@ export default defineMock([
 // 菜单映射表数据
 const menuMap: Record<string, any> = {
   1: {
-    id: 1,
-    parentId: 0,
+    id: "1",
+    parentId: "0",
     name: "系统管理",
     type: "CATALOG",
     routeName: "",
@@ -1291,8 +1340,8 @@ const menuMap: Record<string, any> = {
     params: null,
   },
   210: {
-    id: 210,
-    parentId: 1,
+    id: "210",
+    parentId: "1",
     name: "用户管理",
     type: "MENU",
     routeName: "User",
@@ -1307,8 +1356,8 @@ const menuMap: Record<string, any> = {
     alwaysShow: null,
   },
   220: {
-    id: 220,
-    parentId: 1,
+    id: "220",
+    parentId: "1",
     name: "角色管理",
     type: "MENU",
     routeName: "Role",
@@ -1323,8 +1372,8 @@ const menuMap: Record<string, any> = {
     alwaysShow: null,
   },
   230: {
-    id: 230,
-    parentId: 1,
+    id: "230",
+    parentId: "1",
     name: "菜单管理",
     type: "MENU",
     routeName: "SysMenu",
@@ -1339,8 +1388,8 @@ const menuMap: Record<string, any> = {
     alwaysShow: null,
   },
   240: {
-    id: 240,
-    parentId: 1,
+    id: "240",
+    parentId: "1",
     name: "部门管理",
     type: "MENU",
     routeName: "Dept",
@@ -1355,8 +1404,8 @@ const menuMap: Record<string, any> = {
     alwaysShow: null,
   },
   250: {
-    id: 250,
-    parentId: 1,
+    id: "250",
+    parentId: "1",
     name: "字典管理",
     type: "MENU",
     routeName: "Dict",
