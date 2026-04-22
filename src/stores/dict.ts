@@ -1,4 +1,4 @@
-import { store } from "@/store";
+import { store } from "@/stores";
 import DictAPI, { type DictItemOption } from "@/api/system/dict";
 import { STORAGE_KEYS } from "@/constants";
 

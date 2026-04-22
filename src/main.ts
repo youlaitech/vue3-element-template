@@ -19,7 +19,7 @@ import "animate.css";
 // ===== 核心配置 =====
 import { setupDirective } from "@/directives";
 import { setupRouter } from "@/router";
-import { setupStore } from "@/store";
+import { setupStore } from "@/stores";
 
 // ===== 全局组件 =====
 import * as ElementPlusIcons from "@element-plus/icons-vue";

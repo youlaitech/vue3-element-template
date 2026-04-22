@@ -34,6 +34,7 @@ module.exports = {
         ignorePseudoClasses: ["global", "export", "deep"],
       },
     ],
+    "no-invalid-position-declaration": null,
     "at-rule-no-unknown": null,
     "scss/at-rule-no-unknown": true,
   },

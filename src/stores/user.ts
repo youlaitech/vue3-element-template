@@ -1,12 +1,12 @@
-import { store } from "@/store";
+import { store } from "@/stores";
 
 import AuthAPI, { type LoginRequest } from "@/api/auth";
 import UserAPI, { type UserInfo } from "@/api/system/user";
 
 import { AuthStorage } from "@/utils/auth";
-import { usePermissionStoreHook } from "@/store/modules/permission";
-import { useDictStoreHook } from "@/store/modules/dict";
-import { useTagsViewStore } from "@/store";
+import { usePermissionStoreHook } from "@/stores/permission";
+import { useDictStoreHook } from "@/stores/dict";
+import { useTagsViewStore } from "@/stores";
 import { cleanupSseServices } from "@/composables";
 
 export const useUserStore = defineStore("user", () => {

@@ -161,7 +161,7 @@
 <script setup lang="ts">
 import { DocumentCopy, RefreshLeft, Check } from "@element-plus/icons-vue";
 import { LayoutMode, PageSwitchingAnimationOptions, SidebarColor, ThemeMode } from "@/enums";
-import { useSettingsStore } from "@/store";
+import { useSettingsStore } from "@/stores";
 import { themeColorPresets } from "@/settings";
 
 const pageSwitchingAnimationOptions: Record<string, OptionItem> = PageSwitchingAnimationOptions;

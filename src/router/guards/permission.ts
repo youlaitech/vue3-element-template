@@ -1,7 +1,7 @@
 import type { RouteRecordRaw } from "vue-router";
 import NProgress from "@/plugins/nprogress";
 import router from "@/router";
-import { usePermissionStore, useUserStore } from "@/store";
+import { usePermissionStore, useUserStore } from "@/stores";
 import { setupSse, addRecentMenu } from "@/composables";
 
 /**

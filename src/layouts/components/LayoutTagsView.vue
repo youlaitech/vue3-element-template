@@ -68,7 +68,7 @@
 <script setup lang="ts">
 import { useRoute, useRouter, type RouteRecordRaw } from "vue-router";
 import { resolve } from "path-browserify";
-import { usePermissionStore, useTagsViewStore } from "@/store";
+import { usePermissionStore, useTagsViewStore } from "@/stores";
 
 interface ContextMenu {
   visible: boolean;

@@ -1,12 +1,12 @@
 import type { RouteRecordRaw } from "vue-router";
 import { constantRoutes } from "@/router";
-import { store } from "@/store";
+import { store } from "@/stores";
 import router from "@/router";
-import { useUserStoreHook } from "@/store/modules/user";
+import { useUserStoreHook } from "@/stores/user";
 
 import MenuAPI, { type RouteItem } from "@/api/system/menu";
-const modules = import.meta.glob("../../views/**/**.vue");
-const Layout = () => import("../../layouts/index.vue");
+const modules = import.meta.glob("../views/**/**.vue");
+const Layout = () => import("../layouts/index.vue");
 
 function resolveViewComponent(componentPath: string) {
   const normalized = componentPath
@@ -14,9 +14,9 @@ function resolveViewComponent(componentPath: string) {
     .replace(/^\/+/, "")
     .replace(/\.vue$/i, "");
   return (
-    modules[`../../views/${normalized}.vue`] ||
-    modules[`../../views/${normalized}/index.vue`] ||
-    modules[`../../views/error/404.vue`]
+    modules[`../views/${normalized}.vue`] ||
+    modules[`../views/${normalized}/index.vue`] ||
+    modules[`../views/error/404.vue`]
   );
 }
 

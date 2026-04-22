@@ -117,7 +117,7 @@
 import type { FormInstance } from "element-plus";
 import AuthAPI, { type LoginRequest } from "@/api/auth";
 import router from "@/router";
-import { useUserStore } from "@/store";
+import { useUserStore } from "@/stores";
 import { AuthStorage } from "@/utils/auth";
 
 const userStore = useUserStore();

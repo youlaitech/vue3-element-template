@@ -243,7 +243,7 @@ import UserAPI, { type UserForm, type UserQueryParams, type UserItem } from "@/a
 import { downloadFile } from "@/utils";
 import DeptAPI from "@/api/system/dept";
 import RoleAPI from "@/api/system/role";
-import { useUserStore, useAppStore } from "@/store";
+import { useUserStore, useAppStore } from "@/stores";
 import { DeviceEnum, DialogMode, CommonStatus } from "@/enums";
 import { useTableSelection } from "@/composables";
 import UserDeptTree from "./components/UserDeptTree.vue";

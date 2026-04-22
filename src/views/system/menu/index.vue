@@ -339,7 +339,7 @@
 </template>
 
 <script setup lang="ts">
-import { useAppStore } from "@/store/modules/app";
+import { useAppStore } from "@/stores/app";
 import { DeviceEnum } from "@/enums/settings";
 import MenuAPI, { type MenuQueryParams, type MenuForm, type MenuItem } from "@/api/system/menu";
 import type { FormInstance, FormRules } from "element-plus";
