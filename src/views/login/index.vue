@@ -108,7 +108,7 @@ const formComponents = {
     inset: 0;
     z-index: -2;
     content: "";
-    background: url("@/assets/images/login-bg.svg") center/cover no-repeat;
+    background: url("@/assets/images/login/bg.svg") center/cover no-repeat;
   }
 
   &::after {
@@ -165,6 +165,19 @@ const formComponents = {
   @media (prefers-color-scheme: dark) {
     background-color: rgba(24, 28, 43, 0.8);
     border-color: rgba(64, 128, 255, 0.3);
+  }
+}
+
+/* 暗黑模式背景切换 */
+.dark .auth-view {
+  background-color: #08101f;
+
+  &::before {
+    background-image: url("@/assets/images/login/bg-dark.svg");
+  }
+
+  &::after {
+    background: linear-gradient(120deg, rgba(7, 12, 24, 0.4), rgba(7, 12, 24, 0));
   }
 }
 
