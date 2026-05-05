@@ -12,7 +12,7 @@ import { setupSse, addRecentMenu } from "@/composables";
 export function setupPermissionGuard() {
   const whiteList = ["/login"];
 
-  router.beforeEach(async (to) => {
+  router.beforeEach(async (to, _from) => {
     NProgress.start();
 
     try {
@@ -52,6 +52,10 @@ export function setupPermissionGuard() {
 
       // 路由 404 检查
       if (to.matched.length === 0) {
+        // 从登录页跳转且目标路径无效，回退首页（避免不同用户权限不同导致的 404）
+        if (_from.path === "/login") {
+          return { path: "/", replace: true };
+        }
         return "/404";
       }
 
