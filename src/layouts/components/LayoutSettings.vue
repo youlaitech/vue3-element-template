@@ -2,22 +2,20 @@
   <el-drawer
     v-model="drawerVisible"
     size="380"
-    title="项目配置"
+    title="项目设置"
     :before-close="handleCloseDrawer"
     class="settings-drawer"
   >
     <div class="settings-content">
       <section class="config-section">
-        <el-divider>主题设置</el-divider>
+        <el-divider>主题模式</el-divider>
 
         <div class="flex-center">
-          <el-switch
-            v-model="isDark"
-            active-icon="Moon"
-            inactive-icon="Sunny"
-            class="theme-switch"
-            @change="handleThemeChange"
-          />
+          <el-radio-group v-model="themeMode" class="theme-mode-group">
+            <el-radio-button :value="ThemeMode.LIGHT">明亮</el-radio-button>
+            <el-radio-button :value="ThemeMode.DARK">暗黑</el-radio-button>
+            <el-radio-button :value="ThemeMode.AUTO">自动</el-radio-button>
+          </el-radio-group>
         </div>
       </section>
 
@@ -35,12 +33,12 @@
         </div>
 
         <div class="config-item flex-x-between">
-          <span class="text-xs">显示页签</span>
+          <span class="text-xs">显示标签页</span>
           <el-switch v-model="settingsStore.showTagsView" />
         </div>
 
         <div class="config-item flex-x-between">
-          <span class="text-xs">显示Logo</span>
+          <span class="text-xs">显示 Logo</span>
           <el-switch v-model="settingsStore.showAppLogo" />
         </div>
 
@@ -71,7 +69,10 @@
           <el-switch v-model="settingsStore.colorWeak" />
         </div>
 
-        <div v-if="!isDark" class="config-item flex-x-between">
+        <div
+          v-if="settingsStore.resolvedTheme !== ThemeMode.DARK"
+          class="config-item flex-x-between"
+        >
           <span class="text-xs">侧边栏配色</span>
           <el-radio-group v-model="sidebarColor" @change="changeSidebarColor">
             <el-radio :value="SidebarColor.CLASSIC_BLUE">经典蓝</el-radio>
@@ -82,9 +83,8 @@
 
       <!-- 布局设置 -->
       <section class="config-section">
-        <el-divider>导航设置</el-divider>
+        <el-divider>导航布局</el-divider>
 
-        <!-- 整合的布局选择 -->
         <div class="layout-select">
           <div class="layout-grid">
             <el-tooltip
@@ -106,15 +106,12 @@
                 @click="handleLayoutChange(item.value)"
                 @keydown.enter.space="handleLayoutChange(item.value)"
               >
-                <!-- 布局预览图标 -->
                 <div class="layout-preview">
                   <div v-if="item.value !== LayoutMode.LEFT" class="layout-header"></div>
                   <div v-if="item.value !== LayoutMode.TOP" class="layout-sidebar"></div>
                   <div class="layout-main"></div>
                 </div>
-                <!-- 布局名称 -->
                 <div class="layout-name">{{ item.label }}</div>
-                <!-- 选中状态指示器 -->
                 <div v-if="settingsStore.layout === item.value" class="layout-check">
                   <el-icon><Check /></el-icon>
                 </div>
@@ -125,13 +122,10 @@
       </section>
     </div>
 
-    <!-- 操作按钮区域 - 固定到底部 -->
+    <!-- 操作按钮区域 -->
     <template #footer>
       <div class="action-buttons">
-        <el-tooltip
-          content="复制配置将生成当前设置的代码，覆盖到 `src/settings.ts` 下的 `defaultSettings` 变量"
-          placement="top"
-        >
+        <el-tooltip content="复制配置将生成当前设置的代码" placement="top">
           <el-button
             type="primary"
             size="default"
@@ -150,7 +144,7 @@
             :loading="resetLoading"
             @click="handleResetSettings"
           >
-            {{ resetLoading ? "重置中..." : "重置默认" }}
+            {{ resetLoading ? "重置中..." : "重置配置" }}
           </el-button>
         </el-tooltip>
       </div>
@@ -160,40 +154,40 @@
 
 <script setup lang="ts">
 import { DocumentCopy, RefreshLeft, Check } from "@element-plus/icons-vue";
-import { LayoutMode, PageSwitchingAnimationOptions, SidebarColor, ThemeMode } from "@/enums";
+import { LayoutMode, SidebarColor, ThemeMode } from "@/enums";
 import { useSettingsStore } from "@/stores";
 import { themeColorPresets } from "@/settings";
 
-const pageSwitchingAnimationOptions: Record<string, OptionItem> = PageSwitchingAnimationOptions;
+const pageSwitchingAnimationOptions = [
+  { label: "无动画", value: "none" },
+  { label: "淡入淡出", value: "fade" },
+  { label: "滑动", value: "fade-slide" },
+  { label: "缩放", value: "fade-scale" },
+];
 
-// 按钮图标
 const copyIcon = markRaw(DocumentCopy);
 const resetIcon = markRaw(RefreshLeft);
 
-// 加载状态
 const copyLoading = ref(false);
 const resetLoading = ref(false);
 
-// 布局选项配置
-interface LayoutOption {
-  value: LayoutMode;
-  label: string;
-  className: string;
-}
-
-const layoutOptions: LayoutOption[] = [
-  { value: LayoutMode.LEFT, label: "左侧模式", className: "left" },
-  { value: LayoutMode.TOP, label: "顶部模式", className: "top" },
-  { value: LayoutMode.MIX, label: "混合模式", className: "mix" },
+const layoutOptions = [
+  { value: LayoutMode.LEFT, label: "左侧布局", className: "left" },
+  { value: LayoutMode.TOP, label: "顶部布局", className: "top" },
+  { value: LayoutMode.MIX, label: "混合布局", className: "mix" },
 ];
 
-// 使用统一的颜色预设配置（复制为可变数组以兼容组件 prop）
 const colorPresets = [...themeColorPresets];
 
 const settingsStore = useSettingsStore();
 
-const isDark = ref<boolean>(settingsStore.theme === ThemeMode.DARK);
 const sidebarColor = ref(settingsStore.sidebarColorScheme);
+const themeMode = computed({
+  get: () => settingsStore.theme,
+  set: (value: ThemeMode) => {
+    settingsStore.theme = value;
+  },
+});
 
 const selectedThemeColor = computed({
   get: () => settingsStore.themeColor,
@@ -207,53 +201,21 @@ const drawerVisible = computed({
   set: (value) => (settingsStore.settingsVisible = value),
 });
 
-/**
- * 处理主题切换
- *
- * @param isDark 是否启用暗黑模式
- */
-const handleThemeChange = (isDark: string | number | boolean) => {
-  settingsStore.theme = isDark ? ThemeMode.DARK : ThemeMode.LIGHT;
-};
-
-/**
- * 更改侧边栏颜色
- *
- * @param val 颜色方案名称
- */
 const changeSidebarColor = (val: any) => {
   settingsStore.sidebarColorScheme = val;
 };
 
-/**
- * 切换布局
- *
- * @param layout - 布局模式
- */
 const handleLayoutChange = (layout: LayoutMode) => {
   if (settingsStore.layout === layout) return;
-
   settingsStore.layout = layout;
 };
 
-/**
- * 复制当前配置
- */
 const handleCopySettings = async () => {
   try {
     copyLoading.value = true;
-
-    // 生成配置代码
     const configCode = generateSettingsCode();
-
-    // 复制到剪贴板
     await navigator.clipboard.writeText(configCode);
-
-    // 显示成功消息
-    ElMessage.success({
-      message: "配置已复制到剪贴板",
-      duration: 3000,
-    });
+    ElMessage.success({ message: "复制成功", duration: 3000 });
   } catch {
     ElMessage.error("复制配置失败");
   } finally {
@@ -261,20 +223,12 @@ const handleCopySettings = async () => {
   }
 };
 
-/**
- * 重置为默认配置
- */
 const handleResetSettings = async () => {
   resetLoading.value = true;
-
   try {
     settingsStore.resetSettings();
-
-    // 同步更新本地状态"
-    isDark.value = settingsStore.theme === ThemeMode.DARK;
     sidebarColor.value = settingsStore.sidebarColorScheme;
-
-    ElMessage.success("已重置为默认配置");
+    ElMessage.success("重置成功");
   } catch {
     ElMessage.error("重置配置失败");
   } finally {
@@ -282,9 +236,6 @@ const handleResetSettings = async () => {
   }
 };
 
-/**
- * 生成配置代码字符串
- */
 const generateSettingsCode = (): string => {
   const settings = {
     title: "pkg.name",
@@ -302,7 +253,7 @@ const generateSettingsCode = (): string => {
     sidebarColorScheme: `SidebarColor.${settingsStore.sidebarColorScheme.toUpperCase().replace("-", "_")}`,
   };
 
-  return `const defaultSettings: AppSettings = {
+  return `const defaultSettings = {
   title: ${settings.title},
   version: ${settings.version},
   showSettings: ${settings.showSettings},
@@ -319,16 +270,12 @@ const generateSettingsCode = (): string => {
 };`;
 };
 
-/**
- * 关闭抽屉前的回调
- */
 const handleCloseDrawer = () => {
   settingsStore.settingsVisible = false;
 };
 </script>
 
 <style lang="scss" scoped>
-/* 设置抽屉样式 */
 .settings-drawer {
   :deep(.el-drawer__body) {
     position: relative;
@@ -340,14 +287,12 @@ const handleCloseDrawer = () => {
   }
 }
 
-/* 设置内容区域 */
 .settings-content {
   flex: 1 1 auto;
   padding: 20px;
   overflow-y: auto;
 }
 
-/* 底部操作区域样式 */
 .action-buttons {
   display: flex;
 
@@ -361,15 +306,6 @@ const handleCloseDrawer = () => {
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
       transform: translateY(-2px);
     }
-  }
-}
-/* 主题切换器优化 */
-.theme-switch {
-  transform: scale(1.2);
-  transition: all 0.3s ease;
-
-  &:hover {
-    transform: scale(1.25);
   }
 }
 
@@ -395,7 +331,6 @@ const handleCloseDrawer = () => {
   }
 }
 
-/* 布局选择器样式优化 */
 .layout-select {
   padding: 16px 8px;
 
@@ -413,14 +348,18 @@ const handleCloseDrawer = () => {
   height: 80px;
   overflow: hidden;
   cursor: pointer;
-  background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
-  border: 2px solid var(--el-border-color-light);
+  background: linear-gradient(145deg, var(--el-bg-color) 0%, var(--el-bg-color-page) 100%);
+  border: 2px solid var(--el-border-color);
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
   &:hover {
-    background: linear-gradient(145deg, #ffffff 0%, var(--el-color-primary-light-9) 100%);
+    background: linear-gradient(
+      145deg,
+      var(--el-bg-color) 0%,
+      var(--el-color-primary-light-9) 100%
+    );
     border-color: var(--el-color-primary-light-3);
     transform: translateY(-4px) scale(1.05);
   }
@@ -464,7 +403,7 @@ const handleCloseDrawer = () => {
 
   .layout-main {
     position: absolute;
-    background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+    background: linear-gradient(135deg, var(--el-fill-color-light) 0%, var(--el-fill-color) 100%);
     border: 1px solid var(--el-border-color-lighter);
     border-radius: 2px;
   }
@@ -496,7 +435,6 @@ const handleCloseDrawer = () => {
     border-radius: 50%;
   }
 
-  // 左侧布局
   &.left {
     .layout-sidebar {
       top: 4px;
@@ -510,7 +448,6 @@ const handleCloseDrawer = () => {
     }
   }
 
-  // 顶部布局
   &.top {
     .layout-header {
       height: 12px;
@@ -523,7 +460,6 @@ const handleCloseDrawer = () => {
     }
   }
 
-  // 混合布局
   &.mix {
     .layout-header {
       height: 10px;
@@ -553,50 +489,6 @@ const handleCloseDrawer = () => {
       font-weight: 600;
       color: var(--el-color-primary);
     }
-  }
-}
-
-/* 深色模式适配 */
-.dark {
-  .action-footer {
-    background: var(--el-bg-color);
-    border-top-color: var(--el-border-color);
-  }
-
-  .action-card {
-    background: var(--el-fill-color-extra-light);
-  }
-
-  .layout-item {
-    background: linear-gradient(145deg, var(--el-bg-color) 0%, var(--el-bg-color-page) 100%);
-    border-color: var(--el-border-color);
-
-    &:hover {
-      background: linear-gradient(
-        145deg,
-        var(--el-bg-color-page) 0%,
-        var(--el-color-primary-light-9) 100%
-      );
-    }
-
-    &.is-active {
-      background: linear-gradient(
-        145deg,
-        var(--el-color-primary-light-9) 0%,
-        var(--el-color-primary-light-8) 100%
-      );
-    }
-
-    .layout-main {
-      background: linear-gradient(135deg, var(--el-fill-color) 0%, var(--el-fill-color-light) 100%);
-    }
-  }
-}
-
-:deep(.copy-config-dialog) {
-  .el-message-box__content {
-    max-height: 400px;
-    overflow-y: auto;
   }
 }
 </style>

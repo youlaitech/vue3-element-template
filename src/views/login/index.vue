@@ -1,536 +1,368 @@
 <template>
-  <div class="auth-view">
-    <div class="auth-view__toolbar">
-      <el-tooltip content="主题切换" placement="bottom">
-        <div class="toolbar-item">
-          <ThemeSwitch />
-        </div>
-      </el-tooltip>
-      <el-tooltip content="语言切换" placement="bottom">
-        <div class="toolbar-item">
-          <LangSelect size="text-20px" />
-        </div>
-      </el-tooltip>
-    </div>
-
-    <div class="auth-view__wrapper">
-      <!-- 可选：左侧产品介绍区域，如不需要可整段删除，右侧登录表单会自动居中展示 -->
-      <section class="auth-feature">
-        <div class="auth-feature__badge">
-          <span class="auth-feature__dot" />
-          Enterprise Ready
-        </div>
-        <h1 class="auth-feature__title">企业级管理系统</h1>
-        <p class="auth-feature__subtitle">
-          提供安全、高效、可扩展的管理解决方案，助力企业数字化转型与业务增长。
-        </p>
-        <ul class="auth-feature__highlights">
-          <li>
-            <span>✓</span>
-            统一身份认证与权限管理
-          </li>
-          <li>
-            <span>✓</span>
-            数据安全与操作审计
-          </li>
-          <li>
-            <span>✓</span>
-            灵活扩展与高可用架构
-          </li>
-        </ul>
-      </section>
-
-      <section class="auth-panel">
-        <div class="auth-panel__brand">
-          <div class="auth-panel__logo-wrap">
-            <el-image :src="logo" class="auth-panel__logo" />
+  <div class="login-page">
+    <div class="login-page__body">
+      <section class="login-card">
+        <div class="login-card__brand">
+          <div class="login-card__logo-wrap">
+            <el-image :src="logo" class="login-card__logo" />
           </div>
-          <div class="auth-panel__meta">
-            <div class="auth-panel__title-row">
-              <span class="auth-panel__title">{{ appConfig.title }}</span>
+          <div class="login-card__meta">
+            <div class="login-card__title-row">
+              <span class="login-card__title">{{ appConfig.title }}</span>
             </div>
-            <div v-if="appConfig.version" class="auth-panel__version-row">
+            <div v-if="appConfig.version" class="login-card__version-row">
               <el-text size="small" type="info">VERSION</el-text>
-              <el-tag v-if="appConfig.version" size="small" effect="light" round>
+              <el-tag size="small" effect="light" round>
                 {{ `v${appConfig.version}` }}
               </el-tag>
             </div>
           </div>
         </div>
 
-        <transition name="fade-slide" mode="out-in">
-          <component :is="formComponents[component]" v-model="component" class="auth-panel__form" />
-        </transition>
+        <div class="login-card__form">
+          <h3 class="login-form__title text-center">用户登录</h3>
+          <el-form
+            ref="loginFormRef"
+            :model="loginFormData"
+            :rules="loginRules"
+            size="large"
+            :validate-on-rule-change="false"
+          >
+            <el-form-item prop="username">
+              <el-input v-model.trim="loginFormData.username" placeholder="用户名">
+                <template #prefix>
+                  <el-icon><User /></el-icon>
+                </template>
+              </el-input>
+            </el-form-item>
 
-        <footer class="auth-panel__footer">
-          <el-text size="small">
-            Copyright © 2021 - 2025 youlai.tech
-            <a href="http://beian.miit.gov.cn/" target="_blank">皖ICP备00064962号</a>
-          </el-text>
+            <el-tooltip :visible="isCapsLock" content="大写锁定已开启" placement="right">
+              <el-form-item prop="password">
+                <el-input
+                  v-model.trim="loginFormData.password"
+                  placeholder="密码"
+                  type="password"
+                  show-password
+                  @keyup="checkCapsLock"
+                  @keyup.enter="handleLoginSubmit"
+                >
+                  <template #prefix>
+                    <el-icon><Lock /></el-icon>
+                  </template>
+                </el-input>
+              </el-form-item>
+            </el-tooltip>
+
+            <el-form-item prop="captchaCode">
+              <div flex items-center gap-10px>
+                <el-input
+                  v-model.trim="loginFormData.captchaCode"
+                  placeholder="验证码"
+                  clearable
+                  class="flex-1"
+                  @keyup.enter="handleLoginSubmit"
+                >
+                  <template #prefix>
+                    <div class="i-svg:captcha" />
+                  </template>
+                </el-input>
+                <div cursor-pointer h-44px w-140px flex-center @click="getCaptcha">
+                  <el-icon v-if="codeLoading" class="is-loading" size="20"><Loading /></el-icon>
+                  <img
+                    v-else-if="captchaBase64"
+                    border-rd-4px
+                    w-full
+                    h-full
+                    block
+                    object-cover
+                    shadow="[0_0_0_1px_var(--el-border-color)_inset]"
+                    :src="captchaBase64"
+                    alt="captchaCode"
+                    title="点击刷新验证码"
+                    @error="getCaptcha"
+                  />
+                  <el-text v-else type="info" size="small">点击获取验证码</el-text>
+                </div>
+              </div>
+            </el-form-item>
+
+            <div class="flex-x-between w-full">
+              <el-checkbox v-model="loginFormData.rememberMe">记住我</el-checkbox>
+            </div>
+
+            <el-form-item>
+              <el-button
+                :loading="loading"
+                type="primary"
+                class="w-full"
+                @click="handleLoginSubmit"
+              >
+                登 录
+              </el-button>
+            </el-form-item>
+          </el-form>
+        </div>
+
+        <footer class="login-card__footer">
+          <el-text size="small">Copyright © 2021 - 2025 youlai.tech</el-text>
         </footer>
       </section>
     </div>
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup>
+import { User, Lock, Loading } from "@element-plus/icons-vue";
+import AuthAPI from "@/api/auth";
+import router from "@/router";
+import { useUserStore } from "@/stores";
+import { AuthStorage } from "@/utils/auth";
 import logo from "@/assets/images/logo.png";
 import { appConfig } from "@/settings";
-import ThemeSwitch from "@/components/ThemeSwitch/index.vue";
-import LangSelect from "@/components/LangSelect/index.vue";
 
-type LayoutMap = "login" | "register" | "resetPwd";
+const userStore = useUserStore();
+const route = useRoute();
 
-const component = ref<LayoutMap>("login");
+const loginFormRef = ref();
+const loading = ref(false);
+const isCapsLock = ref(false);
+const captchaBase64 = ref();
+const codeLoading = ref(false);
 
-const formComponents = {
-  login: defineAsyncComponent(() => import("./components/Login.vue")),
-  register: defineAsyncComponent(() => import("./components/Register.vue")),
-  resetPwd: defineAsyncComponent(() => import("./components/ResetPwd.vue")),
-};
+const rememberMe = AuthStorage.getRememberMe();
+const loginFormData = ref({
+  username: "admin",
+  password: "123456",
+  captchaId: "",
+  captchaCode: "",
+  rememberMe,
+});
+
+const loginRules = computed(() => ({
+  username: [{ required: true, trigger: "blur", message: "请输入用户名" }],
+  password: [
+    { required: true, trigger: "blur", message: "请输入密码" },
+    { min: 6, message: "密码长度不能少于6位", trigger: "blur" },
+  ],
+  captchaCode: [{ required: true, trigger: "blur", message: "请输入验证码" }],
+}));
+
+function getCaptcha() {
+  codeLoading.value = true;
+  AuthAPI.getCaptcha()
+    .then((data) => {
+      loginFormData.value.captchaId = data.captchaId;
+      captchaBase64.value = data.captchaBase64;
+    })
+    .finally(() => (codeLoading.value = false));
+}
+
+async function handleLoginSubmit() {
+  const valid = await loginFormRef.value?.validate().then(
+    () => true,
+    () => false
+  );
+  if (!valid) return;
+
+  loading.value = true;
+  try {
+    await userStore.login(loginFormData.value).then(
+      async () => {
+        const redirectPath = route.query.redirect || "/";
+        await router.push(decodeURIComponent(redirectPath));
+      },
+      () => {
+        getCaptcha();
+      }
+    );
+  } finally {
+    loading.value = false;
+  }
+}
+
+function checkCapsLock(event) {
+  if (event instanceof KeyboardEvent) {
+    isCapsLock.value = event.getModifierState("CapsLock");
+  }
+}
+
+onMounted(() => getCaptcha());
 </script>
 
 <style lang="scss" scoped>
-.auth-view {
+.login-page {
+  --login-card-bg: rgb(255 255 255 / 90%);
+  --login-card-border: rgb(0 0 0 / 6%);
+
   position: relative;
-  z-index: 1;
   display: flex;
   flex-direction: column;
-  width: 100%;
-  height: auto;
+  align-items: center;
+  justify-content: center;
   min-height: 100vh;
   padding: clamp(1rem, 3vw, 2rem);
   overflow: hidden;
-  background-color: #f5f7ff;
+  background: #f5f8ff;
 
   &::before {
     position: fixed;
     inset: 0;
-    z-index: -2;
+    z-index: 0;
+    pointer-events: none;
     content: "";
     background: url("@/assets/images/login/bg.svg") center/cover no-repeat;
   }
-
-  &::after {
-    position: fixed;
-    inset: 0;
-    z-index: -1;
-    pointer-events: none;
-    content: "";
-    background: linear-gradient(120deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0));
-  }
 }
 
-.auth-view__toolbar {
-  display: inline-flex;
-  gap: 0.75rem;
-  align-self: flex-end;
-  padding: 0.5rem 0.75rem;
-  background-color: rgba(255, 255, 255, 0.85);
-  border: 1px solid rgba(22, 93, 255, 0.15);
-  border-radius: 999px;
-  box-shadow: 0 10px 30px rgba(22, 93, 255, 0.12);
-  transition:
-    transform 0.3s ease,
-    box-shadow 0.3s ease;
+.dark .login-page {
+  --login-card-bg: rgb(22 26 36 / 90%);
+  --login-card-border: rgb(255 255 255 / 7%);
 
-  &:hover {
-    box-shadow: 0 16px 40px rgba(22, 93, 255, 0.18);
-    transform: translateY(-2px);
-  }
-
-  .toolbar-item {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.5rem;
-    cursor: pointer;
-    border-radius: 8px;
-    transition: background-color 0.3s ease;
-
-    &:hover {
-      background-color: var(--el-fill-color);
-    }
-  }
-
-  @media (max-width: 640px) {
-    position: fixed;
-    top: 12px;
-    right: 16px;
-    z-index: 20;
-    align-self: flex-end;
-    justify-content: center;
-  }
-
-  @media (prefers-color-scheme: dark) {
-    background-color: rgba(24, 28, 43, 0.8);
-    border-color: rgba(64, 128, 255, 0.3);
-  }
-}
-
-/* 暗黑模式背景切换 */
-.dark .auth-view {
-  background-color: #08101f;
+  background: #0b0f19;
 
   &::before {
     background-image: url("@/assets/images/login/bg-dark.svg");
   }
-
-  &::after {
-    background: linear-gradient(120deg, rgba(7, 12, 24, 0.4), rgba(7, 12, 24, 0));
-  }
 }
 
-/* 应用内暗黑主题下顶部设置面板的深色样式 */
-.dark .auth-view__toolbar {
-  background-color: rgba(24, 28, 43, 0.9);
-  border-color: rgba(64, 128, 255, 0.35);
-  box-shadow:
-    0 10px 30px rgba(0, 0, 0, 0.7),
-    0 0 0 1px rgba(90, 140, 255, 0.25) inset;
-}
-
-.auth-view__wrapper {
-  display: grid;
-  flex: 1;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: clamp(1.5rem, 3vw, 3rem);
-  align-items: stretch;
+.login-page__body {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
   padding: clamp(1.5rem, 2vw, 2.5rem);
 }
 
-.auth-feature {
+.login-card {
+  position: relative;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  padding: clamp(1.5rem, 3vw, 3rem);
-  color: var(--el-text-color-primary);
-  animation: featureFade 0.8s ease-out;
-
-  @media (prefers-color-scheme: dark) {
-    color: rgba(236, 242, 255, 0.92);
-  }
-}
-
-@media (max-width: 768px) {
-  .auth-view__wrapper {
-    display: block;
-    padding: 1.25rem 0.75rem 1.75rem;
-  }
-
-  .auth-feature {
-    display: none;
-  }
-
-  .auth-panel {
-    width: 100%;
-    margin-inline: 0;
-    box-shadow:
-      0 12px 32px rgba(22, 93, 255, 0.18),
-      0 2px 8px rgba(22, 93, 255, 0.12);
-  }
-}
-
-.auth-feature__badge {
-  display: inline-flex;
-  gap: 0.5rem;
-  align-items: center;
-  width: fit-content;
-  padding: 0.3rem 0.9rem;
-  font-size: 0.875rem;
-  color: rgba(22, 93, 255, 0.95);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  background: rgba(22, 93, 255, 0.1);
-  border-radius: 999px;
-
-  @media (prefers-color-scheme: dark) {
-    color: rgba(160, 190, 255, 0.95);
-    background: rgba(64, 128, 255, 0.12);
-  }
-}
-
-.auth-feature__dot {
-  width: 0.5rem;
-  height: 0.5rem;
-  background: #165dff;
-  border-radius: 50%;
-  box-shadow: 0 0 12px rgba(22, 93, 255, 0.7);
-
-  @media (prefers-color-scheme: dark) {
-    background: #7aa2ff;
-  }
-}
-
-.auth-feature__title {
-  margin: 1.5rem 0 0.5rem;
-  font-size: clamp(2rem, 4vw, 2.75rem);
-  font-weight: 600;
-  line-height: 1.2;
-}
-
-.auth-feature__subtitle {
-  margin-bottom: 1.5rem;
-  font-size: 1rem;
-  line-height: 1.7;
-  color: var(--el-text-color-regular);
-
-  @media (prefers-color-scheme: dark) {
-    color: rgba(220, 230, 255, 0.75);
-  }
-}
-
-.auth-feature__highlights {
-  display: grid;
-  gap: 0.75rem;
-  padding: 0;
-  margin: 0;
-  list-style: none;
-
-  li {
-    display: flex;
-    gap: 0.5rem;
-    align-items: flex-start;
-    padding: 0.75rem 1rem;
-    font-weight: 500;
-    color: var(--el-text-color-primary);
-    background: rgba(255, 255, 255, 0.9);
-    border: 1px solid rgba(64, 128, 255, 0.08);
-    border-radius: 12px;
-    backdrop-filter: blur(6px);
-
-    span {
-      font-size: 0.75rem;
-      line-height: 1.6;
-      color: rgba(22, 93, 255, 0.8);
-    }
-  }
-
-  @media (prefers-color-scheme: dark) {
-    li {
-      color: rgba(230, 236, 255, 0.85);
-      background: rgba(18, 22, 36, 0.7);
-      border-color: rgba(98, 149, 255, 0.18);
-
-      span {
-        color: rgba(122, 162, 255, 0.9);
-      }
-    }
-  }
-}
-
-.auth-panel {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  align-self: center;
-  justify-content: flex-start;
-  justify-self: end;
+  gap: 20px;
   width: min(420px, 100%);
-  min-height: 560px;
-  padding: clamp(1.5rem, 3vw, 2rem);
+  padding: clamp(1.5rem, 3vw, 2.25rem);
   margin-inline: auto;
-  background: rgba(255, 255, 255, 0.95);
-  border: 1px solid rgba(22, 93, 255, 0.1);
-  border-radius: 24px;
+  background: var(--login-card-bg);
+  border: 1px solid var(--login-card-border);
+  border-radius: 20px;
   box-shadow:
-    0 16px 48px rgba(22, 93, 255, 0.12),
-    0 4px 16px rgba(22, 93, 255, 0.08),
-    0 0 0 1px rgba(255, 255, 255, 0.5) inset;
-  backdrop-filter: blur(20px);
-  animation: panelLift 0.7s ease;
-
-  @media (prefers-color-scheme: dark) {
-    background: rgba(18, 20, 32, 0.88);
-    border-color: rgba(64, 128, 255, 0.25);
-    box-shadow:
-      0 20px 60px rgba(0, 0, 0, 0.6),
-      0 4px 16px rgba(0, 0, 0, 0.4),
-      0 0 0 1px rgba(90, 140, 255, 0.12) inset;
-  }
+    0 2px 4px rgb(0 0 0 / 2%),
+    0 12px 32px rgb(0 0 0 / 6%);
+  backdrop-filter: blur(16px);
+  animation: cardIn 0.7s ease;
 }
 
-/* 应用内暗黑主题（例如 html/body 上挂 .dark 类）下的登录表单样式 */
-.dark .auth-panel {
-  background: rgba(26, 32, 48, 0.9);
-  border-color: rgba(86, 140, 255, 0.28);
-  box-shadow:
-    0 20px 60px rgba(0, 0, 0, 0.58),
-    0 4px 16px rgba(0, 0, 0, 0.36),
-    0 0 0 1px rgba(110, 150, 255, 0.16) inset;
-}
-
-.auth-panel__brand {
+.login-card__brand {
   display: flex;
-  gap: 0.75rem;
+  gap: 12px;
   align-items: center;
-  justify-content: space-between;
-  padding-bottom: 0.875rem;
-  margin-bottom: 1rem;
-  border-bottom: 1px solid rgba(22, 93, 255, 0.06);
-
-  @media (prefers-color-scheme: dark) {
-    border-color: rgba(64, 128, 255, 0.12);
-  }
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--login-card-border);
 }
 
-.auth-panel__logo-wrap {
-  display: inline-flex;
+.login-card__logo-wrap {
+  display: flex;
   align-items: center;
   justify-content: center;
-  width: 52px;
-  height: 52px;
-  background: radial-gradient(circle at 30% 20%, #ffffff, #e6efff);
-  border-radius: 18px;
-  box-shadow:
-    0 8px 20px rgba(22, 93, 255, 0.16),
-    0 0 0 1px rgba(255, 255, 255, 0.8) inset;
-
-  @media (prefers-color-scheme: dark) {
-    background: radial-gradient(circle at 30% 20%, #1f2438, #141827);
-    box-shadow:
-      0 8px 20px rgba(0, 0, 0, 0.7),
-      0 0 0 1px rgba(90, 140, 255, 0.3) inset;
-  }
+  width: 46px;
+  height: 46px;
+  background: var(--el-color-primary-light-9);
+  border-radius: 14px;
 }
 
-.auth-panel__logo {
-  flex-shrink: 0;
-  width: 32px;
-  height: 32px;
+.login-card__logo {
+  width: 26px;
+  height: 26px;
 }
 
-.auth-panel__meta {
-  display: flex;
+.login-card__meta {
   flex: 1;
-  flex-direction: column;
-  gap: 0.35rem;
   min-width: 0;
 }
 
-.auth-panel__title-row {
-  display: flex;
-  gap: 0.5rem;
-  align-items: baseline;
-}
-
-.auth-panel__title {
+.login-card__title {
   overflow: hidden;
   text-overflow: ellipsis;
-  font-size: 1.2rem;
+  font-size: 1.05rem;
   font-weight: 650;
-  line-height: 1.4;
-  color: var(--el-text-color-primary);
   white-space: nowrap;
 }
 
-.auth-panel__version-row {
-  display: inline-flex;
-  gap: 0.5rem;
+.login-card__version-row {
+  display: flex;
+  gap: 8px;
   align-items: center;
-  font-size: 0.78rem;
+  margin-top: 2px;
+  font-size: 0.72rem;
 }
 
-.auth-panel__form {
-  width: 100%;
-  max-width: 100%;
-  min-height: 360px;
-  margin-inline: auto;
+.login-form__title {
+  margin: 0 0 4px;
+  font-size: 1rem;
+  font-weight: 600;
+}
 
+.login-card__form {
   :deep(.el-form-item) {
-    margin-bottom: 1rem;
+    margin-bottom: 18px;
   }
 
   :deep(.el-input__wrapper) {
-    box-shadow: 0 0 0 1px var(--el-border-color) inset;
-    transition: all 0.2s ease;
+    background: rgb(0 0 0 / 2%);
+    border-radius: 10px;
+    box-shadow: 0 0 0 1px rgb(0 0 0 / 6%) inset;
+    transition: all 0.2s;
 
     &:hover {
-      box-shadow: 0 0 0 1px var(--el-border-color-hover) inset;
+      box-shadow: 0 0 0 1px rgb(0 0 0 / 10%) inset;
     }
 
     &.is-focus {
-      box-shadow: 0 0 0 1px var(--el-color-primary) inset;
+      background: transparent;
+      box-shadow: 0 0 0 1.5px var(--el-color-primary) inset;
     }
-  }
-
-  :deep(.el-card) {
-    background: transparent;
-    box-shadow: none;
   }
 }
 
-.auth-panel__footer {
-  padding-top: 0.875rem;
-  margin-top: 0.125rem;
-  font-size: 0.875rem;
-  text-align: center;
-  border-top: 1px solid rgba(22, 93, 255, 0.06);
-
-  a {
-    margin-left: 0.25rem;
-    color: rgba(22, 93, 255, 0.85);
-    text-decoration: none;
-    transition: color 0.2s ease;
+.dark .login-card__form {
+  :deep(.el-input__wrapper) {
+    background: rgb(255 255 255 / 3%);
+    box-shadow: 0 0 0 1px rgb(255 255 255 / 8%) inset;
 
     &:hover {
-      color: rgba(22, 93, 255, 1);
+      box-shadow: 0 0 0 1px rgb(255 255 255 / 14%) inset;
     }
-  }
 
-  @media (prefers-color-scheme: dark) {
-    border-color: rgba(64, 128, 255, 0.12);
-
-    a {
-      color: rgba(140, 170, 255, 0.88);
-
-      &:hover {
-        color: rgba(160, 190, 255, 1);
-      }
+    &.is-focus {
+      background: rgb(255 255 255 / 5%);
+      box-shadow: 0 0 0 1.5px var(--el-color-primary) inset;
     }
   }
 }
 
-@keyframes featureFade {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+.login-card__footer {
+  padding-top: 14px;
+  font-size: 0.78rem;
+  color: var(--el-text-color-placeholder);
+  text-align: center;
+  border-top: 1px solid var(--login-card-border);
+}
+
+@media (max-width: 768px) {
+  .login-page__body {
+    padding: 0.5rem;
   }
 }
 
-@keyframes panelLift {
+@keyframes cardIn {
   from {
     opacity: 0;
-    transform: translateY(30px) scale(0.98);
+    transform: translateY(24px) scale(0.98);
   }
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
   }
-}
-
-.fade-slide-enter-active,
-.fade-slide-leave-active {
-  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.fade-slide-enter-from {
-  opacity: 0;
-  transform: translateX(-40px) scale(0.95);
-}
-
-.fade-slide-leave-to {
-  opacity: 0;
-  transform: translateX(40px) scale(0.95);
-}
-
-.fade-slide-enter-to,
-.fade-slide-leave-from {
-  opacity: 1;
-  transform: translateX(0) scale(1);
 }
 </style>

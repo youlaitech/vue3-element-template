@@ -57,7 +57,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup>
 import { useRoute, useRouter } from "vue-router";
 import { defaults } from "@/settings";
 import { DeviceEnum, SidebarColor, ThemeMode, LayoutMode } from "@/enums/settings";
@@ -69,6 +69,7 @@ import Fullscreen from "@/components/Fullscreen/index.vue";
 import SizeSelect from "@/components/SizeSelect/index.vue";
 import LangSelect from "@/components/LangSelect/index.vue";
 import NoticeDropdown from "@/components/NoticeDropdown/index.vue";
+
 const appStore = useAppStore();
 const settingStore = useSettingsStore();
 const userStore = useUserStore();
@@ -79,24 +80,17 @@ const router = useRouter();
 // 是否为桌面设备
 const isDesktop = computed(() => appStore.device === DeviceEnum.DESKTOP);
 
-/**
- * 打开个人中心页面
- */
-function handleProfileClick() {
-  router.push({ name: "Profile" });
-}
-
-// 根据主题和侧边栏配色方案选择样式
+// 根据主题和侧边栏配色方案选择样式类
 const navbarActionsClass = computed(() => {
-  const { theme, sidebarColorScheme, layout } = settingStore;
+  const { resolvedTheme, sidebarColorScheme, layout } = settingStore;
 
   // 暗黑主题下，所有布局都使用白色文字
-  if (theme === ThemeMode.DARK) {
+  if (resolvedTheme === ThemeMode.DARK) {
     return "navbar-actions--white-text";
   }
 
-  // 明亮主题
-  if (theme === ThemeMode.LIGHT) {
+  // 明亮主题下
+  if (resolvedTheme === ThemeMode.LIGHT) {
     // 顶部布局和混合布局的顶部区域：
     // - 如果侧边栏是经典蓝色，使用白色文字
     // - 如果侧边栏是极简白色，使用深色文字
@@ -113,6 +107,13 @@ const navbarActionsClass = computed(() => {
 });
 
 /**
+ * 打开个人中心页面
+ */
+function handleProfileClick() {
+  router.push({ name: "Profile" });
+}
+
+/**
  * 退出登录
  */
 function logout() {
@@ -123,7 +124,9 @@ function logout() {
     lockScroll: false,
   }).then(() => {
     userStore.logout().then(() => {
-      router.push(`/login?redirect=${route.fullPath}`);
+      // 若当前已在 404/401 等错误页，退出后不再跳回错误页
+      const redirect = ["/404", "/401"].includes(route.path) ? "/" : route.fullPath;
+      router.push(`/login?redirect=${encodeURIComponent(redirect)}`);
     });
   });
 }
@@ -173,19 +176,19 @@ function handleSettingsClick() {
 
     :deep(.i-svg\:language) {
       flex-shrink: 0;
-      width: 18px;
-      height: 18px;
-      font-size: 18px;
-      line-height: 18px;
-      background-size: 18px 18px;
+      width: 16px;
+      height: 16px;
+      font-size: 16px;
+      line-height: 16px;
+      background-size: 16px 16px;
     }
 
     // 图标样式
     :deep([class^="i-svg:"]) {
-      font-size: 18px;
+      font-size: 16px;
       line-height: 1;
-      color: var(--el-text-color-regular);
-      transition: color 0.3s;
+      color: var(--el-text-color-secondary);
+      transition: color 0.2s;
     }
 
     &:hover {
@@ -220,7 +223,7 @@ function handleSettingsClick() {
   }
 }
 
-// 白色文字样式（用于深色背景：暗黑主题、顶部布局、混合布局）
+// 白色文字样式（用于深色背景：暗黑主题、顶部布局、混合布局等）
 .navbar-actions--white-text {
   .navbar-actions__item {
     :deep([class^="i-svg:"]) {
@@ -241,11 +244,11 @@ function handleSettingsClick() {
   }
 }
 
-// 深色文字样式（用于浅色背景：明亮主题下的左侧布局）
+// 深色文字样式（用于浅色背景：明亮主题下的左侧布局等）
 .navbar-actions--dark-text {
   .navbar-actions__item {
     :deep([class^="i-svg:"]) {
-      color: var(--el-text-color-regular) !important;
+      color: var(--el-text-color-secondary) !important;
     }
 
     &:hover {
