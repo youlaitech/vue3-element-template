@@ -247,5 +247,5 @@ Thanks to all the contributors!
   </tr>
 </table>
 
-<p align="center"><em>技术交流 · 问题反馈 · 商务合作</em></p>
+<p align="center"><em>技术交流 · 问题反馈 · 项目咨询</em></p>
 
