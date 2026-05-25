@@ -65,14 +65,14 @@ export const useSettingsStore = defineStore("setting", () => {
     { immediate: true }
   );
 
-  watch(sidebarColorScheme, (v) => toggleSidebarColor(v === SidebarColor.CLASSIC_BLUE), {
+  watch(sidebarColorScheme, (v: string) => toggleSidebarColor(v === SidebarColor.CLASSIC_BLUE), {
     immediate: true,
   });
 
   // 灰色模式监听
   watch(
     grayMode,
-    (v) => {
+    (v: boolean) => {
       document.documentElement.style.filter = v ? "grayscale(100%)" : "";
     },
     { immediate: true }
@@ -81,7 +81,7 @@ export const useSettingsStore = defineStore("setting", () => {
   // 色弱模式监听
   watch(
     colorWeak,
-    (v) => {
+    (v: boolean) => {
       document.documentElement.classList.toggle("color-weak", v);
     },
     { immediate: true }
