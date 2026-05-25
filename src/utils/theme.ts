@@ -1,5 +1,7 @@
 import { ThemeMode } from "@/enums";
 
+const SYSTEM_DARK_MEDIA = "(prefers-color-scheme: dark)";
+
 // 辅助函数：将十六进制颜色转换为 RGB
 function hexToRgb(hex: string): [number, number, number] {
   const bigint = parseInt(hex.slice(1), 16);
@@ -109,4 +111,22 @@ export function toggleSidebarColor(isBuleSidebar: boolean) {
   } else {
     document.documentElement.classList.remove("sidebar-color-blue");
   }
+}
+
+/** 读取系统当前主题模式 */
+export function getSystemTheme() {
+  return window.matchMedia(SYSTEM_DARK_MEDIA).matches ? ThemeMode.DARK : ThemeMode.LIGHT;
+}
+
+/** AUTO 时解析为系统主题，否则直接返回 */
+export function resolveThemeMode(theme: ThemeMode) {
+  return theme === ThemeMode.AUTO ? getSystemTheme() : theme;
+}
+
+/** 监听系统主题变化，返回取消监听的函数 */
+export function watchSystemTheme(callback: (theme: ThemeMode) => void) {
+  const mediaQuery = window.matchMedia(SYSTEM_DARK_MEDIA);
+  const handler = () => callback(mediaQuery.matches ? ThemeMode.DARK : ThemeMode.LIGHT);
+  mediaQuery.addEventListener("change", handler);
+  return () => mediaQuery.removeEventListener("change", handler);
 }
