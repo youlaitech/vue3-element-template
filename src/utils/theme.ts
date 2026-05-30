@@ -54,21 +54,42 @@ export const getLightColor = (color: string, level: number): string => {
  * @param theme 主题类型
  */
 export function generateThemeColors(primary: string, theme: ThemeMode) {
-  const colors: Record<string, string> = {
-    primary,
-  };
+  const resolvedTheme = resolveThemeMode(theme);
+  const colors: Record<string, string> = { primary };
 
-  // 生成浅色变体
   for (let i = 1; i <= 9; i++) {
     colors[`primary-light-${i}`] =
-      theme === ThemeMode.LIGHT
+      resolvedTheme === ThemeMode.LIGHT
         ? `${getLightColor(primary, i / 10)}`
         : `${getDarkColor(primary, i / 10)}`;
   }
 
-  // 生成深色变体
   colors["primary-dark-2"] =
-    theme === ThemeMode.LIGHT ? `${getLightColor(primary, 0.2)}` : `${getDarkColor(primary, 0.3)}`;
+    resolvedTheme === ThemeMode.LIGHT
+      ? `${getLightColor(primary, 0.2)}`
+      : `${getDarkColor(primary, 0.3)}`;
+
+  // 语义色
+  const semanticColors: Record<string, string> = {
+    success: "#22c55e",
+    warning: "#faad14",
+    danger: "#ff4d4f",
+    info: "#788896",
+  };
+
+  Object.entries(semanticColors).forEach(([name, base]) => {
+    colors[name] = base;
+    for (let i = 1; i <= 9; i++) {
+      colors[`${name}-light-${i}`] =
+        resolvedTheme === ThemeMode.LIGHT
+          ? `${getLightColor(base, i / 10)}`
+          : `${getDarkColor(base, i / 10)}`;
+    }
+    colors[`${name}-dark-2`] =
+      resolvedTheme === ThemeMode.LIGHT
+        ? `${getLightColor(base, 0.2)}`
+        : `${getDarkColor(base, 0.3)}`;
+  });
 
   return colors;
 }

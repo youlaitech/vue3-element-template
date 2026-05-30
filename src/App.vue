@@ -25,6 +25,8 @@ const showWatermark = computed(() => settingsStore.showWatermark);
 const watermarkContent = appConfig.name;
 
 const fontColor = computed(() => {
-  return settingsStore.theme === ThemeMode.DARK ? "rgba(255, 255, 255, .15)" : "rgba(0, 0, 0, .15)";
+  return settingsStore.resolvedTheme === ThemeMode.DARK
+    ? "rgba(255, 255, 255, .15)"
+    : "rgba(0, 0, 0, .15)";
 });
 </script>
