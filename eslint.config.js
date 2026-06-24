@@ -1,134 +1,179 @@
-// https://eslint.nodejs.cn/docs/latest/use/configure/configuration-files
-
+import eslint from "@eslint/js";
 import globals from "globals";
-import pluginJs from "@eslint/js"; // JavaScript 规则
-import pluginVue from "eslint-plugin-vue"; // Vue 规则
-import pluginTypeScript from "@typescript-eslint/eslint-plugin"; // TypeScript 规则
+import * as typescriptEslint from "typescript-eslint";
+import pluginVue from "eslint-plugin-vue";
+import vueParser from "vue-eslint-parser";
+import configPrettier from "eslint-config-prettier";
+import fs from "node:fs";
 
-import parserVue from "vue-eslint-parser"; // Vue 解析器
-import parserTypeScript from "@typescript-eslint/parser"; // TypeScript 解析器
+let autoImportGlobals: Record<string, "readonly"> = {};
+try {
+  autoImportGlobals =
+    JSON.parse(fs.readFileSync("./.eslintrc-auto-import.json", "utf-8")).globals || {};
+} catch (error) {
+  console.warn("Could not load auto-import globals", error);
+}
 
-import configPrettier from "eslint-config-prettier"; // 禁用与 Prettier 冲突的规则
-import pluginPrettier from "eslint-plugin-prettier"; // 运行 Prettier 规则
-
-// 解析自动导入配置
-import fs from "fs";
-const autoImportConfig = JSON.parse(fs.readFileSync(".eslintrc-auto-import.json", "utf-8"));
-
-// Element Plus组件
-const elementPlusComponents = {
-  // Element Plus 组件添加为全局变量，避免 no-undef 报错
-  ElInput: "readonly",
-  ElSelect: "readonly",
-  ElSwitch: "readonly",
-  ElCascader: "readonly",
-  ElInputNumber: "readonly",
-  ElTimePicker: "readonly",
-  ElTimeSelect: "readonly",
-  ElDatePicker: "readonly",
-  ElTreeSelect: "readonly",
-  ElText: "readonly",
-  ElRadioGroup: "readonly",
-  ElCheckboxGroup: "readonly",
-  ElOption: "readonly",
-  ElRadio: "readonly",
-  ElCheckbox: "readonly",
-  ElInputTag: "readonly",
-  ElForm: "readonly",
-  ElFormItem: "readonly",
-  ElTable: "readonly",
-  ElTableColumn: "readonly",
-  ElButton: "readonly",
-  ElDialog: "readonly",
-  ElPagination: "readonly",
-  ElMessage: "readonly",
-  ElMessageBox: "readonly",
-  ElNotification: "readonly",
-  ElTree: "readonly",
-};
-
-/** @type {import('eslint').Linter.Config[]} */
 export default [
-  // 指定检查文件和忽略文件
   {
-    files: ["**/*.{js,mjs,cjs,ts,vue}"],
-    ignores: ["**/*.d.ts"],
+    ignores: [
+      "**/node_modules/**",
+      "**/dist/**",
+      "**/*.min.*",
+      "**/auto-imports.d.ts",
+      "**/components.d.ts",
+      "types/**/*.d.ts",
+    ],
   },
-  // 全局配置
+
+  eslint.configs.recommended,
+  ...pluginVue.configs["flat/recommended"],
+  ...typescriptEslint.configs.recommended,
+
   {
+    files: ["**/*.{js,mjs,cjs,ts,mts,cts,vue}"],
     languageOptions: {
+      ecmaVersion: "latest",
+      sourceType: "module",
       globals: {
         ...globals.browser,
         ...globals.node,
-        ...autoImportConfig.globals,
-        ...elementPlusComponents,
-        ...{
-          PageQuery: "readonly",
-          PageResult: "readonly",
-          OptionType: "readonly",
-          OptionItem: "readonly",
-          ResponseData: "readonly",
-          ApiResponse: "readonly",
-          ExcelResult: "readonly",
-          TagView: "readonly",
-          AppSettings: "readonly",
-          __APP_INFO__: "readonly",
-        },
+        ...globals.es2022,
+        ...autoImportGlobals,
+        __APP_INFO__: "readonly",
       },
     },
-    plugins: { prettier: pluginPrettier },
-    rules: {
-      ...configPrettier.rules, // 关闭与 Prettier 冲突的规则
-      ...pluginPrettier.configs.recommended.rules, // 启用 Prettier 规则
-      "prettier/prettier": "error", // 强制 Prettier 格式化
-      "no-unused-vars": [
-        "error",
-        {
-          argsIgnorePattern: "^_", // 忽略参数名以 _ 开头的参数未使用警告
-          varsIgnorePattern: "^[A-Z0-9_]+$", // 忽略变量名为大写字母、数字或下划线组合的未使用警告（枚举定义未使用场景）
-          ignoreRestSiblings: true, // 忽略解构赋值中同级未使用变量的警告
-        },
-      ],
+    plugins: {
+      vue: pluginVue,
+      "@typescript-eslint": typescriptEslint.plugin,
     },
-  },
-  // JavaScript 配置
-  pluginJs.configs.recommended,
+    rules: {
+      // 基础规则
+      "no-console": ["error", { allow: ["warn", "error", "debug"] }],
+      "no-debugger": "error",
 
-  // TypeScript 配置
-  {
-    files: ["**/*.ts"],
-    ignores: ["**/*.d.ts"], // 排除d.ts文件
-    languageOptions: {
-      parser: parserTypeScript,
-      parserOptions: {
-        sourceType: "module",
-      },
-    },
-    plugins: { "@typescript-eslint": pluginTypeScript },
-    rules: {
-      ...pluginTypeScript.configs.strict.rules, // TypeScript 严格规则
-      "@typescript-eslint/no-explicit-any": "off", // 允许使用 any
-      "@typescript-eslint/no-empty-function": "off", // 允许空函数
-      "@typescript-eslint/no-empty-object-type": "off", // 允许空对象类型
+      // ES6+ 规则
+      "prefer-const": "error",
+      "no-var": "error",
+      "object-shorthand": "error",
+
+      // 最佳实践
+      eqeqeq: ["error", "always", { null: "ignore" }],
+      "no-multi-spaces": "error",
+      "no-multiple-empty-lines": ["error", { max: 1, maxBOF: 0, maxEOF: 0 }],
+
+      // 禁用与 TypeScript 冲突的规则
+      "no-unused-vars": "off",
+      "no-undef": "off",
+      "no-redeclare": "off",
+      "@typescript-eslint/ban-ts-comment": "off",
     },
   },
 
-  // Vue 配置
   {
     files: ["**/*.vue"],
     languageOptions: {
-      parser: parserVue,
+      parser: vueParser,
       parserOptions: {
-        parser: parserTypeScript,
+        ecmaVersion: "latest",
         sourceType: "module",
+        parser: typescriptEslint.parser,
+        extraFileExtensions: [".vue"],
+        tsconfigRootDir: __dirname,
       },
     },
-    plugins: { vue: pluginVue, "@typescript-eslint": pluginTypeScript },
-    processor: pluginVue.processors[".vue"],
     rules: {
-      ...pluginVue.configs.recommended.rules, // Vue 推荐规则
-      "vue/no-v-html": "off", // 允许 v-html
-      "vue/multi-word-component-names": "off", // 允许单个单词组件名
+      "vue/multi-word-component-names": "off",
+      "vue/no-v-html": "off",
+      "vue/require-default-prop": "off",
+      "vue/require-explicit-emits": "error",
+      "vue/no-unused-vars": "error",
+      "vue/no-mutating-props": "off",
+      "vue/valid-v-for": "warn",
+      "vue/no-template-shadow": "warn",
+      "vue/return-in-computed-property": "warn",
+      "vue/block-order": [
+        "error",
+        {
+          order: ["template", "script", "style"],
+        },
+      ],
+      "vue/html-self-closing": [
+        "error",
+        {
+          html: {
+            void: "always",
+            normal: "never",
+            component: "always",
+          },
+          svg: "always",
+          math: "always",
+        },
+      ],
+      "vue/component-name-in-template-casing": ["error", "PascalCase"],
+      "@typescript-eslint/no-explicit-any": "warn",
+    },
+  },
+
+  {
+    files: ["**/*.{ts,tsx,mts,cts}"],
+    languageOptions: {
+      parser: typescriptEslint.parser,
+      parserOptions: {
+        ecmaVersion: "latest",
+        sourceType: "module",
+        project: "./tsconfig.eslint.json",
+        tsconfigRootDir: __dirname,
+      },
+    },
+    rules: {
+      "@typescript-eslint/no-explicit-any": "warn",
+      "@typescript-eslint/no-empty-function": "off",
+      "@typescript-eslint/no-empty-object-type": "off",
+      "@typescript-eslint/ban-ts-comment": "off",
+      "@typescript-eslint/no-non-null-assertion": "off",
+      "@typescript-eslint/no-unused-vars": [
+        "warn",
+        {
+          argsIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
+          caughtErrorsIgnorePattern: "^_",
+        },
+      ],
+      "@typescript-eslint/no-unused-expressions": "warn",
+      "@typescript-eslint/consistent-type-imports": [
+        "error",
+        {
+          fixStyle: "separate-type-imports",
+          prefer: "type-imports",
+        },
+      ],
+      "@typescript-eslint/no-import-type-side-effects": "error",
+    },
+  },
+
+  {
+    files: ["**/*.d.ts"],
+    rules: {
+      "@typescript-eslint/no-explicit-any": "off",
+      "@typescript-eslint/no-unused-vars": "off",
+    },
+  },
+
+  {
+    files: ["**/components/CURD/**/*.{ts,vue}"],
+    rules: {
+      "no-unused-vars": "off",
+      "@typescript-eslint/no-unused-vars": "off",
+      "@typescript-eslint/no-explicit-any": "off",
+    },
+  },
+
+  {
+    rules: {
+      ...configPrettier.rules,
+      "arrow-body-style": "off",
+      "prefer-arrow-callback": "off",
     },
   },
 ];
