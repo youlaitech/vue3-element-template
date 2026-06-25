@@ -54,15 +54,18 @@
         </div>
       </div>
 
-      <el-table
-        v-loading="loading"
-        :data="list"
-        row-key="id"
-        default-expand-all
-        border
-        :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
-        @selection-change="handleSelectionChange"
-      >
+      <div class="page-table-wrapper">
+        <el-table
+          v-loading="loading"
+          :data="list"
+          class="page-table"
+          row-key="id"
+          default-expand-all
+          border
+          height="100%"
+          :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
+          @selection-change="handleSelectionChange"
+        >
         <el-table-column type="selection" width="55" align="center" />
         <el-table-column prop="name" label="部门名称" min-width="200" />
         <el-table-column prop="code" label="部门编号" width="200" />
@@ -106,7 +109,8 @@
             </el-button>
           </template>
         </el-table-column>
-      </el-table>
+        </el-table>
+      </div>
     </el-card>
 
     <el-dialog

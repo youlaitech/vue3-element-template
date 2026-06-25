@@ -29,7 +29,8 @@
     </el-card>
 
     <el-card class="page-content" shadow="never">
-      <el-table v-loading="loading" :data="list" highlight-current-row>
+      <div class="page-table-wrapper">
+        <el-table v-loading="loading" :data="list" class="page-table" height="100%" highlight-current-row>
         <el-table-column type="index" label="序号" width="60" />
         <el-table-column label="通知标题" prop="title" min-width="200" />
         <el-table-column align="center" label="通知类型" width="150">
@@ -63,7 +64,8 @@
             </el-button>
           </template>
         </el-table-column>
-      </el-table>
+        </el-table>
+      </div>
 
       <pagination
         v-if="total > 0"

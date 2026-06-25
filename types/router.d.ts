@@ -17,7 +17,5 @@ declare module "vue-router" {
     params?: Record<string, unknown>;
     externalUrl?: string;
     roles?: string[];
-    /** 布局模式覆盖 */
-    layout?: string;
   }
 }
