@@ -1,7 +1,7 @@
 
 <div align="center">
 
-<img alt="vue3-element-template" width="80" src="./src/assets/images/logo.png">
+<img alt="vue3-element-template" width="80" src="./public/images/logo.png">
 
 # vue3-element-template
 
@@ -53,16 +53,16 @@
 
 <table align="center">
   <tr>
-    <td><img alt="PC预览1" width="400" src="./src/assets/images/preview/pc-01.png"></td>
-    <td><img alt="PC预览2" width="400" src="./src/assets/images/preview/pc-02.png"></td>
+    <td><img alt="PC预览1" width="400" src="./public/images/preview/pc-01.png"></td>
+    <td><img alt="PC预览2" width="400" src="./public/images/preview/pc-02.png"></td>
   </tr>
   <tr>
-    <td><img alt="PC预览3" width="400" src="./src/assets/images/preview/pc-03.png"></td>
-    <td><img alt="PC预览4" width="400" src="./src/assets/images/preview/pc-04.png"></td>
+    <td><img alt="PC预览3" width="400" src="./public/images/preview/pc-03.png"></td>
+    <td><img alt="PC预览4" width="400" src="./public/images/preview/pc-04.png"></td>
   </tr>
   <tr>
-    <td><img alt="PC预览5" width="400" src="./src/assets/images/preview/pc-05.png"></td>
-    <td><img alt="PC预览6" width="400" src="./src/assets/images/preview/pc-06.png"></td>
+    <td><img alt="PC预览5" width="400" src="./public/images/preview/pc-05.png"></td>
+    <td><img alt="PC预览6" width="400" src="./public/images/preview/pc-06.png"></td>
   </tr>
 </table>
 
@@ -70,10 +70,10 @@
 
 <table align="center">
   <tr>
-    <td><img alt="APP预览1" width="200" src="./src/assets/images/preview/app-01.png"></td>
-    <td><img alt="APP预览2" width="200" src="./src/assets/images/preview/app-02.png"></td>
-    <td><img alt="APP预览3" width="200" src="./src/assets/images/preview/app-03.png"></td>
-    <td><img alt="APP预览4" width="200" src="./src/assets/images/preview/app-04.png"></td>
+    <td><img alt="APP预览1" width="200" src="./public/images/preview/app-01.png"></td>
+    <td><img alt="APP预览2" width="200" src="./public/images/preview/app-02.png"></td>
+    <td><img alt="APP预览3" width="200" src="./public/images/preview/app-03.png"></td>
+    <td><img alt="APP预览4" width="200" src="./public/images/preview/app-04.png"></td>
   </tr>
 </table>
 
@@ -231,17 +231,17 @@ Thanks to all the contributors!
 <table align="center">
   <tr>
     <td align="center">
-      <img src="./src/assets/images/qr/wechat-offical.png" height="180" alt="公众号「有来技术」"><br>
+      <img src="./public/images/qrcode/wechat-official.png" height="180" alt="公众号「有来技术」"><br>
       <sub>公众号「有来技术」</sub>
     </td>
     <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
     <td align="center">
-      <img src="./src/assets/images/qr/wechat-mp.jpg" height="180" alt="小程序「有来技术」"><br>
+      <img src="./public/images/qrcode/wechat-mp.jpg" height="180" alt="小程序「有来技术」"><br>
       <sub>小程序「有来技术」</sub>
     </td>
     <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
     <td align="center">
-      <img src="./src/assets/images/qr/wechat-personal.png" height="180" alt="添加作者微信"><br>
+      <img src="./public/images/qrcode/wechat-personal.png" height="180" alt="添加作者微信"><br>
       <sub>添加作者微信</sub>
     </td>
   </tr>
