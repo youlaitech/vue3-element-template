@@ -22,7 +22,7 @@
         >
           <template v-if="onlyOneChild.meta">
             <LayoutMenuIcon :icon="onlyOneChild.meta.icon || item.meta?.icon" />
-            <span v-if="onlyOneChild.meta.title" class="ml-1">
+            <span v-if="onlyOneChild.meta.title" class="ml-1" :title="onlyOneChild.meta.title">
               {{ onlyOneChild.meta.title }}
             </span>
           </template>
@@ -34,7 +34,7 @@
       <template #title>
         <template v-if="item.meta">
           <LayoutMenuIcon :icon="item.meta.icon" />
-          <span v-if="item.meta.title" class="ml-1">
+          <span v-if="item.meta.title" class="ml-1" :title="item.meta.title">
             {{ item.meta.title }}
           </span>
         </template>
