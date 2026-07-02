@@ -1,5 +1,5 @@
 <template>
-  <BaseLayout>
+  <BaseLayout :show-overlay="false">
     <div v-show="!appStore.contentFullscreen" class="layout-header">
       <div class="layout-header__content">
         <div v-if="showLogo" class="layout-header__logo">
@@ -19,7 +19,7 @@
               <template v-if="item.meta">
                 <LayoutMenuIcon :icon="item.meta.icon" />
                 <span v-if="item.meta.title" class="ml-1">
-                  {{ item.meta.title }}
+                  {{ translateRouteTitle(item.meta.title) }}
                 </span>
               </template>
             </el-menu-item>
@@ -74,6 +74,7 @@ import { useWindowSize } from "@vueuse/core";
 import { useLayout } from "../composables/useLayout";
 import { useMixMenu } from "../composables/useMixMenu";
 import { useAppStore, useSettingsStore } from "@/stores";
+import { translateRouteTitle } from "@/lang/utils";
 import { SidebarColor, ThemeMode } from "@/enums/settings";
 import BaseLayout from "../BaseLayout.vue";
 import LayoutLogo from "../components/LayoutLogo.vue";
@@ -239,10 +240,20 @@ const useMenuColors = computed(
 
   &.is-collapsed {
     width: $sidebar-width-collapsed !important;
+    min-width: 0; // 覆盖 flex 子元素默认 min-width: auto，防止 .el-menu--collapse 64px 推挤容器
+    overflow: hidden; // 裁剪 .el-menu--collapse 溢出，防止其可见溢出推挤 .layout-container 宽度
   }
 
   :deep(.el-scrollbar) {
     @include sidebar-scroll-height-with-toggle;
+
+    .el-scrollbar__wrap {
+      overflow-x: hidden !important;
+    }
+
+    .el-scrollbar__bar.is-horizontal {
+      display: none;
+    }
   }
 
   :deep(.el-menu) {
@@ -285,28 +296,8 @@ const useMenuColors = computed(
   overflow-y: auto;
 }
 
-::deep(.is-mobile) {
-  .layout-container {
-    .layout-sidebar {
-      position: fixed;
-      top: $navbar-height;
-      bottom: 0;
-      left: 0;
-      z-index: 1000;
-      transition: transform 0.28s;
-    }
-  }
-
-  &.is-sidebar-collapsed {
-    .layout-sidebar {
-      width: $sidebar-width !important;
-      transform: translateX(-$sidebar-width);
-    }
-  }
-}
-
-::global(html.dark),
-::global(html.sidebar-color-blue) {
+:global(html.dark),
+:global(html.sidebar-color-blue) {
   .layout-header__menu {
     :deep(.el-menu--horizontal) {
       .el-menu-item {
