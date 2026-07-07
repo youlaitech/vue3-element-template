@@ -19,7 +19,7 @@
               <template v-if="item.meta">
                 <LayoutMenuIcon :icon="item.meta.icon" />
                 <span v-if="item.meta.title" class="ml-1">
-                  {{ translateRouteTitle(item.meta.title) }}
+                  {{ item.meta.title }}
                 </span>
               </template>
             </el-menu-item>
@@ -74,7 +74,6 @@ import { useWindowSize } from "@vueuse/core";
 import { useLayout } from "../composables/useLayout";
 import { useMixMenu } from "../composables/useMixMenu";
 import { useAppStore, useSettingsStore } from "@/stores";
-import { translateRouteTitle } from "@/lang/utils";
 import { SidebarColor, ThemeMode } from "@/enums/settings";
 import BaseLayout from "../BaseLayout.vue";
 import LayoutLogo from "../components/LayoutLogo.vue";
