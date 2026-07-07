@@ -17,12 +17,12 @@
             :key="item.path"
             class="layout-double__primary-item"
             :class="{ 'is-active': item.path === activeTopMenuPath }"
-            :title="item.meta?.title ? translateRouteTitle(item.meta.title) : undefined"
+            :title="item.meta?.title"
             type="button"
             @click="handleTopMenuSelect(item.path)"
           >
             <LayoutMenuIcon :icon="item.meta?.icon" />
-            <span v-if="item.meta?.title">{{ translateRouteTitle(item.meta.title) }}</span>
+            <span v-if="item.meta?.title">{{ item.meta.title }}</span>
           </button>
         </el-scrollbar>
 
@@ -71,7 +71,6 @@ import { useLayout } from "../composables/useLayout";
 import { useMixMenu } from "../composables/useMixMenu";
 import { useAppStore } from "@/stores";
 import { appConfig } from "@/settings";
-import { translateRouteTitle } from "@/lang/utils";
 import BaseLayout from "../BaseLayout.vue";
 import LayoutLogo from "../components/LayoutLogo.vue";
 import LayoutNavbar from "../components/LayoutNavbar.vue";
