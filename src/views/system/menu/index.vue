@@ -91,12 +91,6 @@
             </template>
           </el-table-column>
           <el-table-column label="权限标识" align="center" width="200" prop="perm" />
-          <el-table-column v-if="showMenuScope" label="范围" align="center" width="100">
-            <template #default="scope">
-              <el-tag v-if="scope.row.scope === MenuScopeEnum.PLATFORM" type="danger">平台</el-tag>
-              <el-tag v-else type="success">业务</el-tag>
-            </template>
-          </el-table-column>
 
           <el-table-column label="状态" align="center" width="80">
             <template #default="scope">
@@ -108,7 +102,9 @@
           <el-table-column fixed="right" align="center" label="操作" width="220">
             <template #default="scope">
               <el-button
-                v-if="scope.row.type === MenuTypeEnum.CATALOG || scope.row.type === MenuTypeEnum.MENU"
+                v-if="
+                  scope.row.type === MenuTypeEnum.CATALOG || scope.row.type === MenuTypeEnum.MENU
+                "
                 v-hasPerm="['sys:menu:create']"
                 type="primary"
                 link
@@ -388,17 +384,6 @@
           </div>
         </el-form-item>
 
-        <el-form-item
-          v-if="formData.type !== MenuTypeEnum.BUTTON && showMenuScope"
-          prop="scope"
-          label="菜单范围"
-        >
-          <el-radio-group v-model="formData.scope">
-            <el-radio :value="MenuScopeEnum.PLATFORM">平台菜单</el-radio>
-            <el-radio :value="MenuScopeEnum.TENANT">业务菜单</el-radio>
-          </el-radio-group>
-        </el-form-item>
-
         <el-form-item v-if="formData.type !== MenuTypeEnum.BUTTON" label="图标" prop="icon">
           <icon-select v-model="formData.icon" />
         </el-form-item>
@@ -438,9 +423,8 @@ import MenuAPI from "@/api/system/menu";
 import type { MenuForm, MenuItem, MenuQueryParams } from "@/api/system/menu";
 import type { OptionItem } from "@/api/common";
 import { useAppStore } from "@/stores/app";
-import { CommonStatus, MenuScopeEnum, MenuTypeEnum } from "@/enums";
+import { CommonStatus, MenuTypeEnum } from "@/enums";
 import { DeviceEnum } from "@/enums/settings";
-import { isTenantEnabled } from "@/utils/tenant";
 import { isValidURL } from "@/utils";
 
 defineOptions({
@@ -471,7 +455,6 @@ const initialFormData: MenuForm = {
   id: undefined,
   parentId: "0",
   visible: CommonStatus.ENABLED,
-  scope: MenuScopeEnum.TENANT,
   sort: 1,
   type: MenuTypeEnum.MENU,
   alwaysShow: 0,
@@ -489,9 +472,6 @@ const menuTypes = [
 const formData = reactive<MenuForm>({ ...initialFormData });
 const currentMenuType = ref<MenuTypeEnum>(MenuTypeEnum.MENU);
 const menuTypeDrafts = reactive<Record<MenuTypeEnum, Partial<MenuForm>>>(createMenuTypeDrafts());
-
-// 多租户关闭时隐藏菜单范围字段。
-const showMenuScope = computed(() => isTenantEnabled());
 
 // 抽屉宽度（响应式）。
 const drawerSize = computed(() => (appStore.device === DeviceEnum.DESKTOP ? "600px" : "90%"));
@@ -662,7 +642,6 @@ const rules: FormRules<MenuForm> = {
   perm: [{ required: true, message: "请输入权限标识", validator: validatePerm, trigger: "blur" }],
 
   visible: [{ required: true, message: "请选择显示状态", trigger: "change" }],
-  scope: [{ required: true, message: "请选择菜单范围", trigger: "change" }],
 };
 
 /**
