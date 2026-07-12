@@ -196,7 +196,7 @@ Execute `pnpm run commit` to invoke interactive git commit and complete the info
 <table align="center">
   <tr>
     <td align="center">
-      <img src="./src/assets/images/qr/wechat-offical.png" height="180" alt="WeChat Official Account"><br>
+      <img src="./src/assets/images/qr/wechat-official.png" height="180" alt="WeChat Official Account"><br>
       <sub>WeChat Official Account</sub>
     </td>
     <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
