@@ -1,9 +1,7 @@
 
 <div align="center">
 
-<img alt="vue3-element-template" width="80" src="./public/images/logo.png">
-
-# vue3-element-template
+# <img alt="logo" width="40" valign="middle" src="./public/images/logo.png"> vue3-element-template
 
 **Vue3 + Vite + TypeScript 企业级后台管理前端模板**
 
@@ -21,7 +19,8 @@
 
 <div align="center">
 
-[🖥️ 在线预览](https://vue.youlai.tech/template) | [📖 文档](https://www.youlai.tech/vue3-element-admin)
+[![在线预览](https://img.shields.io/badge/在线预览-2D8CF0?style=for-the-badge&logo=google-chrome&logoColor=white)](https://vue.youlai.tech/template)
+[![文档](https://img.shields.io/badge/文档-8B5CF6?style=for-the-badge&logo=gitbook&logoColor=white)](https://www.youlai.tech/vue3-element-admin)
 
 </div>
 
