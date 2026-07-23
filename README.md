@@ -9,6 +9,7 @@
 [![Gitee Star](https://gitee.com/youlaiorg/vue3-element-template/badge/star.svg)](https://gitee.com/youlaiorg/vue3-element-template/stargazers)
 [![GitHub Star](https://img.shields.io/github/stars/youlaitech/vue3-element-template?style=social)](https://github.com/youlaitech/vue3-element-template)
 [![GitCode Star](https://gitcode.com/youlai/vue3-element-template/star/badge.svg)](https://gitcode.com/youlai/vue3-element-template/stargazers)
+[![AtomGit G-Star](https://atomgit.com/youlaiorg/vue3-element-admin/star/new_badge.svg)](https://atomgit.com/youlaiorg/vue3-element-admin)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 </div>
