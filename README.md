@@ -9,12 +9,11 @@
 [![Gitee Star](https://gitee.com/youlaiorg/vue3-element-template/badge/star.svg)](https://gitee.com/youlaiorg/vue3-element-template/stargazers)
 [![GitHub Star](https://img.shields.io/github/stars/youlaitech/vue3-element-template?style=social)](https://github.com/youlaitech/vue3-element-template)
 [![GitCode Star](https://gitcode.com/youlai/vue3-element-template/star/badge.svg)](https://gitcode.com/youlai/vue3-element-template/stargazers)
-<a href="https://atomgit.com/youlai/vue3-element-admin"><img src="https://atomgit.com/youlai/vue3-element-admin/star/new_badge.svg" height="20" alt="AtomGit G-Star"></a>
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 </div>
 
-![](https://foruda.gitee.com/images/1708618984641188532/a7cca095_716974.png "rainbow.png")
+<p align="center"><img src="https://foruda.gitee.com/images/1708618984641188532/a7cca095_716974.png" alt="rainbow"></p>
 
 <div align="center">
 
