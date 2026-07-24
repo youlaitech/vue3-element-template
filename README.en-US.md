@@ -17,7 +17,7 @@
 
 </div>
 
-![](./docs/images/rainbow.png "rainbow.png")
+![](./public/images/rainbow.png "rainbow.png")
 
 <div align="center">
 

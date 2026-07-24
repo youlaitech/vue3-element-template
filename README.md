@@ -13,7 +13,7 @@
 
 </div>
 
-<p align="center"><img src="./docs/images/rainbow.png" alt="rainbow"></p>
+<p align="center"><img src="./public/images/rainbow.png" alt="rainbow"></p>
 
 <div align="center">
 
