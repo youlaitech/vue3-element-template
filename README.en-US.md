@@ -17,7 +17,7 @@
 
 </div>
 
-![](https://foruda.gitee.com/images/1708618984641188532/a7cca095_716974.png "rainbow.png")
+![](./docs/images/rainbow.png "rainbow.png")
 
 <div align="center">
 
@@ -30,7 +30,7 @@
 
 ## Introduction
 
-[vue3-element-admin](https://gitee.com/youlaiorg/vue3-element-admin) is a free and open-source admin template for backend management frontend, built with popular technologies such as Vue3, Vite5, TypeScript, Element-Plus, and Pinia (with accompanying [backend source code](https://gitee.com/youlaiorg/youlai-boot)).
+[vue3-element-template](https://gitee.com/youlaiorg/vue3-element-template) is the lite version of [vue3-element-admin](https://gitee.com/youlaiorg/vue3-element-admin), built with Vue 3, Vite, TypeScript, and Element Plus, paired with [9 mainstream backends + derivatives](https://gitee.com/youlaiorg/vue3-element-admin#ecosystem) (covering Java / Node.js / Go / Python / PHP / C# / Rust 7 languages) and the mobile app [youlai-app](https://gitee.com/youlaiorg/youlai-app). Other frontend versions: [TypeScript](https://gitee.com/youlaiorg/vue3-element-admin) · [JavaScript](https://gitee.com/youlaiorg/vue3-element-admin-js) · [NaiveUI](https://gitee.com/youlaiorg/vue3-naiveui-admin).
 
 
 
