@@ -15,7 +15,7 @@ const props = withDefaults(
   }
 );
 
-const isElementIcon = computed(() => props.icon.startsWith("el-icon"));
-const elementIconName = computed(() => props.icon.replace("el-icon-", ""));
+const isElementIcon = computed(() => (props.icon || "").startsWith("el-icon"));
+const elementIconName = computed(() => (props.icon || "").replace("el-icon-", ""));
 const svgIconClass = computed(() => `i-svg:${props.icon || "menu"}`);
 </script>
