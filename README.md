@@ -103,7 +103,7 @@ pnpm run dev
 本项目配套 [Agent Skill](https://skills.sh/youlaitech/youlai-skills)，安装后 AI 编程助手会自动遵循本项目的 Vue3 开发规范（命名、目录结构、BEM + UnoCSS、组件与 API 约定）。支持 CodeBuddy、Claude Code、Cursor、Codex、GitHub Copilot 等 70+ Agent。
 
 ```bash
-npx skills add https://github.com/youlaitech/youlai-skills --skill vue
+npx skills add https://github.com/youlaitech/youlai-skills --skill vue-admin
 ```
 
 ## 生态矩阵
