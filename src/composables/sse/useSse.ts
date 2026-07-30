@@ -1,27 +1,36 @@
 import { AuthStorage } from "@/utils/auth";
 
+/** SSE 连接配置选项 */
 export interface UseSseOptions {
-  url?: string; // SSE 连接地址，默认走 VITE_APP_BASE_API 代理
-  debug?: boolean; // 是否在控制台打印调试日志
-  connectionTimeout?: number; // 连接超时时间(ms)
-  /** 重连间隔基数，实际间隔 = min(基数 × 2^n, 最大间隔) */
+  /** SSE 连接地址，默认走 VITE_APP_BASE_API 代理 */
+  url?: string;
+  /** 是否在控制台打印调试日志 */
+  debug?: boolean;
+  /** 连接超时时间（ms），默认 10000 */
+  connectionTimeout?: number;
+  /** 重连间隔基数（ms），实际间隔 = min(基数 × 2^n, maxReconnectInterval) */
   reconnectInterval?: number;
-  maxReconnectInterval?: number; // 重连间隔上限(ms)
-  maxReconnectAttempts?: number; // 最大重试次数，超过后停止重连
+  /** 重连间隔上限（ms），默认 120000 */
+  maxReconnectInterval?: number;
+  /** 最大重试次数，超过后停止重连，默认 10 */
+  maxReconnectAttempts?: number;
 }
 
+/** SSE 事件处理器类型 */
 type EventHandler = (data: unknown) => void;
 
+/** SSE 流解析中间状态 */
 type SseParseState = {
   currentEvent: string;
   currentData: string;
   buffer: string;
 };
 
+/** SSE 连接状态 */
 export enum SseConnectionState {
-  DISCONNECTED = "DISCONNECTED", // 未连接
-  CONNECTING = "CONNECTING", // 连接中
-  CONNECTED = "CONNECTED", // 已连接
+  DISCONNECTED = "DISCONNECTED",
+  CONNECTING = "CONNECTING",
+  CONNECTED = "CONNECTED",
 }
 
 let globalInstance: ReturnType<typeof createSseConnection> | null = null;
@@ -33,10 +42,10 @@ function createSseConnection(options: UseSseOptions = {}) {
   const config = {
     url: options.url ?? defaultUrl,
     debug: options.debug ?? false,
-    connectionTimeout: options.connectionTimeout ?? 10000, // 连接超时 10s
-    reconnectInterval: options.reconnectInterval ?? 5000, // 首次重连等 5s，之后翻倍
-    maxReconnectInterval: options.maxReconnectInterval ?? 120000, // 重连间隔最大 2min
-    maxReconnectAttempts: options.maxReconnectAttempts ?? 10, // 最多重试 10 次
+    connectionTimeout: options.connectionTimeout ?? 10000,
+    reconnectInterval: options.reconnectInterval ?? 5000,
+    maxReconnectInterval: options.maxReconnectInterval ?? 120000,
+    maxReconnectAttempts: options.maxReconnectAttempts ?? 10,
   };
 
   const connectionState = ref<SseConnectionState>(SseConnectionState.DISCONNECTED);
@@ -45,7 +54,8 @@ function createSseConnection(options: UseSseOptions = {}) {
   let abortController: AbortController | null = null;
   let connectionTimeoutTimer: ReturnType<typeof setTimeout> | null = null;
   let reader: ReadableStreamDefaultReader<Uint8Array> | null = null;
-  let isManualDisconnect = false; // 主动断开则不重连
+  /** 主动断开则不重连 */
+  let isManualDisconnect = false;
   let reconnectTimer: ReturnType<typeof setTimeout> | null = null;
   let reconnectAttempts = 0;
   let currentReconnectInterval = config.reconnectInterval;
@@ -59,27 +69,26 @@ function createSseConnection(options: UseSseOptions = {}) {
   };
   const logError = (...args: unknown[]) => console.error("[SSE]", ...args);
 
-  // 清理定时器并返回空值
-  const clearTimer = (timer: typeof connectionTimeoutTimer) => {
+  /** 清除定时器并返回 null，用于链式赋值 */
+  const clearTimer = (timer: ReturnType<typeof setTimeout> | null): null => {
     if (timer) {
       clearTimeout(timer);
-      return null;
     }
-    return timer;
+    return null;
   };
 
-  // 重置重连计数和间隔
+  /** 重置重连状态：次数归零、间隔恢复基数 */
   const resetReconnectState = () => {
     reconnectAttempts = 0;
     currentReconnectInterval = config.reconnectInterval;
   };
 
-  // 更新下一次重连间隔
+  /** 指数退避：当前间隔翻倍，不超过上限 */
   const advanceReconnectState = () => {
     currentReconnectInterval = Math.min(currentReconnectInterval * 2, config.maxReconnectInterval);
   };
 
-  // 分发一条完整的 SSE 事件
+  /** 分发 SSE 事件：先尝试 JSON.parse，失败则传原始字符串 */
   const flushSseEvent = (eventName: string, data: string) => {
     if (!data) return;
     const handlers = eventHandlers.get(eventName);
@@ -94,7 +103,7 @@ function createSseConnection(options: UseSseOptions = {}) {
     log(`收到事件[${eventName}]:`, data);
   };
 
-  // 解析单行 SSE 文本并更新当前事件状态
+  /** 解析单行 SSE 数据：区分 event/data/注释/空行（触发分发） */
   const handleSseLine = (line: string, state: SseParseState) => {
     if (line.startsWith(":")) return;
     if (line.startsWith("event:")) {
@@ -113,30 +122,42 @@ function createSseConnection(options: UseSseOptions = {}) {
     }
   };
 
-  // 持续读取 SSE 流并按行解析
+  /** 持续读取流数据并按行解析，异常时触发重连 */
   const consumeSseStream = async (streamReader: ReadableStreamDefaultReader<Uint8Array>) => {
     const decoder = new TextDecoder();
     const state: SseParseState = { currentEvent: "message", currentData: "", buffer: "" };
 
-    while (true) {
-      const { done, value } = await streamReader.read();
-      if (done) {
-        connectionState.value = SseConnectionState.DISCONNECTED;
-        log("SSE 连接已关闭");
-        return;
+    try {
+      while (true) {
+        const { done, value } = await streamReader.read();
+        if (done) {
+          reader = null;
+          connectionState.value = SseConnectionState.DISCONNECTED;
+          log("SSE 连接已关闭");
+          return;
+        }
+
+        state.buffer += decoder.decode(value, { stream: true });
+        const lines = state.buffer.split("\n");
+        state.buffer = lines.pop() || "";
+
+        for (const line of lines) {
+          handleSseLine(line, state);
+        }
       }
-
-      state.buffer += decoder.decode(value, { stream: true });
-      const lines = state.buffer.split("\n");
-      state.buffer = lines.pop() || "";
-
-      for (const line of lines) {
-        handleSseLine(line, state);
+    } catch (err) {
+      reader = null;
+      connectionState.value = SseConnectionState.DISCONNECTED;
+      if (err instanceof Error && err.name === "AbortError") {
+        log("SSE 流读取已主动断开");
+      } else {
+        logError("SSE 流读取错误:", err);
+        scheduleReconnect();
       }
     }
   };
 
-  // 指数退避重连
+  /** 调度重连：指数退避，达到上限或主动断开时停止 */
   const scheduleReconnect = () => {
     if (isManualDisconnect) return;
     if (config.maxReconnectAttempts > 0 && reconnectAttempts >= config.maxReconnectAttempts) {
@@ -148,12 +169,12 @@ function createSseConnection(options: UseSseOptions = {}) {
     log(`将在 ${currentReconnectInterval}ms 后重试（${reconnectAttempts}）`);
 
     reconnectTimer = setTimeout(() => {
-      connect();
       advanceReconnectState();
+      connect();
     }, currentReconnectInterval);
   };
 
-  // 建立 SSE 连接
+  /** 建立连接：校验 token → fetch → 超时检测 → 消费流；401/403 不重连 */
   const connect = () => {
     isManualDisconnect = false;
 
@@ -168,14 +189,14 @@ function createSseConnection(options: UseSseOptions = {}) {
 
     const token = AuthStorage.getAccessToken();
     if (!token) {
-      log("未检测到有效令牌，跳过 SSE 连接");
+      log("未检测到有效令牌，稍后重试");
+      reconnectTimer = setTimeout(() => connect(), config.reconnectInterval);
       return;
     }
 
     connectionState.value = SseConnectionState.CONNECTING;
     abortController = new AbortController();
 
-    // 超时自动断开
     connectionTimeoutTimer = setTimeout(() => {
       if (connectionState.value === SseConnectionState.CONNECTING) {
         log("SSE 连接超时");
@@ -195,6 +216,12 @@ function createSseConnection(options: UseSseOptions = {}) {
     })
       .then((response) => {
         if (!response.ok) {
+          if (response.status === 401 || response.status === 403) {
+            isManualDisconnect = true;
+            connectionState.value = SseConnectionState.DISCONNECTED;
+            log(`SSE 连接被拒绝（HTTP ${response.status}），不再重连`);
+            return null;
+          }
           throw new Error(`HTTP ${response.status}`);
         }
         connectionTimeoutTimer = clearTimer(connectionTimeoutTimer);
@@ -219,7 +246,7 @@ function createSseConnection(options: UseSseOptions = {}) {
       });
   };
 
-  // 订阅事件，返回取消函数
+  /** 订阅指定事件，返回取消订阅函数 */
   const on = <T = unknown>(eventName: string, handler: (data: T) => void): (() => void) => {
     if (!eventHandlers.has(eventName)) {
       eventHandlers.set(eventName, new Set());
@@ -239,7 +266,7 @@ function createSseConnection(options: UseSseOptions = {}) {
     };
   };
 
-  // 主动断开，不会触发重连
+  /** 主动断开：清除定时器、取消流读取、中止请求，不触发重连 */
   const disconnect = () => {
     isManualDisconnect = true;
     connectionTimeoutTimer = clearTimer(connectionTimeoutTimer);
@@ -252,7 +279,7 @@ function createSseConnection(options: UseSseOptions = {}) {
     log("SSE 连接已断开");
   };
 
-  // 登出时调用，断开并释放所有资源
+  /** 断开连接并清空所有事件订阅 */
   const cleanup = () => {
     disconnect();
     eventHandlers.clear();
@@ -269,6 +296,15 @@ function createSseConnection(options: UseSseOptions = {}) {
   };
 }
 
+/**
+ * SSE 连接组合式函数（单例模式）
+ *
+ * 基于 fetch + ReadableStream 实现，支持指数退避重连、
+ * 事件订阅/取消订阅、主动断开与资源清理。
+ *
+ * @param options - 连接配置选项
+ * @returns SSE 连接实例，包含连接状态、connect/disconnect/on/cleanup 方法
+ */
 export function useSse(options: UseSseOptions = {}) {
   if (!globalInstance) {
     globalInstance = createSseConnection(options);
@@ -276,6 +312,7 @@ export function useSse(options: UseSseOptions = {}) {
   return globalInstance;
 }
 
+/** 清理 SSE 单例：断开连接、清空订阅、释放全局引用 */
 export function cleanupSse() {
   if (globalInstance) {
     globalInstance.cleanup();
