@@ -75,7 +75,9 @@
                   :model-value="settingsStore.themeColors[item.name]"
                   :predefine="colorPresets[item.name]"
                   popper-class="theme-picker-dropdown"
-                  @update:model-value="(color: string | null) => handleThemeColorChange(item.name, color)"
+                  @update:model-value="
+                    (color: string | null) => handleThemeColorChange(item.name, color)
+                  "
                 />
               </div>
             </div>
@@ -116,8 +118,12 @@
                   <div
                     v-if="item.value !== LayoutMode.TOP"
                     class="settings-layout-preview__sidebar"
-                  />
-                  <div class="settings-layout-preview__main" />
+                  ></div>
+                  <div
+                    v-if="item.value === LayoutMode.DOUBLE"
+                    class="settings-layout-preview__sub-sidebar"
+                  ></div>
+                  <div class="settings-layout-preview__main"></div>
                 </div>
                 <div class="settings-layout-select__name">{{ item.label }}</div>
                 <div
@@ -180,7 +186,9 @@
                   `settings-tabs-style__preview--${item.value}`,
                 ]"
               >
-                <i /><i /><i />
+                <i />
+                <i />
+                <i />
               </span>
               <span class="settings-tabs-style__label">{{ item.label }}</span>
             </button>
@@ -252,20 +260,16 @@
 import { ArrowRight, Check, DocumentCopy, RefreshLeft } from "@element-plus/icons-vue";
 import {
   LayoutMode,
+  PageSwitchingAnimationOptions,
   SidebarColor,
   TagsViewStyle,
   ThemeMode,
 } from "@/enums";
 import { useSettingsStore } from "@/stores";
 import { themeColorNames, themePalettePresets } from "@/settings";
-import type { ThemeColorMap, ThemeColorName, ThemePalettePreset } from "@/settings";
+import type { ThemeColorMap, ThemeColorName } from "@/settings";
 
-const pageSwitchingAnimationOptions = [
-  { label: "无动画", value: "none" },
-  { label: "淡入淡出", value: "fade" },
-  { label: "滑动", value: "fade-slide" },
-  { label: "缩放", value: "fade-scale" },
-];
+const pageSwitchingAnimationOptions = PageSwitchingAnimationOptions;
 
 const copyIcon = markRaw(DocumentCopy);
 const resetIcon = markRaw(RefreshLeft);
@@ -339,9 +343,7 @@ function getPaletteColors(colors: ThemeColorMap) {
 }
 
 const activePaletteName = computed(() =>
-  settingsStore.activeThemePalette
-    ? settingsStore.activeThemePalette.name
-    : "自定义调色板"
+  settingsStore.activeThemePalette ? settingsStore.activeThemePalette.name : "自定义调色板"
 );
 
 function getColorLabel(name: ThemeColorName) {
@@ -823,6 +825,17 @@ function handleCloseDrawer(): void {
     border-radius: 2px;
   }
 
+  .settings-layout-preview__sub-sidebar {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 15px;
+    width: 14px;
+    background: var(--el-color-primary-light-9);
+    border: 1px solid var(--el-color-primary-light-6);
+    border-radius: 2px;
+  }
+
   .settings-layout-preview__main {
     position: absolute;
     background:
@@ -917,8 +930,7 @@ function handleCloseDrawer(): void {
       top: 0;
       right: 0;
       bottom: 0;
-      left: 16px;
-      border-left: 8px solid var(--el-color-primary-light-9);
+      left: 33px;
     }
   }
 
@@ -1028,6 +1040,13 @@ function handleCloseDrawer(): void {
       background: var(--el-color-primary-light-9);
       border-color: var(--el-color-primary-light-6);
     }
+  }
+}
+
+::deep(.copy-config-dialog) {
+  .el-message-box__content {
+    max-height: 400px;
+    overflow-y: auto;
   }
 }
 </style>
