@@ -31,8 +31,7 @@
 
 - **简洁易用**：基于 [vue-element-admin](https://gitee.com/panjiachen/vue-element-admin) 升级的 Vue3 版本，无过度封装，易上手。
 - **权限体系**：动态路由、按钮权限、角色权限和数据权限。
-- **多租户**：支持多租户模式与租户隔离。
-- **基础设施**：国际化、多布局、暗黑模式、全屏、水印、接口文档、代码生成器。
+- **基础设施**：多布局、暗黑模式、全屏、水印、接口文档、代码生成器。
 - **数据交互**：支持 Mock 数据与线上接口文档，配套 Java / Node 后端源码。
 - **持续更新**：项目持续开源更新，跟进主流技术栈。
 
@@ -127,10 +126,10 @@ npx skills add https://github.com/youlaitech/youlai-skills --skill vue-admin
 | [youlai-gin](https://gitee.com/youlaiorg/youlai-gin) | Go + Gorm | Go | ✅️ |
 | [youlai-django](https://gitee.com/youlaiorg/youlai-django) | Django + DRF | Python | ✅️ |
 | [youlai-fastapi](https://gitee.com/youlaiorg/youlai-fastapi) | FastAPI + SQLAlchemy | Python | ✅️ |
-| [youlai-laravel](https://gitee.com/youlaiorg/youlai-laravel) | Laravel + Eloquent | PHP | ✅️ |
 | [youlai-think](https://gitee.com/youlaiorg/youlai-think) | ThinkPHP + ThinkORM | PHP | ✅️ |
 | [youlai-aspnet](https://gitee.com/youlaiorg/youlai-aspnet) | ASP.NET Core + EF Core | C# | ✅️ |
 | [youlai-axum](https://gitee.com/youlaiorg/youlai-axum) | Axum + SeaORM | Rust | ✅️ |
+| [youlai-laravel](https://gitee.com/youlaiorg/youlai-laravel) | Laravel + Eloquent | PHP | ❌️ |
 
 > 九种后端共享同一套 **RESTful API 规范** 和 **数据库结构**，前端可无缝切换。
 
@@ -142,8 +141,8 @@ npx skills add https://github.com/youlaitech/youlai-skills --skill vue-admin
 | [youlai-boot-flex](https://gitee.com/youlaiorg/youlai-boot-flex) | youlai-boot | 改用 MyBatis-Flex | ✅️ |
 | [youlai-boot (db-pg)](https://gitee.com/youlaiorg/youlai-boot/tree/db-pg) | youlai-boot | PostgreSQL 数据库分支 | ✅️ |
 | [youlai-boot (multi-module)](https://gitee.com/youlaiorg/youlai-boot/tree/multi-module) | youlai-boot | 多模块工程拆分 | ✅️ |
-| [youlai-boot (spring-boot-3)](https://gitee.com/youlaiorg/youlai-boot/tree/spring-boot-3) | youlai-boot | Spring Boot 3 兼容分支 | ✅️ |
 | [youlai-nest (multi-tenant)](https://gitee.com/youlaiorg/youlai-nest/tree/multi-tenant) | youlai-nest | 多租户 SaaS，租户隔离与租户配置 | ✅️ |
+| [youlai-boot (spring-boot-3)](https://gitee.com/youlaiorg/youlai-boot/tree/spring-boot-3) | youlai-boot | Spring Boot 3 兼容分支 | ❌️ |
 
 ## 开发指南
 
@@ -172,9 +171,9 @@ pnpm run build
 
 前端默认使用线上接口，也可切换为本地 Mock 或对接本地后端。
 
-**本地 Mock**：将 `.env.development` 的 `VITE_MOCK_DEV_SERVER` 设为 `true` 即启用本地 Mock 接口，无需后端即可独立开发。
+**本地 Mock**：将 `.env.development` 的 `VITE_MOCK_ENABLED` 设为 `true` 即启用本地 Mock 接口，无需后端即可独立开发。
 
-**对接后端**：九种后端默认端口均为 `8000`，将 `.env.development` 的 `VITE_APP_API_URL` 改为 `http://localhost:8000` 并启动对应后端即可（主推 Java 后端 [youlai-boot](https://gitee.com/youlaiorg/youlai-boot.git)，其余见各自仓库 README）。
+**对接后端**：九种后端默认端口均为 `8000`，将 `.env.development` 的 `VITE_PROXY_TARGET` 改为 `http://localhost:8000` 并启动对应后端即可（主推 Java 后端 [youlai-boot](https://gitee.com/youlaiorg/youlai-boot.git)，其余见各自仓库 README）。
 
 ## 提交规范
 
