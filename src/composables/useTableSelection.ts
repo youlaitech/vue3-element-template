@@ -12,11 +12,6 @@ import { computed, ref } from "vue";
  * - 不和 API 请求合并
  *
  * @template T 数据项类型，必须包含可选 `id` 属性
- *
- * @example
- * ```ts
- * const { selectedIds, hasSelection, handleSelectionChange } = useTableSelection<RoleItem>();
- * ```
  */
 export function useTableSelection<T extends { id?: string | number }>() {
   // 选中的数据项 ID 列表
