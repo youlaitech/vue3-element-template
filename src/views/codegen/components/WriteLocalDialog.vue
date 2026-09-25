@@ -152,6 +152,7 @@ const emit = defineEmits<{
   confirmWrite: [];
 }>();
 
+// 根据写入范围检查目录是否都选好了
 const dirReady = computed(() => {
   if (props.writeScope === "all") {
     return !!props.frontendDirPath && !!props.backendDirPath;

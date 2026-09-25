@@ -2,7 +2,7 @@
   <div>
     <h3 text-center m-0 mb-20px>重置密码</h3>
     <el-form ref="formRef" :model="model" :rules="rules" size="large">
-      <!-- 用户名"-->
+      <!-- 用户名 -->
       <el-form-item prop="username">
         <el-input v-model.trim="model.username" placeholder="用户名">
           <template #prefix>
@@ -25,6 +25,9 @@
 import type { FormInstance } from "element-plus";
 
 const emit = defineEmits(["update:modelValue"]);
+/**
+ * 切回登录表单
+ */
 const toLogin = () => emit("update:modelValue", "login");
 
 const model = ref({
@@ -45,6 +48,9 @@ const rules = computed(() => {
 
 const formRef = ref<FormInstance>();
 
+/**
+ * 提交重置密码表单
+ */
 const submit = async () => {
   await formRef.value?.validate();
   ElMessage.warning("开发中 ...");

@@ -1,10 +1,14 @@
 import { Storage } from "./storage";
 import { STORAGE_KEYS, ROLE_ROOT } from "@/constants";
 import { useUserStoreHook } from "@/stores/user";
-import router from "@/router";
 
-// 负责本地凭证与偏好的读写
+/**
+ * 本地凭证与偏好读写
+ */
 export const AuthStorage = {
+  /**
+   * 读取访问令牌
+   */
   getAccessToken(): string {
     const isRememberMe = Storage.get<boolean>(STORAGE_KEYS.REMEMBER_ME, false);
     return isRememberMe
@@ -12,6 +16,9 @@ export const AuthStorage = {
       : Storage.sessionGet(STORAGE_KEYS.ACCESS_TOKEN, "");
   },
 
+  /**
+   * 读取刷新令牌
+   */
   getRefreshToken(): string {
     const isRememberMe = Storage.get<boolean>(STORAGE_KEYS.REMEMBER_ME, false);
     return isRememberMe
@@ -19,6 +26,9 @@ export const AuthStorage = {
       : Storage.sessionGet(STORAGE_KEYS.REFRESH_TOKEN, "");
   },
 
+  /**
+   * 写入令牌，按"记住我"决定存本地还是会话
+   */
   setTokens(accessToken: string, refreshToken: string, rememberMe: boolean): void {
     Storage.set(STORAGE_KEYS.REMEMBER_ME, rememberMe);
     if (rememberMe) {
@@ -32,6 +42,9 @@ export const AuthStorage = {
     }
   },
 
+  /**
+   * 清空令牌
+   */
   clearAuth(): void {
     Storage.remove(STORAGE_KEYS.ACCESS_TOKEN);
     Storage.remove(STORAGE_KEYS.REFRESH_TOKEN);
@@ -39,64 +52,30 @@ export const AuthStorage = {
     Storage.sessionRemove(STORAGE_KEYS.REFRESH_TOKEN);
   },
 
+  /**
+   * 读取"记住我"偏好
+   */
   getRememberMe(): boolean {
     return Storage.get<boolean>(STORAGE_KEYS.REMEMBER_ME, false);
   },
 };
 
 /**
- * 权限判断
+ * 权限判断（v-hasPerm 指令共用本实现）
  */
-export function hasPerm(value: string | string[], type: "button" | "role" = "button"): boolean {
+export function hasPerm(value: string | string[]): boolean {
   const { roles, perms } = useUserStoreHook().userInfo;
 
   if (!roles || !perms) {
     return false;
   }
 
-  // 超级管理员拥有所有权限
-  if (type === "button" && roles.includes(ROLE_ROOT)) {
+  const requiredPerms = Array.isArray(value) ? value : [value];
+
+  // 超级管理员或通配权限直接放行
+  if (roles.includes(ROLE_ROOT) || requiredPerms.includes("*:*:*")) {
     return true;
   }
 
-  const auths = type === "button" ? perms : roles;
-  return typeof value === "string"
-    ? auths.includes(value)
-    : value.some((perm) => auths.includes(perm));
-}
-
-let redirectingToLogin = false;
-
-/**
- * 重定向到登录页面
- */
-export async function redirectToLogin(
-  message: string = "请重新登录",
-  notify: boolean = true
-): Promise<void> {
-  if (redirectingToLogin) return;
-  redirectingToLogin = true;
-
-  if (notify) {
-    ElNotification({
-      title: "提示",
-      message,
-      type: "warning",
-      duration: 3000,
-    });
-  }
-
-  await useUserStoreHook().resetAllState();
-
-  try {
-    // 跳转到登录页，保留当前路由用于登录后跳转
-    const currentPath = router.currentRoute.value.fullPath;
-    await router.push(`/login?redirect=${encodeURIComponent(currentPath)}`);
-  } catch (error) {
-    console.error("Redirect to login error:", error);
-    // 强制跳转，即使路由重定向失败
-    window.location.href = "/login";
-  } finally {
-    redirectingToLogin = false;
-  }
+  return requiredPerms.some((perm) => perms.includes(perm));
 }

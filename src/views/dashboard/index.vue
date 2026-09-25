@@ -261,11 +261,11 @@ import {
   Document,
   VideoPlay,
 } from "@element-plus/icons-vue";
-import { useOnlineCount } from "@/composables";
+import { useOnlineUsers } from "./composables/useOnlineUsers";
 
 const userStore = useUserStore();
 const settingsStore = useSettingsStore();
-const { onlineUserCount, isConnected } = useOnlineCount();
+const { onlineUserCount, isConnected } = useOnlineUsers();
 
 const hours = new Date().getHours();
 const greetings = computed(() => {
@@ -401,13 +401,21 @@ const visitTrendDateRange = ref(7);
 const visitTrendData = ref<VisitTrendDetail>();
 const visitTrendChartOptions = ref({});
 
+/**
+ * 读取 CSS 变量，取不到时用兜底值
+ */
 function getCssVar(name: string, fallback: string) {
   if (typeof window === "undefined") return fallback;
+
   return getComputedStyle(document.documentElement).getPropertyValue(name).trim() || fallback;
 }
 
+/**
+ * 给颜色加上透明度
+ */
 function colorWithAlpha(color: string, alpha: number) {
   const value = color.trim();
+
   if (value.startsWith("#")) {
     const hex =
       value.length === 4
@@ -417,21 +425,30 @@ function colorWithAlpha(color: string, alpha: number) {
     const r = (rgb >> 16) & 255;
     const g = (rgb >> 8) & 255;
     const b = rgb & 255;
+
     return `rgba(${r}, ${g}, ${b}, ${alpha})`;
   }
+
   const parts = value.match(/\d+(\.\d+)?/g);
   if (parts && parts.length >= 3) {
     return `rgba(${parts[0]}, ${parts[1]}, ${parts[2]}, ${alpha})`;
   }
+
   return value;
 }
 
+/**
+ * 拉取访问概览数据
+ */
 function fetchVisitOverviewData() {
   LogAPI.getVisitOverview().then((d) => {
     visitOverviewData.value = d;
   });
 }
 
+/**
+ * 拉取访问趋势数据
+ */
 function fetchVisitTrendData() {
   const s = dayjs()
     .subtract(visitTrendDateRange.value - 1, "day")
@@ -445,6 +462,9 @@ function fetchVisitTrendData() {
   });
 }
 
+/**
+ * 更新访问趋势图表配置
+ */
 function updateVisitTrendChartOptions(d: VisitTrendDetail) {
   const primary = getCssVar("--el-color-primary", "#409eff");
   const success = getCssVar("--el-color-success", "#67c23a");
@@ -547,6 +567,7 @@ watch(
   () => [settingsStore.resolvedTheme, settingsStore.themeColors],
   () => {
     if (!visitTrendData.value) return;
+
     requestAnimationFrame(() => {
       if (visitTrendData.value) updateVisitTrendChartOptions(visitTrendData.value);
     });

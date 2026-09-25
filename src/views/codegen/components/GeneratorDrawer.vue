@@ -1,7 +1,14 @@
 <template>
-  <el-drawer v-model="visible" :title="title" size="90%" destroy-on-close @close="handleClose">
+  <el-drawer
+    v-model="visible"
+    class="gen-drawer"
+    :title="title"
+    size="90%"
+    destroy-on-close
+    @close="handleClose"
+  >
     <!-- 步骤导航 -->
-    <el-steps :active="currentStep" align-center finish-status="success">
+    <el-steps class="drawer-steps" :active="currentStep" align-center finish-status="success">
       <el-step v-for="step in STEPS" :key="step.step">
         <template #icon>
           <el-icon :size="20"><component :is="step.icon" /></el-icon>
@@ -50,7 +57,7 @@
     <!-- 底部操作栏 -->
     <template #footer>
       <div class="drawer-footer">
-        <div>
+        <div class="flex gap-3">
           <el-button v-if="currentStep > STEP.BASIC_CONFIG" @click="handlePrev">
             <el-icon><Back /></el-icon>
             {{ STEPS[currentStep].prevText }}
@@ -145,8 +152,15 @@ const basicConfigRef = ref();
 const fieldConfigRef = ref();
 const previewRef = ref();
 
-const { genConfigFormData, menuOptions, dictOptions, loadConfig, saveConfig, validateBasic } =
-  useGenConfig();
+const {
+  genConfigFormData,
+  menuOptions,
+  dictOptions,
+  loadConfig,
+  saveConfig,
+  validateBasic,
+  applyDefaults,
+} = useGenConfig();
 
 const {
   filteredTreeData,
@@ -193,6 +207,9 @@ watch(currentStep, (val) => {
   }
 });
 
+/**
+ * 打开生成向导并加载表配置
+ */
 async function open(tableName: string) {
   currentTableName.value = tableName;
   currentStep.value = STEP.BASIC_CONFIG;
@@ -211,12 +228,18 @@ async function open(tableName: string) {
   }
 }
 
+/**
+ * 回到上一步
+ */
 async function handlePrev() {
   if (currentStep.value === STEP.PREVIEW) {
+    // 从预览回退要重新加载，不然下次进来数据会有问题
     genConfigFormData.value = { fieldConfigs: [] };
     loading.value = true;
     try {
-      genConfigFormData.value = await GeneratorAPI.getGenConfig(currentTableName.value);
+      genConfigFormData.value = applyDefaults(
+        await GeneratorAPI.getGenConfig(currentTableName.value)
+      );
     } finally {
       loading.value = false;
     }
@@ -226,6 +249,9 @@ async function handlePrev() {
   }
 }
 
+/**
+ * 进入下一步
+ */
 async function handleNext() {
   if (currentStep.value === STEP.BASIC_CONFIG) {
     if (!validateBasic()) return;
@@ -251,15 +277,22 @@ async function handleNext() {
 
   if (currentStep.value === STEP.PREVIEW) {
     const pageType = genConfigFormData.value.pageType || "classic";
-    GeneratorAPI.download(currentTableName.value, pageType as "classic" | "curd", "ts");
+    GeneratorAPI.download(currentTableName.value, pageType as "classic" | "crud", "ts");
   }
 }
 
+/**
+ * 生成预览文件
+ */
 async function doPreview(tableName: string) {
   const files = await handlePreview(tableName);
+  // 把文件列表传给写入本地模块，这样点写入时能拿到数据
   setPreviewFiles(files);
 }
 
+/**
+ * 关闭生成向导
+ */
 function handleClose() {
   visible.value = false;
   fieldConfigRef.value?.destroySort();
@@ -269,6 +302,17 @@ defineExpose({ open });
 </script>
 
 <style scoped lang="scss">
+.gen-drawer {
+  // body 默认 20px 上内边距落在滚动容器内，滚动内容会从头顶露出，上间距改由步骤条承担
+  :deep(.el-drawer__body) {
+    padding-top: 0;
+  }
+}
+
+.drawer-steps {
+  padding-top: 20px;
+}
+
 .drawer-content {
   min-height: 400px;
 }

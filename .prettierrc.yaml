@@ -32,8 +32,8 @@ trailingComma: "es5"
 useTabs: false
 # Vue 文件中的 <script> 和 <style> 不增加额外的缩进
 vueIndentScriptAndStyle: false
-# 根据系统自动检测换行符
-endOfLine: "auto"
+# 统一使用 LF 换行符，避免跨平台差异产生大量 diff
+endOfLine: "lf"
 # 对 HTML 文件应用特定格式化规则
 overrides:
   - files: "*.html"

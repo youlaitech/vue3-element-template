@@ -10,7 +10,7 @@ import { mockDevServerPlugin } from "vite-plugin-mock-dev-server";
 
 import UnoCSS from "unocss/vite";
 import { resolve } from "path";
-import { name, version } from "./package.json";
+import { name, version } from "./package.json" with { type: "json" };
 
 // 平台名称、版本信息
 const __APP_INFO__ = {
@@ -18,10 +18,8 @@ const __APP_INFO__ = {
   buildTimestamp: Date.now(),
 };
 
-// ESM 模式下使用 import.meta.dirname（Node 20.11+）
 const pathSrc = resolve(import.meta.dirname, "src");
 
-// Vite配置  https://cn.vitejs.dev/config
 export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
   const env = loadEnv(mode, process.cwd());
 
@@ -44,16 +42,16 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
       port: +env.VITE_APP_PORT,
       open: true,
       proxy: {
-        [env.VITE_APP_BASE_API]: {
+        [env.VITE_API_BASE]: {
           changeOrigin: true,
-          target: env.VITE_APP_API_URL,
-          rewrite: (path: string) => path.replace(new RegExp(`^${env.VITE_APP_BASE_API}`), ""),
+          target: env.VITE_PROXY_TARGET,
+          rewrite: (path: string) => path.replace(new RegExp(`^${env.VITE_API_BASE}`), ""),
         },
       },
     },
     plugins: [
       vue(),
-      ...(env.VITE_MOCK_DEV_SERVER === "true" ? [mockDevServerPlugin()] : []),
+      ...(env.VITE_MOCK_ENABLED === "true" ? [mockDevServerPlugin()] : []),
       UnoCSS(),
       // API 自动导入
       AutoImport({
@@ -111,7 +109,8 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
         "element-plus/es",
         "element-plus/es/locale/lang/en",
         "element-plus/es/locale/lang/zh-cn",
-        // Element Plus 组件样式预构建（避免按需发现时触发页面重载）
+        // Element Plus 组件样式预构建：按 src 实际用到的组件清单硬编码，首启即预加载，
+        // 避免首次使用某组件时触发依赖重优化导致页面刷新
         ...[
           "alert",
           "avatar",
@@ -162,6 +161,7 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
           "radio",
           "radio-button",
           "radio-group",
+          "result",
           "row",
           "scrollbar",
           "select",

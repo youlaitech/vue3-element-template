@@ -27,13 +27,18 @@ defineProps({
   },
 });
 
-const appStore = useAppStore();
-
 const langOptions = [
   { label: "中文", value: LanguageEnum.ZH_CN },
   { label: "English", value: LanguageEnum.EN },
 ];
 
+const appStore = useAppStore();
+
+/**
+ * 处理语言切换
+ *
+ * @param lang 语言（zh-cn、en）
+ */
 function handleLanguageChange(lang: string) {
   appStore.changeLanguage(lang);
 }

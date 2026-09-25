@@ -64,11 +64,11 @@
             <el-icon v-if="codeLoading" class="is-loading" size="20"><Loading /></el-icon>
             <img
               v-else-if="captchaBase64"
-              h-full
+              border-rd-4px
               w-full
+              h-full
               block
               object-cover
-              border-rd-4px
               shadow="[0_0_0_1px_var(--el-border-color)_inset]"
               :src="captchaBase64"
               alt="code"
@@ -101,9 +101,13 @@
 <script setup lang="ts">
 import type { FormInstance } from "element-plus";
 import { Lock } from "@element-plus/icons-vue";
-import AuthAPI, { type LoginRequest } from "@/api/auth";
+import AuthAPI from "@/api/auth";
+import type { LoginRequest } from "@/api/auth";
 
 const emit = defineEmits(["update:modelValue"]);
+/**
+ * 切回登录表单
+ */
 const toLogin = () => emit("update:modelValue", "login");
 
 onMounted(() => getCaptcha());
@@ -111,7 +115,7 @@ onMounted(() => getCaptcha());
 const formRef = ref<FormInstance>();
 const loading = ref(false); // 按钮 loading 状态
 const isCapsLock = ref(false); // 是否大写锁定
-const captchaBase64 = ref(); // 验证码图片Base64字符串
+const captchaBase64 = ref(); // 验证码图片 Base64 字符串
 const isRead = ref(false);
 
 interface Model extends LoginRequest {
@@ -160,14 +164,8 @@ const rules = computed(() => {
         trigger: "blur",
       },
       {
-        validator: (rule: any, value: any, callback: any) => {
-          if (value === "") {
-            callback(new Error("请输入密码"));
-          } else if (value !== model.value.password) {
-            callback(new Error("两次密码输入不一致"));
-          } else {
-            callback();
-          }
+        validator: (_: any, value: string) => {
+          return value === model.value.password;
         },
         trigger: "blur",
         message: "两次密码输入不一致",
@@ -185,6 +183,9 @@ const rules = computed(() => {
 
 // 获取验证码
 const codeLoading = ref(false);
+/**
+ * 刷新验证码
+ */
 function getCaptcha() {
   codeLoading.value = true;
   AuthAPI.getCaptcha()
@@ -195,7 +196,9 @@ function getCaptcha() {
     .finally(() => (codeLoading.value = false));
 }
 
-// 检查输入大小写
+/**
+ * 检查输入大小写
+ */
 function checkCapsLock(event: KeyboardEvent) {
   // 防止浏览器密码自动填充时报错
   if (event instanceof KeyboardEvent) {
@@ -203,6 +206,9 @@ function checkCapsLock(event: KeyboardEvent) {
   }
 }
 
+/**
+ * 提交注册表单
+ */
 const submit = async () => {
   await formRef.value?.validate();
   ElMessage.warning("开发中 ...");

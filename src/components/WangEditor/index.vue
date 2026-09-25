@@ -49,8 +49,9 @@ defineProps({
     default: "500px",
   },
 });
-
-// 双向绑定 - 直接使用 v-model，无需手动 setHtml
+/**
+ * 双向绑定 - 直接使用 v-model，无需手动 setHtml
+ */
 const modelValue = defineModel<string>({
   type: String,
   required: false,
@@ -71,22 +72,24 @@ const editorConfig: Partial<IEditorConfig> = {
   placeholder: "请输入内容..",
   MENU_CONF: {
     uploadImage: {
-      customUpload(file: File, insertFn: InsertFnType) {
-        // 上传图片
-        FileAPI.uploadFile(file).then((res) => {
-          // 插入图片
-          insertFn(res.url, res.name, res.url);
-        });
+      async customUpload(file: File, insertFn: InsertFnType) {
+        const data = await FileAPI.uploadFile(file);
+        insertFn(data.url, data.name, data.url);
       },
     } as any,
   },
 };
 
-// 记录 editor 实例
+/**
+ * 记录 editor 实例
+ */
 const handleCreated = (editor: any) => {
   editorRef.value = editor;
 };
 
+/**
+ * 编辑器内容变化后同步回 v-model
+ */
 const handleChange = () => {
   innerUpdating.value = true;
   Promise.resolve().then(() => {
@@ -103,7 +106,7 @@ watch(
   }
 );
 
-// 组件销毁时，也及时销毁编辑器，重要！
+// 组件销毁时，及时销毁编辑器
 onBeforeUnmount(() => {
   const editor = editorRef.value;
   if (editor == null) return;

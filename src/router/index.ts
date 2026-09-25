@@ -1,6 +1,9 @@
 import type { App } from "vue";
 import { createRouter, createWebHashHistory, type RouteRecordRaw } from "vue-router";
 
+/**
+ * 布局组件，供各路由复用（懒加载）
+ */
 export const Layout = () => import("@/layouts/index.vue");
 
 // 静态路由
@@ -78,7 +81,9 @@ const router = createRouter({
   scrollBehavior: () => ({ left: 0, top: 0 }),
 });
 
-// 全局注册 router
+/**
+ * 全局注册 router
+ */
 export function setupRouter(app: App<Element>) {
   app.use(router);
 }

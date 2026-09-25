@@ -4,8 +4,10 @@ import type { PageResult } from "@/api/common";
 
 const GENERATOR_BASE_URL = "/api/v1/codegen";
 
-// 构建预览和下载接口的查询参数
-const buildCodegenParams = (pageType?: "classic" | "curd", type?: "ts" | "js") => {
+/**
+ * 构建预览和下载接口的查询参数
+ */
+const buildCodegenParams = (pageType?: "classic" | "crud", type?: "ts" | "js") => {
   const params: Record<string, string> = {};
   if (pageType) {
     params.pageType = pageType;
@@ -17,7 +19,9 @@ const buildCodegenParams = (pageType?: "classic" | "curd", type?: "ts" | "js") =
 };
 
 const GeneratorAPI = {
-  /** 获取数据表分页列表 */
+  /**
+   * 获取数据表分页列表
+   */
   getTablePage(params: TableQueryParams) {
     return request<unknown, PageResult<TableItem>>({
       url: `${GENERATOR_BASE_URL}/table`,
@@ -26,7 +30,9 @@ const GeneratorAPI = {
     });
   },
 
-  /** 获取代码生成配置 */
+  /**
+   * 获取代码生成配置
+   */
   getGenConfig(tableName: string) {
     return request<unknown, GenConfigForm>({
       url: `${GENERATOR_BASE_URL}/${tableName}/config`,
@@ -34,7 +40,9 @@ const GeneratorAPI = {
     });
   },
 
-  /** 保存代码生成配置 */
+  /**
+   * 保存代码生成配置
+   */
   saveGenConfig(tableName: string, data: GenConfigForm) {
     return request({
       url: `${GENERATOR_BASE_URL}/${tableName}/config`,
@@ -43,8 +51,10 @@ const GeneratorAPI = {
     });
   },
 
-  /** 获取代码生成预览数据 */
-  getPreviewData(tableName: string, pageType?: "classic" | "curd", type?: "ts" | "js") {
+  /**
+   * 获取代码生成预览数据
+   */
+  getPreviewData(tableName: string, pageType?: "classic" | "crud", type?: "ts" | "js") {
     return request<unknown, GeneratorPreviewItem[]>({
       url: `${GENERATOR_BASE_URL}/${tableName}/preview`,
       method: "get",
@@ -52,7 +62,9 @@ const GeneratorAPI = {
     });
   },
 
-  /** 重置代码生成配置 */
+  /**
+   * 重置代码生成配置
+   */
   resetGenConfig(tableName: string) {
     return request({
       url: `${GENERATOR_BASE_URL}/${tableName}/config`,
@@ -60,8 +72,10 @@ const GeneratorAPI = {
     });
   },
 
-  /** 下载代码生成 ZIP 文件 */
-  download(tableName: string, pageType?: "classic" | "curd", type?: "ts" | "js") {
+  /**
+   * 下载代码生成 ZIP 文件
+   */
+  download(tableName: string, pageType?: "classic" | "crud", type?: "ts" | "js") {
     return request({
       url: `${GENERATOR_BASE_URL}/${tableName}/download`,
       method: "get",
@@ -96,5 +110,4 @@ const GeneratorAPI = {
 
 export default GeneratorAPI;
 
-// 重导出类型
 export * from "./types";

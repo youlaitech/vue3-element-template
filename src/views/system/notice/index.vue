@@ -1,4 +1,4 @@
-﻿<template>
+<template>
   <div class="page-container">
     <el-card class="page-search" shadow="never">
       <el-form ref="queryFormRef" :model="params" :inline="true" label-suffix=":">
@@ -90,15 +90,18 @@
               <el-tag v-if="scope.row.targetType === NOTICE_TARGET_ALL" type="warning">全体</el-tag>
               <el-tag v-if="scope.row.targetType === NOTICE_TARGET_SPECIFIED" type="success">
                 指定
-            </el-tag>
-          </template>
+              </el-tag>
+            </template>
           </el-table-column>
           <el-table-column align="center" label="发布状态" min-width="100">
             <template #default="scope">
               <el-tag v-if="scope.row.publishStatus === NOTICE_STATUS_DRAFT" type="info">
                 未发布
               </el-tag>
-              <el-tag v-else-if="scope.row.publishStatus === NOTICE_STATUS_PUBLISHED" type="success">
+              <el-tag
+                v-else-if="scope.row.publishStatus === NOTICE_STATUS_PUBLISHED"
+                type="success"
+              >
                 已发布
               </el-tag>
               <el-tag v-else-if="scope.row.publishStatus === NOTICE_STATUS_REVOKED" type="warning">
@@ -117,7 +120,10 @@
                 <span>发布时间：</span>
                 <span>{{ scope.row.publishTime || "-" }}</span>
               </div>
-              <div v-else-if="scope.row.publishStatus === NOTICE_STATUS_REVOKED" class="flex-x-start">
+              <div
+                v-else-if="scope.row.publishStatus === NOTICE_STATUS_REVOKED"
+                class="flex-x-start"
+              >
                 <span>撤回时间：</span>
                 <span>{{ scope.row.revokeTime || "-" }}</span>
               </div>
@@ -323,15 +329,15 @@ const { toggle: toggleFullscreen } = useFullscreen(tableWrapperRef);
 const queryFormRef = ref<FormInstance>();
 const noticeFormRef = ref<FormInstance>();
 
-// 通知发布状态：0=未发布，1=已发布，-1=已撤回。
+// 通知发布状态：0=未发布，1=已发布，-1=已撤回
 const NOTICE_STATUS_DRAFT = 0;
 const NOTICE_STATUS_PUBLISHED = 1;
 const NOTICE_STATUS_REVOKED = -1;
-/** 通知目标类型：1=全体，2=指定用户。 */
+// 通知目标类型：1=全体，2=指定用户
 const NOTICE_TARGET_ALL = 1;
 const NOTICE_TARGET_SPECIFIED = 2;
 
-/** 分页表格数据管理 */
+// 分页表格数据管理
 const { loading, list, total, params, fetchData, handleQuery, handleResetQuery } = usePageTable<
   NoticeItem,
   NoticeQueryParams
@@ -388,9 +394,8 @@ const detailDialog = reactive({
 const currentNotice = ref<NoticeDetail>({});
 
 /**
- * 将后端返回的 `targetUserIds`（可能是数组、JSON 字符串、逗号分隔字符串）标准化为数字数组。
- *
- * 用于编辑回显时把后端字段转换成表单 `targetUsers` 字段。
+ * 将后端返回的 `targetUserIds`（可能是数组、JSON 字符串、逗号分隔字符串）标准化为数字数组
+ * 用于编辑回显时把后端字段转换成表单 `targetUsers` 字段
  *
  * @param value 后端返回的原始值
  */
@@ -398,6 +403,9 @@ function normalizeTargetUsers(value?: unknown): number[] {
   if (!value) {
     return [];
   }
+  /**
+   * 把数组转成数字数组，过滤掉非数字
+   */
   const toNumberArray = (arr: unknown[]): number[] =>
     arr.map((v) => Number(v)).filter((v) => Number.isFinite(v));
   if (Array.isArray(value)) {
@@ -426,9 +434,8 @@ function normalizeTargetUsers(value?: unknown): number[] {
 }
 
 /**
- * 构造提交给后端的 payload。
- *
- * 字段名转换：targetUsers → targetUserIds。
+ * 构造提交给后端的 payload
+ * 字段名转换：targetUsers → targetUserIds
  */
 function buildSubmitPayload(): Omit<NoticeForm, "targetUsers"> & { targetUserIds: number[] } {
   const { targetUsers, ...rest } = formData;
@@ -439,9 +446,8 @@ function buildSubmitPayload(): Omit<NoticeForm, "targetUsers"> & { targetUserIds
 }
 
 /**
- * 重置表单数据和验证状态。
- *
- * 重置表单数据。
+ * 重置表单数据和验证状态
+ * 重置表单数据
  */
 function resetForm(): void {
   noticeFormRef.value?.resetFields();
@@ -453,14 +459,15 @@ function resetForm(): void {
 }
 
 /**
- * 切换表单弹窗的全屏状态。
+ * 切换表单弹窗的全屏状态
  */
 function toggleDialogFullscreen(): void {
   dialogState.fullscreen = !dialogState.fullscreen;
 }
 
 /**
- * 打开新增/编辑通知弹窗。
+ * 打开新增/编辑通知弹窗
+ *
  * @param id 通知 ID（编辑时传入）
  */
 async function openDialog(id?: string): Promise<void> {
@@ -485,7 +492,7 @@ async function openDialog(id?: string): Promise<void> {
 }
 
 /**
- * 关闭表单弹窗并重置表单。
+ * 关闭表单弹窗并重置表单
  */
 function closeDialog(): void {
   dialogState.visible = false;
@@ -522,7 +529,7 @@ async function handleSubmit(): Promise<void> {
 }
 
 /**
- * 发布通知公告。
+ * 发布通知公告
  *
  * @param id 通知 ID
  */
@@ -533,7 +540,7 @@ async function handlePublish(id: string): Promise<void> {
 }
 
 /**
- * 撤回通知公告。
+ * 撤回通知公告
  *
  * @param id 通知 ID
  */
@@ -544,7 +551,7 @@ async function handleRevoke(id: string): Promise<void> {
 }
 
 /**
- * 删除单个或批量通知。
+ * 删除单个或批量通知
  *
  * @param id 指定时删除单个通知；不指定时删除表格勾选项
  */
@@ -577,7 +584,7 @@ async function handleDelete(id?: string): Promise<void> {
 }
 
 /**
- * 打开通知详情弹窗。
+ * 打开通知详情弹窗
  *
  * @param id 通知 ID
  */
@@ -587,7 +594,7 @@ async function openDetailDialog(id: string): Promise<void> {
 }
 
 /**
- * 关闭通知详情弹窗。
+ * 关闭通知详情弹窗
  */
 function closeDetailDialog(): void {
   detailDialog.visible = false;

@@ -10,8 +10,9 @@ import { setupDirective } from "@/directives";
 import { setupRouter } from "@/router";
 import { setupStore } from "@/stores";
 import * as ElementPlusIcons from "@element-plus/icons-vue";
-import { setupPermissionGuard } from "@/router/guards/permission";
-import { setupSse } from "@/composables";
+import { setupPermissionGuard } from "@/router/guards";
+import { useSse } from "@/utils/sse";
+import { useDictStoreHook } from "@/stores/dict";
 
 const app = createApp(App);
 
@@ -22,6 +23,9 @@ setupStore(app);
 Object.entries(ElementPlusIcons).forEach(([name, comp]) => app.component(name, comp));
 
 setupPermissionGuard();
-setupSse();
+
+// 建立 SSE 连接并开启字典实时同步
+useSse().connect();
+useDictStoreHook().setupDictSync();
 
 app.mount("#app");

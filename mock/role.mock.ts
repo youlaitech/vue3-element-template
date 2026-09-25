@@ -7,30 +7,12 @@ export default defineMock([
     body: {
       code: "00000",
       data: [
-        {
-          value: "2",
-          label: "系统管理员",
-        },
-        {
-          value: "4",
-          label: "部门主管",
-        },
-        {
-          value: "5",
-          label: "部门成员",
-        },
-        {
-          value: "6",
-          label: "普通员工",
-        },
-        {
-          value: "7",
-          label: "自定义权限用户",
-        },
-        {
-          value: "3",
-          label: "访问游客",
-        },
+        { value: "2", label: "系统管理员" },
+        { value: "4", label: "部门主管" },
+        { value: "5", label: "部门成员" },
+        { value: "6", label: "普通员工" },
+        { value: "7", label: "自定义权限用户" },
+        { value: "3", label: "访问游客" },
       ],
       msg: "一切ok",
     },

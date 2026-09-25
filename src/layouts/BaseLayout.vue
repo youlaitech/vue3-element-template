@@ -15,6 +15,7 @@ import { useLayout } from "./composables/useLayout";
 
 withDefaults(
   defineProps<{
+    /** 移动端展开侧边栏时是否显示遮罩层（LeftLayout 需要，MixLayout 不需要） */
     showOverlay?: boolean;
   }>(),
   {

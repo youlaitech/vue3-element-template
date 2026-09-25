@@ -1,6 +1,6 @@
 <template>
   <el-scrollbar>
-    <div :class="{ hidden: hidden }" class="pagination">
+    <div :class="{ 'is-hidden': hidden }" class="pagination-container">
       <el-pagination
         v-model:current-page="currentPage"
         v-model:page-size="pageSize"
@@ -16,49 +16,43 @@
 </template>
 
 <script setup lang="ts">
-const props = defineProps({
-  total: {
-    type: Number as PropType<number>,
-    default: 0,
-  },
-  pageSizes: {
-    type: Array as PropType<number[]>,
-    default() {
-      return [10, 20, 30, 50];
-    },
-  },
-  layout: {
-    type: String,
-    default: "total, sizes, prev, pager, next, jumper",
-  },
-  background: {
-    type: Boolean,
-    default: true,
-  },
-  autoScroll: {
-    type: Boolean,
-    default: true,
-  },
-  hidden: {
-    type: Boolean,
-    default: false,
-  },
+interface Props {
+  /** 数据总条数 */
+  total?: number;
+  /** 每页条数选项，默认 [10, 20, 50, 100] */
+  pageSizes?: number[];
+  /** 分页布局，控制显示哪些子组件及其顺序 */
+  layout?: string;
+  /** 是否为分页按钮添加背景色 */
+  background?: boolean;
+  /** 是否隐藏整个分页条 */
+  hidden?: boolean;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  total: 0,
+  pageSizes: () => [10, 20, 50, 100],
+  layout: "total, sizes, prev, pager, next, jumper",
+  background: true,
+  hidden: false,
 });
 
-const emit = defineEmits(["pagination"]);
+const emit = defineEmits<{
+  /** 页码或每页条数变化时触发，回调当前页码与每页条数 */
+  pagination: [query: { page: number; limit: number }];
+}>();
 
-const currentPage = defineModel("page", {
-  type: Number,
-  required: true,
-  default: 1,
-});
+/**
+ * 当前页码，双向绑定到父组件的 page
+ */
+const currentPage = defineModel<number>("page", { default: 1 });
 
-const pageSize = defineModel("limit", {
-  type: Number,
-  required: true,
-  default: 10,
-});
+/**
+ * 每页条数，双向绑定到父组件的 limit
+ */
+const pageSize = defineModel<number>("limit", { default: 10 });
 
+// 数据总量变化后，若当前页超出最后一页，则回退到最后一页
 watch(
   () => props.total,
   (newVal: number) => {
@@ -70,22 +64,31 @@ watch(
   }
 );
 
+/**
+ * 切换每页条数时回到第一页，并触发分页请求
+ */
 function handleSizeChange(val: number) {
   currentPage.value = 1;
   emit("pagination", { page: currentPage.value, limit: val });
 }
 
+/**
+ * 切换页码时触发分页请求
+ */
 function handleCurrentChange(val: number) {
   emit("pagination", { page: val, limit: pageSize.value });
 }
 </script>
 
 <style lang="scss" scoped>
-.pagination {
-  padding: 12px;
+.pagination-container {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 14px;
+  overflow: visible;
+}
 
-  &.hidden {
-    display: none;
-  }
+.pagination-container.is-hidden {
+  display: none;
 }
 </style>

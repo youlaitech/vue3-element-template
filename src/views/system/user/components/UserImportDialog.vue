@@ -95,7 +95,9 @@ import { downloadFile } from "@/utils/download";
 
 const emit = defineEmits(["import-success"]);
 
-// 弹窗可见状态
+/**
+ * 弹窗可见状态
+ */
 const visible = defineModel("modelValue", {
   type: Boolean,
   required: true,
@@ -144,7 +146,7 @@ function handleFileExceed(): void {
  * 下载导入模板
  */
 function downloadTemplate(): void {
-  UserAPI.downloadTemplate().then((response: any) => {
+  UserAPI.downloadTemplate().then((response) => {
     downloadFile(response);
   });
 }

@@ -12,6 +12,10 @@
       <div class="layout-toolbar__item">
         <SizeSelect />
       </div>
+
+      <div class="layout-toolbar__item">
+        <NoticeCenter />
+      </div>
     </template>
 
     <div class="layout-toolbar__item layout-toolbar__item--profile">
@@ -20,16 +24,12 @@
           <div class="layout-user__avatar">
             <img :src="userStore.userInfo.avatar" class="layout-user__avatar-img" />
           </div>
-          <span class="layout-user__name">{{ userStore.userInfo.username }}</span>
+          <span class="layout-user__name">{{ userStore.userInfo.nickname }}</span>
         </div>
         <template #dropdown>
           <el-dropdown-menu>
-            <el-dropdown-item @click="handleProfileClick">
-              个人中心
-            </el-dropdown-item>
-            <el-dropdown-item divided @click="logout">
-              退出登录
-            </el-dropdown-item>
+            <el-dropdown-item @click="handleProfileClick">个人中心</el-dropdown-item>
+            <el-dropdown-item divided @click="logout">退出登录</el-dropdown-item>
           </el-dropdown-menu>
         </template>
       </el-dropdown>
@@ -152,7 +152,8 @@ function handleSettingsClick() {
 
     :deep(.el-tooltip__trigger),
     :deep(.fullscreen-trigger),
-    :deep(.size-trigger) {
+    :deep(.size-trigger),
+    :deep(.notice__trigger) {
       color: inherit;
     }
 

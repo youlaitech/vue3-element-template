@@ -43,7 +43,7 @@
 
 - **Permission Management**: Complete permission system for users, roles, menus, dictionaries, and departments.
 
-- **Essential Infrastructure**: Dynamic routing, button permissions, internationalization, code style, Git commit conventions, and common component encapsulation.
+- **Essential Infrastructure**: Dynamic routing, button permissions, code style, Git commit conventions, and common component encapsulation.
 
 - **Continuous Updates**: Since 2021, the project has maintained an open-source status with continuous updates, integrating new tools and dependencies in real time, and has accumulated a broad user base.
 
@@ -149,7 +149,7 @@ server {
 
 ## Local Mock
 
-The project supports both online API and local mock API. By default, it uses the online API. If you want to switch to the mock API, modify the value of `VITE_MOCK_DEV_SERVER` in the `.env.development` file to `true`.
+The project supports both online API and local mock API. By default, it uses the online API. If you want to switch to the mock API, modify the value of `VITE_MOCK_ENABLED` in the `.env.development` file to `true`.
 
 ## Backend API
 
@@ -157,7 +157,7 @@ The project supports both online API and local mock API. By default, it uses the
 
 1. Get the backend source code based on `Java` and `SpringBoot` from [youlai-boot](https://gitee.com/youlaiorg/youlai-boot.git).
 2. Follow the instructions in the backend project's README.md to set up the local environment.
-3. Modify the value of `VITE_APP_API_URL` in the `.env.development` file to `http://localhost:8989`, replacing it with the backend API URL.
+3. Modify the value of `VITE_PROXY_TARGET` in the `.env.development` file to `http://localhost:8989`, replacing it with the backend API URL.
 
 ## Notes
 

@@ -338,6 +338,9 @@ const drawerVisible = computed({
   set: (value) => (settingsStore.settingsVisible = value),
 });
 
+/**
+ * 取调色板的颜色列表
+ */
 function getPaletteColors(colors: ThemeColorMap) {
   return colorOptions.map((item) => colors[item.name]);
 }
@@ -346,29 +349,47 @@ const activePaletteName = computed(() =>
   settingsStore.activeThemePalette ? settingsStore.activeThemePalette.name : "自定义调色板"
 );
 
+/**
+ * 取颜色项的名称
+ */
 function getColorLabel(name: ThemeColorName) {
   return colorLabels[name] || name;
 }
 
+/**
+ * 展开或收起自定义颜色
+ */
 function toggleCustomColors(): void {
   isCustomColorsOpen.value = !isCustomColorsOpen.value;
 }
 
+/**
+ * 更新单个主题色
+ */
 function handleThemeColorChange(name: ThemeColorName, color: string | null): void {
   if (!color) return;
   settingsStore.updateThemeColor(name, color);
 }
 
+/**
+ * 切换侧边栏配色
+ */
 function setSidebarColor(value: string | number | boolean | undefined): void {
   if (value !== SidebarColor.CLASSIC_BLUE && value !== SidebarColor.MINIMAL_WHITE) return;
   settingsStore.sidebarColorScheme = value;
 }
 
+/**
+ * 切换导航布局
+ */
 function handleLayoutChange(layout: LayoutMode): void {
   if (settingsStore.layout === layout) return;
   settingsStore.layout = layout;
 }
 
+/**
+ * 复制当前 settings 默认配置片段
+ */
 async function copyCurrentSettings(): Promise<void> {
   try {
     copyLoading.value = true;
@@ -388,6 +409,9 @@ async function copyCurrentSettings(): Promise<void> {
   }
 }
 
+/**
+ * 恢复所有设置为默认值
+ */
 async function resetSettingsToDefault(): Promise<void> {
   try {
     await ElMessageBox.confirm("确定要重置所有设置为默认值吗？", "重置配置", {
@@ -409,6 +433,9 @@ async function resetSettingsToDefault(): Promise<void> {
   }
 }
 
+/**
+ * 生成 src/settings.ts 中 defaults 的配置片段
+ */
 function buildDefaultsCode(): string {
   const themeColorsCode = JSON.stringify(settingsStore.themeColors, null, 4)
     .replace(/"([^"]+)":/g, "$1:")
@@ -448,6 +475,9 @@ function buildDefaultsCode(): string {
 } as const;`;
 }
 
+/**
+ * 关闭设置抽屉
+ */
 function handleCloseDrawer(): void {
   settingsStore.settingsVisible = false;
 }
@@ -1043,7 +1073,7 @@ function handleCloseDrawer(): void {
   }
 }
 
-::deep(.copy-config-dialog) {
+:deep(.copy-config-dialog) {
   .el-message-box__content {
     max-height: 400px;
     overflow-y: auto;

@@ -1,10 +1,11 @@
-/**
- * 全局配置（已移除）
- * @see https://example.com
- */
+// VxeTable 全局配置
+// 参考：https://vxetable.cn/v4.6/#/table/start/install
 
 import VXETable from "vxe-table";
 
+/**
+ * 配置 vxe-table 的默认参数
+ */
 export function configureVxeTable() {
   VXETable.setConfig({
     size: "medium",

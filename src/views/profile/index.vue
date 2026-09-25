@@ -1,4 +1,4 @@
-﻿<template>
+<template>
   <div class="profile-page">
     <section class="profile-hero">
       <div class="profile-hero__body">
@@ -314,7 +314,6 @@ import type { Component } from "vue";
 import { computed, onBeforeUnmount, onMounted, reactive, ref } from "vue";
 import FileAPI from "@/api/file";
 import { useUserStoreHook } from "@/stores";
-import { redirectToLogin } from "@/utils/auth";
 
 import {
   Calendar,
@@ -686,10 +685,16 @@ const securityItems = computed<SecurityItem[]>(() => [
   },
 ]);
 
+/**
+ * 空值统一显示占位符
+ */
 function formatValue(value?: Date | string) {
   return value ? String(value) : "-";
 }
 
+/**
+ * 从弹窗结果里取出输入值
+ */
 function getPromptValue(result: unknown) {
   if (result && typeof result === "object" && "value" in result) {
     return String(result.value || "");
@@ -697,11 +702,17 @@ function getPromptValue(result: unknown) {
   return "";
 }
 
+/**
+ * 手机号中间四位打码
+ */
 function maskMobile(mobile?: string) {
   if (!mobile) return "";
   return mobile.replace(/^(\d{3})\d{4}(\d{4})$/, "$1****$2");
 }
 
+/**
+ * 邮箱名打码
+ */
 function maskEmail(email?: string) {
   if (!email) return "";
   const [name, domain] = email.split("@");
@@ -722,6 +733,9 @@ const emailSecurityDesc = computed(() => {
     : "未绑定邮箱，建议立即绑定";
 });
 
+/**
+ * 打开账号/手机/邮箱修改弹窗
+ */
 const handleOpenDialog = (type: DialogType) => {
   dialogState.type = type;
   dialogState.visible = true;
@@ -750,6 +764,9 @@ const handleOpenDialog = (type: DialogType) => {
   }
 };
 
+/**
+ * 解绑手机号
+ */
 async function handleUnbindMobile() {
   if (!userProfile.value.mobile) return;
   try {
@@ -770,6 +787,9 @@ async function handleUnbindMobile() {
   }
 }
 
+/**
+ * 解绑邮箱
+ */
 async function handleUnbindEmail() {
   if (!userProfile.value.email) return;
   try {
@@ -790,6 +810,9 @@ async function handleUnbindEmail() {
   }
 }
 
+/**
+ * 发送手机验证码
+ */
 function handleSendMobileCode() {
   if (!mobileUpdateForm.mobile) {
     ElMessage.error("请输入手机号");
@@ -813,6 +836,9 @@ function handleSendMobileCode() {
   });
 }
 
+/**
+ * 发送邮箱验证码
+ */
 function handleSendEmailCode() {
   if (!emailUpdateForm.email) {
     ElMessage.error("请输入邮箱");
@@ -837,6 +863,9 @@ function handleSendEmailCode() {
   });
 }
 
+/**
+ * 提交弹窗表单
+ */
 const handleSubmit = async () => {
   try {
     if (dialogState.type === DialogType.ACCOUNT) {
@@ -856,7 +885,7 @@ const handleSubmit = async () => {
 
       await UserAPI.changePassword(passwordChangeForm);
       dialogState.visible = false;
-      await redirectToLogin("密码已修改，请重新登录");
+      await userStore.redirectToLogin("password-changed");
     } else if (dialogState.type === DialogType.MOBILE) {
       const valid = await mobileBindingFormRef.value?.validate();
       if (!valid) return;
@@ -879,6 +908,9 @@ const handleSubmit = async () => {
   }
 };
 
+/**
+ * 关闭弹窗并重置表单
+ */
 const handleCancel = () => {
   dialogState.visible = false;
   if (dialogState.type === DialogType.ACCOUNT) {
@@ -894,10 +926,16 @@ const handleCancel = () => {
 
 const fileInput = ref<HTMLInputElement | null>(null);
 
+/**
+ * 触发头像文件选择
+ */
 const triggerFileUpload = () => {
   fileInput.value?.click();
 };
 
+/**
+ * 选择头像后上传
+ */
 const handleFileChange = async (event: Event) => {
   const target = event.target as HTMLInputElement;
   const file = target.files ? target.files[0] : null;
@@ -913,6 +951,9 @@ const handleFileChange = async (event: Event) => {
   target.value = "";
 };
 
+/**
+ * 加载个人中心用户信息
+ */
 const loadUserProfile = async () => {
   const data = await UserAPI.getProfile();
   userProfile.value = data;

@@ -10,7 +10,7 @@
           <el-dropdown-item
             v-for="item of sizeOptions"
             :key="item.value"
-            :disabled="appStore.size == item.value"
+            :disabled="appStore.size === item.value"
             :command="item.value"
           >
             {{ item.label }}
@@ -34,6 +34,9 @@ const sizeOptions = computed(() => {
 });
 
 const appStore = useAppStore();
+/**
+ * 切换组件尺寸
+ */
 function handleSizeChange(size: string) {
   appStore.changeSize(size);
   ElMessage.success("切换布局大小成功！");

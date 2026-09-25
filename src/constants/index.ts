@@ -1,7 +1,23 @@
+/**
+ * 应用存储前缀
+ */
 export const APP_PREFIX = "vea";
 
+/**
+ * 超级管理员角色标识
+ *
+ * @description
+ * 拥有系统最高权限，可以访问所有资源
+ */
 export const ROLE_ROOT = "ROOT";
 
+/**
+ * 存储键名常量
+ *
+ * @description
+ * 统一管理所有 localStorage/sessionStorage 的键名
+ * 命名规则：{APP_PREFIX}:{分类}:{具体名称}
+ */
 export const STORAGE_KEYS = {
   // 认证
   ACCESS_TOKEN: `${APP_PREFIX}:auth:access_token`,
@@ -11,7 +27,7 @@ export const STORAGE_KEYS = {
   // 系统
   DICT_CACHE: `${APP_PREFIX}:system:dict_cache`,
 
-  // UI 设置
+  // UI
   SHOW_TAGS_VIEW: `${APP_PREFIX}:ui:show_tags_view`,
   TAGS_VIEW_STYLE: `${APP_PREFIX}:ui:tags_view_style`,
   SHOW_APP_LOGO: `${APP_PREFIX}:ui:show_app_logo`,
@@ -25,7 +41,7 @@ export const STORAGE_KEYS = {
   GRAY_MODE: `${APP_PREFIX}:ui:gray_mode`,
   COLOR_WEAK: `${APP_PREFIX}:ui:color_weak`,
 
-  // 应用状态
+  // 应用
   DEVICE: `${APP_PREFIX}:app:device`,
   SIZE: `${APP_PREFIX}:app:size`,
   LANGUAGE: `${APP_PREFIX}:app:language`,
@@ -33,4 +49,7 @@ export const STORAGE_KEYS = {
   ACTIVE_TOP_MENU_PATH: `${APP_PREFIX}:app:active_top_menu_path`,
 } as const;
 
+/**
+ * 存储键名类型
+ */
 export type StorageKey = (typeof STORAGE_KEYS)[keyof typeof STORAGE_KEYS];

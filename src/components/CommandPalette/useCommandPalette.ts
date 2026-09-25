@@ -1,13 +1,10 @@
-/**
- * 菜单搜索逻辑
- */
-import { ref, onMounted, onBeforeUnmount, toRaw } from "vue";
-import { RouteRecordRaw, LocationQueryRaw } from "vue-router";
+import { onBeforeUnmount, onMounted, ref, toRaw } from "vue";
+import type { LocationQueryRaw, RouteRecordRaw } from "vue-router";
 import router from "@/router";
 import { usePermissionStore } from "@/stores";
 import { isExternal } from "@/utils";
 
-/** 搜索项类型 */
+/** 命令面板中的可搜索菜单项 */
 interface SearchItem {
   title: string;
   path: string;
@@ -19,26 +16,28 @@ interface SearchItem {
 
 const STORAGE_KEY = "menu_search_history";
 const MAX_HISTORY = 5;
+const EXCLUDED_PATHS = ["/redirect", "/login", "/401", "/404"];
 
+/**
+ * 命令面板：菜单搜索、历史记录与键盘导航
+ */
 export function useCommandPalette() {
   const permissionStore = usePermissionStore();
 
-  // 状态
+  // 面板状态
   const visible = ref(false);
   const keyword = ref("");
   const activeIndex = ref(-1);
   const inputRef = ref<HTMLInputElement>();
+
+  // 菜单数据
   const menuItems = ref<SearchItem[]>([]);
   const results = ref<SearchItem[]>([]);
   const history = ref<SearchItem[]>([]);
 
-  // 排除的路由
-  const excludedPaths = ["/redirect", "/login", "/401", "/404"];
-
-  // ============================================
-  // 弹窗控制
-  // ============================================
-
+  /**
+   * 打开面板并清空上一次的搜索状态
+   */
   function open() {
     keyword.value = "";
     results.value = [];
@@ -47,28 +46,38 @@ export function useCommandPalette() {
     setTimeout(() => inputRef.value?.focus(), 100);
   }
 
+  /**
+   * 关闭面板
+   */
   function close() {
     visible.value = false;
   }
 
-  // ============================================
-  // 搜索逻辑
-  // ============================================
-
+  /**
+   * 搜索仅匹配菜单标题，避免路径命中过多造成结果噪音
+   */
   function onSearch() {
     activeIndex.value = -1;
     if (!keyword.value.trim()) {
       results.value = [];
       return;
     }
-    const kw = keyword.value.toLowerCase();
-    results.value = menuItems.value.filter((item) => item.title.toLowerCase().includes(kw));
+    const keywordText = keyword.value.toLowerCase();
+    results.value = menuItems.value.filter((item) =>
+      item.title.toLowerCase().includes(keywordText)
+    );
   }
 
-  function getDisplayList() {
+  /**
+   * 有搜索结果时展示结果，否则展示历史记录
+   */
+  function getDisplayList(): SearchItem[] {
     return results.value.length ? results.value : history.value;
   }
 
+  /**
+   * 键盘选择当前展示列表，搜索为空时回退历史记录
+   */
   function onSelect() {
     const list = getDisplayList();
     if (list.length === 0) return;
@@ -78,6 +87,9 @@ export function useCommandPalette() {
     onGo(item);
   }
 
+  /**
+   * 上下键移动高亮项，到头后循环
+   */
   function onNavigate(direction: "up" | "down") {
     const list = getDisplayList();
     if (list.length === 0) return;
@@ -89,6 +101,9 @@ export function useCommandPalette() {
     }
   }
 
+  /**
+   * 跳转到选中项并写入历史
+   */
   function onGo(item: SearchItem) {
     close();
     addHistory(item);
@@ -100,10 +115,9 @@ export function useCommandPalette() {
     }
   }
 
-  // ============================================
-  // 历史记录
-  // ============================================
-
+  /**
+   * 从本地存储读取搜索历史
+   */
   function loadHistory() {
     try {
       const data = localStorage.getItem(STORAGE_KEY);
@@ -113,19 +127,22 @@ export function useCommandPalette() {
     }
   }
 
+  /**
+   * 把搜索历史写入本地存储
+   */
   function saveHistory() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(history.value));
   }
 
+  /**
+   * 历史记录按最近使用排序，并限制本地缓存数量
+   */
   function addHistory(item: SearchItem) {
-    // 去重
-    const idx = history.value.findIndex((i) => i.path === item.path);
-    if (idx !== -1) history.value.splice(idx, 1);
+    const index = history.value.findIndex((historyItem) => historyItem.path === item.path);
+    if (index !== -1) history.value.splice(index, 1);
 
-    // 添加到开头
     history.value.unshift(item);
 
-    // 限制数量
     if (history.value.length > MAX_HISTORY) {
       history.value = history.value.slice(0, MAX_HISTORY);
     }
@@ -133,27 +150,32 @@ export function useCommandPalette() {
     saveHistory();
   }
 
+  /**
+   * 删除单条搜索历史
+   */
   function removeHistory(index: number) {
     history.value.splice(index, 1);
     saveHistory();
   }
 
+  /**
+   * 清空搜索历史
+   */
   function clearHistory() {
     history.value = [];
     localStorage.removeItem(STORAGE_KEY);
   }
 
-  // ============================================
-  // 路由解析
-  // ============================================
-
+  /**
+   * 将权限路由拍平成命令面板可搜索的菜单项
+   */
   function loadRoutes(routes: RouteRecordRaw[], parentPath = "") {
     routes.forEach((route) => {
       const path = route.path.startsWith("/")
         ? route.path
         : `${parentPath}${parentPath.endsWith("/") ? "" : "/"}${route.path}`;
 
-      if (excludedPaths.includes(route.path) || isExternal(route.path)) return;
+      if (EXCLUDED_PATHS.includes(route.path) || isExternal(route.path)) return;
 
       if (route.children) {
         loadRoutes(route.children, path);
@@ -172,20 +194,15 @@ export function useCommandPalette() {
     });
   }
 
-  // ============================================
-  // 快捷键
-  // ============================================
-
+  /**
+   * Ctrl/Cmd + K 打开命令面板，并阻止浏览器默认搜索
+   */
   function handleKeydown(e: KeyboardEvent) {
     if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
       e.preventDefault();
       open();
     }
   }
-
-  // ============================================
-  // 生命周期
-  // ============================================
 
   onMounted(() => {
     loadRoutes(permissionStore.routes);

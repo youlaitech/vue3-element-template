@@ -24,6 +24,7 @@ const size = computed(() => appStore.size as ComponentSize);
 const showWatermark = computed(() => settingsStore.showWatermark);
 const watermarkContent = appConfig.name;
 
+// 明亮/暗黑主题水印字体颜色适配
 const fontColor = computed(() => {
   return settingsStore.resolvedTheme === ThemeMode.DARK
     ? "rgba(255, 255, 255, .15)"

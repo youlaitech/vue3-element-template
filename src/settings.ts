@@ -1,3 +1,5 @@
+// 应用配置
+
 import {
   LayoutMode,
   ComponentSize,
