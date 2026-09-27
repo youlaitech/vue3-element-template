@@ -1,296 +1,34 @@
 import { defineMock } from "./base";
 
-export default defineMock([
+/* ------------------------------------------------------------------
+ * 字典 / 字典项 mock（内存态）
+ * 数据与线上接口一致；新增、修改、删除直接作用于内存数据，
+ * 删除字典会级联删除其字典项，与后端行为保持一致。
+ * ------------------------------------------------------------------ */
+
+// 字典数据
+const dictList = [
   {
-    url: "dicts",
-    method: ["GET"],
-    body: {
-      code: "00000",
-      data: {
-        list: [
-          {
-            id: "1",
-            name: "性别",
-            dictCode: "gender",
-            status: 1,
-          },
-          {
-            id: "2",
-            name: "通知类型",
-            dictCode: "notice_type",
-            status: 1,
-          },
-          {
-            id: "3",
-            name: "通知级别",
-            dictCode: "notice_level",
-            status: 1,
-          },
-        ],
-        total: 3,
-      },
-      msg: "一切ok",
-    },
-  },
-
-  /**
-   * 字典列表
-   */
-  {
-    url: "dicts/options",
-    method: ["GET"],
-    body: {
-      code: "00000",
-      data: [
-        {
-          value: "gender",
-          label: "性别",
-        },
-        {
-          value: "notice_type",
-          label: "通知类型",
-        },
-        {
-          value: "notice_level",
-          label: "通知级别",
-        },
-      ],
-      msg: "一切ok",
-    },
-  },
-
-  // 新增字典
-  {
-    url: "dicts",
-    method: ["POST"],
-    body({ body }) {
-      return {
-        code: "00000",
-        data: null,
-        msg: "新增字典" + body.name + "成功",
-      };
-    },
-  },
-
-  // 获取字典表单数据
-  {
-    url: "dicts/:id/form",
-    method: ["GET"],
-    body: ({ params }) => {
-      return {
-        code: "00000",
-        data: dictMap[params.id],
-        msg: "一切ok",
-      };
-    },
-  },
-
-  // 修改字典
-  {
-    url: "dicts/:id",
-    method: ["PUT"],
-    body({ body }) {
-      return {
-        code: "00000",
-        data: null,
-        msg: "修改字典" + body.name + "成功",
-      };
-    },
-  },
-
-  // 删除字典
-  {
-    url: "dicts/:ids",
-    method: ["DELETE"],
-    body({ params }) {
-      return {
-        code: "00000",
-        data: null,
-        msg: "删除字典" + params.ids + "成功",
-      };
-    },
-  },
-
-  //---------------------------------------------------
-  // 字典项相关接口
-  //---------------------------------------------------
-
-  // 字典项分页列表
-  {
-    url: "dicts/:dictCode/items",
-    method: ["GET"],
-    body: ({ params }) => {
-      const list = dictItemList[params.dictCode] ?? [];
-      return {
-        code: "00000",
-        data: {
-          list,
-          total: list.length,
-        },
-        msg: "一切ok",
-      };
-    },
-  },
-  // 字典项列表
-  {
-    url: "dicts/:dictCode/items/options",
-    method: ["GET"],
-    body: ({ params }) => {
-      const dictCode = params.dictCode;
-
-      let list = null;
-
-      if (dictCode === "gender") {
-        list = [
-          {
-            value: "1",
-            label: "男",
-          },
-          {
-            value: "2",
-            label: "女",
-          },
-          {
-            value: "0",
-            label: "保密",
-          },
-        ];
-      } else if (dictCode === "notice_level") {
-        list = [
-          {
-            value: "L",
-            label: "低",
-            tagType: "I",
-          },
-          {
-            value: "M",
-            label: "中",
-            tagType: "W",
-          },
-          {
-            value: "H",
-            label: "高",
-            tagType: "D",
-          },
-        ];
-      } else if (dictCode === "notice_type") {
-        list = [
-          {
-            value: "1",
-            label: "系统升级",
-            tagType: "S",
-          },
-          {
-            value: "2",
-            label: "系统维护",
-            tagType: "P",
-          },
-          {
-            value: "3",
-            label: "安全警告",
-            tagType: "D",
-          },
-          {
-            value: "4",
-            label: "假期通知",
-            tagType: "S",
-          },
-          {
-            value: "5",
-            label: "公司新闻",
-            tagType: "P",
-          },
-          {
-            value: "99",
-            label: "其他",
-            tagType: "I",
-          },
-        ];
-      }
-
-      return {
-        code: "00000",
-        data: list,
-        msg: "一切ok",
-      };
-    },
-  },
-  // 新增字典项
-  {
-    url: "dicts/:dictCode/items",
-    method: ["POST"],
-    body({ body }) {
-      return {
-        code: "00000",
-        data: null,
-        msg: "新增字典项" + body.label + "成功",
-      };
-    },
-  },
-
-  // 字典项表单数据
-  {
-    url: "dicts/:dictCode/items/:itemId/form",
-    method: ["GET"],
-    body: ({ params }) => {
-      return {
-        code: "00000",
-        data: dictItemMap[params.itemId],
-        msg: "一切ok",
-      };
-    },
-  },
-
-  // 修改字典项
-  {
-    url: "dicts/:dictCode/items/:itemId",
-    method: ["PUT"],
-    body({ body }) {
-      return {
-        code: "00000",
-        data: null,
-        msg: "修改字典项" + body.label + "成功",
-      };
-    },
-  },
-
-  // 删除字典
-  {
-    url: "dicts/:dictCode/items/:itemId",
-    method: ["DELETE"],
-    body({ params }) {
-      return {
-        code: "00000",
-        data: null,
-        msg: "删除字典" + params.itemId + "成功",
-      };
-    },
-  },
-]);
-
-// 字典映射表数据
-const dictMap: Record<string, any> = {
-  1: {
     id: "1",
     name: "性别",
     dictCode: "gender",
     status: 1,
   },
-  2: {
+  {
     id: "2",
     name: "通知类型",
     dictCode: "notice_type",
     status: 1,
   },
-  3: {
+  {
     id: "3",
     name: "通知级别",
     dictCode: "notice_level",
     status: 1,
   },
-};
+];
 
-// 字典项数据：tagType 用全称，与 sql/youlai-admin.sql 种子数据保持一致
+// 字典项数据（按字典编码分组）
 const dictItemList: Record<string, any[]> = {
   gender: [
     {
@@ -302,8 +40,24 @@ const dictItemList: Record<string, any[]> = {
       status: 1,
       tagType: "primary",
     },
-    { id: "2", dictCode: "gender", label: "女", value: "2", sort: 2, status: 1, tagType: "danger" },
-    { id: "3", dictCode: "gender", label: "保密", value: "0", sort: 3, status: 1, tagType: "info" },
+    {
+      id: "2",
+      dictCode: "gender",
+      label: "女",
+      value: "2",
+      sort: 2,
+      status: 1,
+      tagType: "danger",
+    },
+    {
+      id: "3",
+      dictCode: "gender",
+      label: "保密",
+      value: "0",
+      sort: 3,
+      status: 1,
+      tagType: "info",
+    },
   ],
   notice_type: [
     {
@@ -392,7 +146,271 @@ const dictItemList: Record<string, any[]> = {
   ],
 };
 
-// 字典项映射表数据（按 id 取单条，供编辑回显）
-const dictItemMap: Record<string, any> = Object.values(dictItemList)
-  .flat()
-  .reduce((map, item) => ({ ...map, [item.id]: item }), {});
+/** 新增字典/字典项的 id 游标 */
+let nextDictId = 100;
+let nextItemId = 1000;
+
+/** 按 id 查找字典 */
+function findDict(id: string) {
+  return dictList.find((item) => item.id === id);
+}
+
+/** 按字典编码与 id 查找字典项 */
+function findItem(dictCode: string, itemId: string) {
+  return (dictItemList[dictCode] ?? []).find((item) => item.id === itemId);
+}
+
+export default defineMock([
+  // 字典分页列表（支持关键字搜索）
+  {
+    url: "dicts",
+    method: ["GET"],
+    body({ query }) {
+      const keywords = String(query?.keywords ?? "").trim();
+      const status =
+        query?.status === undefined || query?.status === "" ? undefined : Number(query.status);
+
+      const pageNum = Math.max(1, Number(query?.pageNum) || 1);
+      const pageSize = Math.max(1, Number(query?.pageSize) || 10);
+
+      const list = dictList.filter((item) => {
+        if (keywords && !item.name.includes(keywords) && !item.dictCode.includes(keywords)) {
+          return false;
+        }
+        if (status !== undefined && item.status !== status) return false;
+        return true;
+      });
+
+      return {
+        code: "00000",
+        data: {
+          list: list.slice((pageNum - 1) * pageSize, pageNum * pageSize),
+          total: list.length,
+        },
+        msg: "一切ok",
+      };
+    },
+  },
+
+  // 字典下拉数据源
+  {
+    url: "dicts/options",
+    method: ["GET"],
+    body: {
+      code: "00000",
+      data: dictList.map((item) => ({ value: item.dictCode, label: item.name })),
+      msg: "一切ok",
+    },
+  },
+
+  // 新增字典
+  {
+    url: "dicts",
+    method: ["POST"],
+    body({ body }) {
+      const item = {
+        id: String(nextDictId++),
+        name: body.name ?? "",
+        dictCode: body.dictCode ?? "",
+        status: body.status ?? 1,
+      };
+      dictList.push(item);
+      dictItemList[item.dictCode] = dictItemList[item.dictCode] ?? [];
+      return {
+        code: "00000",
+        data: null,
+        msg: "新增字典" + item.name + "成功",
+      };
+    },
+  },
+
+  // 获取字典表单数据
+  {
+    url: "dicts/:id/form",
+    method: ["GET"],
+    body: ({ params }) => {
+      const item = findDict(params.id);
+      return {
+        code: "00000",
+        data: {
+          id: item?.id ?? params.id,
+          name: item?.name ?? "",
+          dictCode: item?.dictCode ?? "",
+          status: item?.status ?? 1,
+          remark: null,
+        },
+        msg: "一切ok",
+      };
+    },
+  },
+
+  // 修改字典
+  {
+    url: "dicts/:id",
+    method: ["PUT"],
+    body({ params, body }) {
+      const item = findDict(params.id);
+      if (item) {
+        Object.assign(item, {
+          name: body.name ?? item.name,
+          dictCode: body.dictCode ?? item.dictCode,
+          status: body.status ?? item.status,
+        });
+      }
+      return {
+        code: "00000",
+        data: null,
+        msg: "修改字典" + (body.name ?? params.id) + "成功",
+      };
+    },
+  },
+
+  // 删除字典（级联删除字典项）
+  {
+    url: "dicts/:ids",
+    method: ["DELETE"],
+    body({ params }) {
+      String(params.ids)
+        .split(",")
+        .forEach((id) => {
+          const index = dictList.findIndex((item) => item.id === id);
+          if (index !== -1) {
+            const [removed] = dictList.splice(index, 1);
+            delete dictItemList[removed.dictCode];
+          }
+        });
+      return {
+        code: "00000",
+        data: null,
+        msg: "删除字典" + params.ids + "成功",
+      };
+    },
+  },
+
+  //---------------------------------------------------
+  // 字典项相关接口
+  //---------------------------------------------------
+
+  // 字典项分页列表（支持关键字搜索）
+  {
+    url: "dicts/:dictCode/items",
+    method: ["GET"],
+    body({ params, query }) {
+      const all = dictItemList[params.dictCode] ?? [];
+      const keywords = String(query?.keywords ?? "").trim();
+      const filtered = keywords
+        ? all.filter((item) => item.label.includes(keywords) || item.value.includes(keywords))
+        : all;
+      const pageNum = Number(query?.pageNum ?? 1);
+      const pageSize = Number(query?.pageSize ?? 10);
+      const start = (pageNum - 1) * pageSize;
+
+      return {
+        code: "00000",
+        data: { list: filtered.slice(start, start + pageSize), total: filtered.length },
+        msg: "一切ok",
+      };
+    },
+  },
+
+  // 字典项下拉数据源
+  {
+    url: "dicts/:dictCode/items/options",
+    method: ["GET"],
+    body({ params }) {
+      const list = (dictItemList[params.dictCode] ?? [])
+        .filter((item) => item.status === 1)
+        .map((item) => ({ value: item.value, label: item.label, tagType: item.tagType }));
+
+      return { code: "00000", data: list, msg: "一切ok" };
+    },
+  },
+
+  // 新增字典项
+  {
+    url: "dicts/:dictCode/items",
+    method: ["POST"],
+    body({ params, body }) {
+      const item = {
+        id: String(nextItemId++),
+        dictCode: params.dictCode,
+        label: body.label ?? "",
+        value: body.value ?? "",
+        sort: Number(body.sort ?? 1),
+        status: body.status ?? 1,
+        tagType: body.tagType ?? "",
+      };
+      dictItemList[params.dictCode] = dictItemList[params.dictCode] ?? [];
+      dictItemList[params.dictCode].push(item);
+      return {
+        code: "00000",
+        data: null,
+        msg: "新增字典项" + item.label + "成功",
+      };
+    },
+  },
+
+  // 字典项表单数据
+  {
+    url: "dicts/:dictCode/items/:itemId/form",
+    method: ["GET"],
+    body: ({ params }) => ({
+      code: "00000",
+      data:
+        findItem(params.dictCode, params.itemId) ??
+        ({
+          id: params.itemId,
+          dictCode: params.dictCode,
+          label: "",
+          value: "",
+          sort: 1,
+          status: 1,
+          tagType: "",
+        } as any),
+      msg: "一切ok",
+    }),
+  },
+
+  // 修改字典项
+  {
+    url: "dicts/:dictCode/items/:itemId",
+    method: ["PUT"],
+    body({ params, body }) {
+      const item = findItem(params.dictCode, params.itemId);
+      if (item) {
+        Object.assign(item, {
+          label: body.label ?? item.label,
+          value: body.value ?? item.value,
+          sort: Number(body.sort ?? item.sort),
+          status: body.status ?? item.status,
+          tagType: body.tagType ?? item.tagType,
+        });
+      }
+      return {
+        code: "00000",
+        data: null,
+        msg: "修改字典项" + (body.label ?? params.itemId) + "成功",
+      };
+    },
+  },
+
+  // 删除字典项（支持逗号分隔的批量删除）
+  {
+    url: "dicts/:dictCode/items/:itemId",
+    method: ["DELETE"],
+    body({ params }) {
+      const rows = dictItemList[params.dictCode] ?? [];
+      String(params.itemId)
+        .split(",")
+        .forEach((id) => {
+          const index = rows.findIndex((item) => item.id === id);
+          if (index !== -1) rows.splice(index, 1);
+        });
+      return {
+        code: "00000",
+        data: null,
+        msg: "删除字典项" + params.itemId + "成功",
+      };
+    },
+  },
+]);

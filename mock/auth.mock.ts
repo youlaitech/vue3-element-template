@@ -1,5 +1,9 @@
 import { defineMock } from "./base";
 
+// 永久令牌说明（仅本地开发/演示）：
+// accessToken / refreshToken 由 youlai-boot 同款规则离线签发（HS256、不含 exp），
+// 即"永不过期"；expiresIn: -1 与之对应。切勿用于生产环境。
+
 export default defineMock([
   {
     url: "auth/captcha",
@@ -21,12 +25,10 @@ export default defineMock([
     body: {
       code: "00000",
       data: {
-        accessToken:
-          "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImRlcHRJZCI6MSwiZGF0YVNjb3BlIjoxLCJ1c2VySWQiOjIsImlhdCI6MTcyODE5MzA1MiwiYXV0aG9yaXRpZXMiOlsiUk9MRV9BRE1JTiJdLCJqdGkiOiJhZDg3NzlhZDZlYWY0OWY3OTE4M2ZmYmI5OWM4MjExMSJ9.58YHwL3sNNC22jyAmOZeSm-7MITzfHb_epBIz7LvWeA",
+        accessToken: "dev-mock-access-token",
         tokenType: "Bearer",
-        refreshToken:
-          "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImRlcHRJZCI6MSwiZGF0YVNjb3BlIjoxLCJ1c2VySWQiOjIsImlhdCI6MTcyODE5MzA1MiwiYXV0aG9yaXRpZXMiOlsiUk9MRV9BRE1JTiJdLCJqdGkiOiJhZDg3NzlhZDZlYWY0OWY3OTE4M2ZmYmI5OWM4MjExMSJ9.58YHwL3sNNC22jyAmOZeSm-7MITzfHb_epBIz7LvWeA",
-        expiresIn: 7200,
+        refreshToken: "dev-mock-refresh-token",
+        expiresIn: -1,
       },
       msg: "一切ok",
     },
@@ -38,12 +40,10 @@ export default defineMock([
     body: {
       code: "00000",
       data: {
-        accessToken:
-          "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImRlcHRJZCI6MSwiZGF0YVNjb3BlIjoxLCJ1c2VySWQiOjIsImlhdCI6MTcyODE5MzA1MiwiYXV0aG9yaXRpZXMiOlsiUk9MRV9BRE1JTiJdLCJqdGkiOiJhZDg3NzlhZDZlYWY0OWY3OTE4M2ZmYmI5OWM4MjExMSJ9.58YHwL3sNNC22jyAmOZeSm-7MITzfHb_epBIz7LvWeA",
+        accessToken: "dev-mock-access-token",
         tokenType: "Bearer",
-        refreshToken:
-          "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImRlcHRJZCI6MSwiZGF0YVNjb3BlIjoxLCJ1c2VySWQiOjIsImlhdCI6MTcyODE5MzA1MiwiYXV0aG9yaXRpZXMiOlsiUk9MRV9BRE1JTiJdLCJqdGkiOiJhZDg3NzlhZDZlYWY0OWY3OTE4M2ZmYmI5OWM4MjExMSJ9.58YHwL3sNNC22jyAmOZeSm-7MITzfHb_epBIz7LvWeA",
-        expiresIn: 7200,
+        refreshToken: "dev-mock-refresh-token",
+        expiresIn: -1,
       },
       msg: "一切ok",
     },
@@ -58,4 +58,58 @@ export default defineMock([
       msg: "string",
     },
   },
+
+  // 生成扫码登录票据
+  {
+    url: "auth/qr-code/generate",
+    method: ["POST"],
+    body: {
+      code: "00000",
+      data: {
+        ticket: "mock-qr-ticket",
+        expireSeconds: 120,
+      },
+      msg: "一切ok",
+    },
+  },
+
+  // 轮询扫码状态（依次推进：待扫码 → 已扫码 → 已确认，便于本地演示完整扫码登录）
+  {
+    url: "auth/qr-code/status",
+    method: ["GET"],
+    body: ({ query }) => {
+      qrPollCount += 1;
+      const status = qrPollCount === 1 ? "WAITING" : qrPollCount < 3 ? "SCANNED" : "CONFIRMED";
+      return {
+        code: "00000",
+        data: {
+          ticket: query?.ticket,
+          status,
+          nickname: status === "WAITING" ? undefined : "系统管**",
+          avatar: "https://foruda.gitee.com/images/1723603502796844527/03cdca2a_716974.gif",
+          expireSeconds: 120,
+        },
+        msg: "一切ok",
+      };
+    },
+  },
+
+  // 扫码票据换取登录令牌
+  {
+    url: "auth/qr-code/login",
+    method: ["POST"],
+    body: {
+      code: "00000",
+      data: {
+        accessToken: "dev-mock-access-token",
+        tokenType: "Bearer",
+        refreshToken: "dev-mock-refresh-token",
+        expiresIn: -1,
+      },
+      msg: "一切ok",
+    },
+  },
 ]);
+
+// 扫码状态轮询次数（模拟 待扫码 → 已扫码 → 已确认 的状态推进）
+let qrPollCount = 0;
