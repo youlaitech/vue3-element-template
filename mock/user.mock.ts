@@ -7,7 +7,7 @@ export default defineMock([
     body: {
       code: "00000",
       data: {
-        // 与登录账号（admin）保持一致，见 mock 的 users 列表：id=2, dept_id=1
+        // 登录账号 admin 的用户 id 与部门 id（见本文件 users 列表）
         userId: "2",
         username: "admin",
         nickname: "系统管理员",
@@ -326,7 +326,7 @@ export default defineMock([
     body: {
       code: "00000",
       data: {
-        // 与登录账号（admin）保持一致，见本文件 users 列表中的 admin 记录
+        // 登录账号 admin 对应的用户记录（见本文件 users 列表）
         id: "2",
         username: "admin",
         nickname: "系统管理员",

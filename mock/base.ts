@@ -1,7 +1,7 @@
 import { createDefineMock } from "vite-plugin-mock-dev-server";
 
 /**
- * 接口前缀，与 src/api 各模块的 BASE_URL 保持一致：
+ * 接口前缀：
  *   完整请求路径 = VITE_API_BASE + /api/v1 + 业务路径，如 /dev-api/api/v1/users
  *
  * 说明：插件的 mock url 需为**完整请求路径**（内部用 path-to-regexp 匹配完整 pathname），

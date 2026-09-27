@@ -1,7 +1,7 @@
 import { createSSEStream } from "vite-plugin-mock-dev-server";
 import { defineMock } from "./base";
 
-/** 事件名与后端 SseTopics / 前端 src/enums/sse.ts 保持一致 */
+/** 事件名取自前端 src/enums/sse.ts 的 SseTopics */
 const TOPIC = {
   ONLINE_USERS: "online-users",
 } as const;
@@ -23,7 +23,7 @@ export default defineMock([
     method: ["GET"],
     response(req, res) {
       const sse = createSSEStream(req, res);
-      const write = (event: string, data: unknown) => sse.write({ event, data });
+      const write = (event: string, data: string | object) => sse.write({ event, data });
 
       // 连接后立即回一次在线人数，首页无需等待即可显示。
       // 注意：插件只支持 data 为 string | object，传数字会被丢弃（SSE 报文里没有 data 行），

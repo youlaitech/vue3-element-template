@@ -2,7 +2,7 @@ import { defineMock } from "./base";
 
 /* ------------------------------------------------------------------
  * 菜单 mock（内存态）
- * 数据与 youlai-boot 的 sys_menu 保持一致，仅保留模板已有页面的菜单：
+ * 数据取自 sql/youlai_admin.sql 的 sys_menu，仅保留模板已有页面的菜单：
  * 系统管理(1) 与 代码生成(3)；新增/修改/删除直接作用于内存数据，
  * 「动态路由」由菜单树实时生成，便于演示完整闭环。
  * ------------------------------------------------------------------ */
@@ -1073,7 +1073,7 @@ export default defineMock([
       return {
         code: "00000",
         data: {
-          // 与线上表单接口字段保持一致（不返回 children）
+          // 表单接口返回的字段（不返回 children）
           id: menu?.id ?? params.id,
           parentId: menu?.parentId ?? "0",
           name: menu?.name ?? "",

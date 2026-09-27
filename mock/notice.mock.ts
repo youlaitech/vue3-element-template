@@ -1,7 +1,7 @@
 import { defineMock } from "./base";
 
 /**
- * 同步修改某条通知的字段
+ * 修改某条通知的字段（列表与表单两处数据一起改）
  *
  * 通知数据分两份：列表用 noticeList、表单/详情用 noticeMap，
  * 任何状态变更（发布/撤回/已读）都必须同时改两处，否则列表与表单会显示不一致。
@@ -93,7 +93,7 @@ export default defineMock([
     body: ({ params }) => {
       const myNotice = myNoticeList.find((item) => item.id === String(params.id));
       if (myNotice) myNotice.isRead = 1;
-      // 已读状态同样需要同步到列表数据
+      // 已读状态也要写回列表数据
       patchNotice(params.id, { isRead: 1 });
 
       return {
@@ -108,7 +108,7 @@ export default defineMock([
     url: "notices/:id/publish",
     method: ["PUT"],
     body({ params }) {
-      // 列表与表单两处数据同步，避免"列表已发布、表单仍显示草稿"
+      // 列表与表单两份数据一起改，避免"列表已发布、表单仍显示草稿"
       patchNotice(params.id, {
         publishStatus: 1,
         publishTime: "2026-09-26 08:10",
