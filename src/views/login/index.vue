@@ -126,9 +126,7 @@
               </el-form>
 
               <div class="login-card__demo">
-                <div class="login-card__demo-title">
-                  工作流演示账号 · 密码统一 123456，点击直接填入
-                </div>
+                <div class="login-card__demo-title">演示账号 · 密码统一 123456，点击直接填入</div>
                 <div class="flex flex-wrap gap-8px">
                   <button
                     v-for="account in demoAccounts"
@@ -217,10 +215,10 @@ const loginRules = computed(() => ({
   captchaCode: [{ required: true, trigger: "blur", message: "请输入验证码" }],
 }));
 
-// 工作流演示账号，与 workflow.sql 预置数据一致
+// 演示账号（与内置用户一致），点击一键填入
 const demoAccounts = [
-  { username: "employee", label: "员工·发起" },
-  { username: "dept_manager", label: "部门主管·审批" },
+  { username: "employee", label: "普通员工" },
+  { username: "dept_manager", label: "部门主管" },
   { username: "manager", label: "总经理" },
   { username: "finance", label: "财务" },
   { username: "clerk", label: "行政" },
