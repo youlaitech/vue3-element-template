@@ -181,6 +181,9 @@ import type { OptionItem } from "@/api/common";
 
 const formData = defineModel<GenConfigForm>({ required: true });
 
+/**
+ * 代码生成字段配置步骤
+ */
 defineProps<{
   loading: boolean;
   loadingText: string;

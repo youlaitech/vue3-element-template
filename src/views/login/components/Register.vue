@@ -104,6 +104,9 @@ import { Lock } from "@element-plus/icons-vue";
 import AuthAPI from "@/api/auth";
 import type { LoginRequest } from "@/api/auth";
 
+/**
+ * 切换登录或注册表单
+ */
 const emit = defineEmits(["update:modelValue"]);
 /**
  * 切回登录表单

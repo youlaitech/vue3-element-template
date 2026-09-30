@@ -67,8 +67,7 @@
     "sortablejs": "^1.15.7",
     "vue": "^3.5.41",
     "vue-draggable-plus": "^0.6.1",
-    "vue-router": "^5.2.0",
-    "vxe-table": "~4.6.25"
+    "vue-router": "^5.2.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^21.2.1",

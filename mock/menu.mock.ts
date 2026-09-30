@@ -802,6 +802,23 @@ const MENU_TREE: MenuTreeNode[] = [
     ],
   },
   {
+    id: "2",
+    parentId: "0",
+    name: "数据大屏",
+    type: "E",
+    routeName: null,
+    routePath: "",
+    component: null,
+    externalUrl: "/data-screen",
+    perm: null,
+    visible: 1,
+    sort: 2,
+    icon: "el-icon-Monitor",
+    redirect: null,
+    keepAlive: null,
+    children: [],
+  },
+  {
     id: "3",
     parentId: "0",
     name: "代码生成",
@@ -828,6 +845,8 @@ interface MenuTreeNode {
   routeName: string | null;
   routePath: string;
   component: string | null;
+  /** 外链地址（E 型菜单：外部网址或站内路径） */
+  externalUrl?: string | null;
   perm: string | null;
   visible: number;
   sort: number;
@@ -850,6 +869,8 @@ interface RouteMeta {
   icon: string;
   hidden: boolean;
   keepAlive?: boolean;
+  /** 外链地址（E 型菜单透传，前端据此判断新标签页打开） */
+  externalUrl?: string;
   params: null;
 }
 
@@ -942,6 +963,15 @@ function buildRoutes(nodes: MenuTreeNode[]): RouteNode[] {
         params: null,
       };
 
+      // 外链（E）：不注册内部路由，前端按 externalUrl 新标签页打开
+      if (node.type === "E") {
+        return {
+          path: node.externalUrl ?? "",
+          component: "",
+          meta: { ...meta, externalUrl: node.externalUrl ?? "" },
+        };
+      }
+
       // 目录（Layout 容器）：保留分组信息，递归子路由
       if (!node.component || node.component === "Layout") {
         return {
@@ -1022,6 +1052,7 @@ export default defineMock([
         routeName: body.routeName ?? null,
         routePath: body.routePath ?? "",
         component: body.component ?? null,
+        externalUrl: body.externalUrl ?? null,
         perm: body.perm ?? null,
         visible: body.visible ?? 1,
         sort: Number(body.sort ?? 1),
@@ -1088,7 +1119,7 @@ export default defineMock([
           redirect: menu?.redirect ?? "",
           keepAlive: menu?.keepAlive ? 1 : null,
           params: null,
-          externalUrl: null,
+          externalUrl: menu?.externalUrl ?? null,
           generateCrudButtons: null,
           buttonPermPrefix: null,
         },
@@ -1116,6 +1147,7 @@ export default defineMock([
           routeName: body.routeName ?? menu.routeName,
           routePath: body.routePath ?? menu.routePath,
           component: body.component ?? menu.component,
+          externalUrl: body.externalUrl ?? menu.externalUrl,
           perm: body.perm ?? menu.perm,
           visible: body.visible ?? menu.visible,
           sort: Number(body.sort ?? menu.sort),

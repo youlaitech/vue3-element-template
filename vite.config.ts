@@ -9,7 +9,8 @@ import { ElementPlusResolver } from "unplugin-vue-components/resolvers";
 import { mockDevServerPlugin } from "vite-plugin-mock-dev-server";
 
 import UnoCSS from "unocss/vite";
-import { resolve } from "path";
+import { existsSync, mkdirSync, writeFileSync } from "fs";
+import { join, resolve } from "path";
 import { name, version } from "./package.json" with { type: "json" };
 
 // 平台名称、版本信息
@@ -82,6 +83,20 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
         // 导入组件类型声明文件路径 (false:关闭自动生成)
         dts: false,
       }),
+      // 生成版本号文件
+      {
+        name: "dist-version",
+        closeBundle() {
+          const distDir = resolve(import.meta.dirname, "dist");
+          if (!existsSync(distDir)) {
+            mkdirSync(distDir, { recursive: true });
+          }
+          writeFileSync(
+            join(distDir, "version.json"),
+            JSON.stringify({ version: __APP_INFO__.buildTimestamp })
+          );
+        },
+      },
     ] as PluginOption[],
     // 预加载项目必需的依赖
     optimizeDeps: {
@@ -102,7 +117,6 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
         "nprogress",
         "sortablejs",
         "qs",
-        "vxe-table",
         "path-browserify",
         "lodash-es",
         "@element-plus/icons-vue",
