@@ -1,5 +1,3 @@
-import { ElMessageBox } from "element-plus";
-
 import { store } from "@/stores";
 
 import AuthAPI from "@/api/auth";
@@ -21,15 +19,6 @@ let sessionExpired = false;
 const MAX_REFRESH_FAILURES = 3;
 // 连续续期失败次数
 let refreshFailures = 0;
-
-// 会话失效原因，决定弹窗提示文案
-type RedirectReason = "expired" | "password-changed";
-
-// 会话失效弹窗的提示文案
-const SESSION_EXPIRED_TIPS: Record<RedirectReason, string> = {
-  expired: "您的登录状态已过期，请重新登录",
-  "password-changed": "您的密码已修改，请重新登录",
-};
 
 export const useUserStore = defineStore("user", () => {
   // 用户信息
@@ -126,32 +115,23 @@ export const useUserStore = defineStore("user", () => {
   }
 
   /**
-   * 会话失效的统一出口：弹窗提示，用户确认后清状态并跳登录页
+   * 会话失效的统一出口：清空状态并静默跳转登录页
    *
-   * @param reason 失效原因，决定弹窗文案
-   */ async function redirectToLogin(reason: RedirectReason = "expired"): Promise<void> {
+   * <p>整页 replace 避免回退到已失效的页面；redirect 参数用于登录后回到原页面。
+   */
+  async function redirectToLogin(): Promise<void> {
     if (sessionExpired) return;
     sessionExpired = true;
 
     // 携带当前路由，登录成功后跳回
     const currentPath = router.currentRoute.value.fullPath;
-
-    await ElMessageBox.alert(SESSION_EXPIRED_TIPS[reason], "提示", {
-      type: "warning",
-      confirmButtonText: "重新登录",
-      // 只能点确认关闭，避免用户停在已失效的会话里继续操作
-      showClose: false,
-      closeOnClickModal: false,
-      closeOnPressEscape: false,
-    }).catch(() => {
-      // 弹窗被异常销毁也要完成跳转
-    });
+    const loginHref = router.resolve({
+      path: "/login",
+      query: { redirect: currentPath },
+    }).href;
 
     resetAllState();
-
-    // 整页跳转：SPA 内 push 的导航被并发请求或守卫取消时不报错，页面会留在原地
-    window.location.href = `${window.location.pathname}#/login?redirect=${encodeURIComponent(currentPath)}`;
-    window.location.reload();
+    window.location.replace(loginHref);
   }
 
   /**

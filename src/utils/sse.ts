@@ -263,8 +263,8 @@ function createSseConnection(options: UseSseOptions = {}) {
                 }
               } catch (err) {
                 logError("SSE 令牌刷新失败:", err);
-                // 续期失败即会话失效，走统一出口弹窗提示后跳登录页
-                await userStore.redirectToLogin("expired");
+                // 续期失败即会话失效，走统一出口静默跳转登录页
+                await userStore.redirectToLogin();
               }
             }
             isManualDisconnect = true;
