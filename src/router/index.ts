@@ -6,18 +6,6 @@ import { createRouter, createWebHashHistory, type RouteRecordRaw } from "vue-rou
  */
 export const Layout = () => import("@/layouts/index.vue");
 
-/**
- * 布局外大屏路由：不套后台 Layout，整页铺满视口，菜单以站内外链形式新标签页打开
- */
-export const screenRoutes: RouteRecordRaw[] = [
-  {
-    path: "/data-screen",
-    name: "DataScreen",
-    component: () => import("@/views/data-screen/index.vue"),
-    meta: { hidden: true, title: "数据大屏" },
-  },
-];
-
 // 静态路由
 export const constantRoutes: RouteRecordRaw[] = [
   {
@@ -27,7 +15,7 @@ export const constantRoutes: RouteRecordRaw[] = [
     children: [
       {
         path: "/redirect/:path(.*)",
-        component: () => import("@/views/redirect.vue"),
+        component: () => import("@/views/internal/redirect.vue"),
       },
     ],
   },
@@ -37,9 +25,6 @@ export const constantRoutes: RouteRecordRaw[] = [
     component: () => import("@/views/login/index.vue"),
     meta: { hidden: true },
   },
-
-  // 大屏演示页（独立成页，不经后台框架）
-  ...screenRoutes,
 
   {
     path: "/",
@@ -54,7 +39,7 @@ export const constantRoutes: RouteRecordRaw[] = [
         // 参考文档: https://cn.vuejs.org/guide/built-ins/keep-alive.html#include-exclude
         name: "Dashboard",
         meta: {
-          title: "dashboard",
+          title: "首页",
           icon: "homepage",
           affix: true,
           keepAlive: true,
@@ -62,24 +47,24 @@ export const constantRoutes: RouteRecordRaw[] = [
       },
       {
         path: "401",
-        component: () => import("@/views/error/401.vue"),
+        component: () => import("@/views/internal/error/401.vue"),
         meta: { hidden: true },
       },
       {
         path: "404",
-        component: () => import("@/views/error/404.vue"),
+        component: () => import("@/views/internal/error/404.vue"),
         meta: { hidden: true },
       },
       {
         path: "profile",
         name: "Profile",
-        component: () => import("@/views/profile/index.vue"),
+        component: () => import("@/views/workspace/account/index.vue"),
         meta: { title: "个人中心", icon: "user", hidden: true },
       },
       {
         path: "profile/notice",
         name: "MyNotice",
-        component: () => import("@/views/profile/notice/index.vue"),
+        component: () => import("@/views/workspace/notifications/index.vue"),
         meta: { title: "我的通知", icon: "user", hidden: true },
       },
     ],

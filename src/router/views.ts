@@ -26,15 +26,25 @@ export function normalizeViewPath(componentPath: string): string {
     .replace(/\.vue$/i, "");
 }
 
+// 内嵌外链菜单的组件标识固定为 iframe，视图文件在 internal 下
+const VIEW_ALIASES: Record<string, string> = { iframe: "internal/iframe" };
+
+/**
+ * 把菜单里保存的组件标识映射到实际视图路径
+ */
+function resolveViewAlias(path: string): string {
+  return VIEW_ALIASES[path] ?? path;
+}
+
 /**
  * 解析组件：支持 system/user 与 system/user/index 两种写法，未命中回退 404
  */
 export function resolveComponent(componentPath: string) {
-  const path = normalizeViewPath(componentPath);
+  const path = resolveViewAlias(normalizeViewPath(componentPath));
   return (
     viewModules[`${VIEW_PREFIX}${path}.vue`] ||
     viewModules[`${VIEW_PREFIX}${path}/index.vue`] ||
-    viewModules[`${VIEW_PREFIX}error/404.vue`]
+    viewModules[`${VIEW_PREFIX}internal/error/404.vue`]
   );
 }
 
@@ -43,7 +53,7 @@ export function resolveComponent(componentPath: string) {
  */
 export function isViewComponent(componentPath?: string): boolean {
   if (!componentPath) return false;
-  const path = normalizeViewPath(componentPath);
+  const path = resolveViewAlias(normalizeViewPath(componentPath));
   return viewPaths.has(path) || viewPaths.has(`${path}/index`);
 }
 
@@ -64,7 +74,7 @@ export interface PageComponentNode {
 function isSelectable(path: string): boolean {
   const segments = path.split("/");
   if (segments.includes("components")) return false;
-  return segments[0] !== "error" && path !== "redirect";
+  return segments[0] !== "internal";
 }
 
 /**
