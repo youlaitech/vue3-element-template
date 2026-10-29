@@ -1,5 +1,5 @@
 import request from "@/utils/request";
-import type { GeneratorPreviewItem, TableQueryParams, TableItem, GenConfigForm } from "./types";
+import type { GeneratorPreviewItem, TableQuery, TableItem, GenConfigForm } from "./types";
 import type { PageResult } from "@/api/common";
 
 const GENERATOR_BASE_URL = "/api/v1/codegen";
@@ -22,7 +22,7 @@ const GeneratorAPI = {
   /**
    * 获取数据表分页列表
    */
-  getTablePage(params: TableQueryParams) {
+  getTablePage(params: TableQuery) {
     return request<unknown, PageResult<TableItem>>({
       url: `${GENERATOR_BASE_URL}/table`,
       method: "get",
@@ -37,6 +37,17 @@ const GeneratorAPI = {
     return request<unknown, GenConfigForm>({
       url: `${GENERATOR_BASE_URL}/${tableName}/config`,
       method: "get",
+    });
+  },
+
+  /**
+   * AI 推断代码生成配置，未开启 AI 时返回业务异常
+   */
+  aiFillConfig(tableName: string, requirement?: string) {
+    return request<unknown, GenConfigForm>({
+      url: `${GENERATOR_BASE_URL}/${tableName}/ai-config`,
+      method: "post",
+      data: requirement ? { requirement } : undefined,
     });
   },
 

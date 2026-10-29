@@ -16,4 +16,7 @@ export const enum ApiCodeEnum {
 
   /** 权限不足 */
   PERMISSION_DENIED = "A0301",
+
+  /** 实时服务未启用 */
+  REALTIME_DISABLED = "B0102",
 }

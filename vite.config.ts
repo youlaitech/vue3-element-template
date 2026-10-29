@@ -21,10 +21,21 @@ const __APP_INFO__ = {
 
 const pathSrc = resolve(import.meta.dirname, "src");
 
-export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
-  const env = loadEnv(mode, process.cwd());
+export default defineConfig(({ mode, command }: ConfigEnv): UserConfig => {
+  const env = loadEnv(mode, import.meta.dirname, "");
+  const port = Number(env.APP_PORT ?? "3000");
+  if (!Number.isInteger(port) || port < 1 || port > 65535) {
+    throw new Error("APP_PORT 必须是 1–65535 的整数");
+  }
+  const proxyTarget = env.API_PROXY_TARGET;
+  // 构建产物不经过开发代理，只在 dev server 校验代理目标
+  if (command === "serve" && (!proxyTarget || !/^https?:\/\//.test(proxyTarget))) {
+    throw new Error("API_PROXY_TARGET 必须是 HTTP(S) 地址");
+  }
 
   return {
+    // 部署基础路径
+    base: env.VITE_BASE_URL || "/",
     resolve: {
       alias: {
         "@": pathSrc,
@@ -40,19 +51,35 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
     },
     server: {
       host: "0.0.0.0",
-      port: +env.VITE_APP_PORT,
+      port,
       open: true,
       proxy: {
         [env.VITE_API_BASE]: {
           changeOrigin: true,
-          target: env.VITE_PROXY_TARGET,
+          target: proxyTarget,
           rewrite: (path: string) => path.replace(new RegExp(`^${env.VITE_API_BASE}`), ""),
         },
       },
     },
     plugins: [
       vue(),
-      ...(env.VITE_MOCK_ENABLED === "true" ? [mockDevServerPlugin()] : []),
+      ...(env.VITE_MOCK_ENABLED === "true"
+        ? [
+            mockDevServerPlugin(
+              // 产出独立可部署的 mock 服务：pnpm build:mock 生成 dist/mockServer（Node HTTP 服务）
+              env.VITE_MOCK_BUILD === "true"
+                ? {
+                    build: {
+                      serverPort: +env.VITE_MOCK_PORT || 8081,
+                      // 绝对路径：直接写到项目根下的 .deploy/mock-server，不进前端 dist，
+                      // 部署时前端与 mock 各自独立上传，无需排除
+                      dist: resolve(import.meta.dirname, ".deploy/mock-server"),
+                    },
+                  }
+                : {}
+            ),
+          ]
+        : []),
       UnoCSS(),
       // API 自动导入
       AutoImport({
@@ -215,10 +242,10 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
           pluginTimings: false,
         },
         output: {
-          // 用于从入口点创建的块的打包输出格式
-          entryFileNames: "js/[name].[hash].js",
+          // 用于从入口点创建的块的打包输出格式；资源目录避开站点子路径，统一用 assets/
+          entryFileNames: "assets/[name].[hash].js",
           // 用于命名代码拆分时创建的共享块的输出命名
-          chunkFileNames: "js/[name].[hash].js",
+          chunkFileNames: "assets/[name].[hash].js",
           // 用于输出静态资源的命名
           assetFileNames: (assetInfo) => {
             const assetName = assetInfo.names[0];
@@ -237,6 +264,20 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
               extType = "fonts";
             }
             return `${extType}/[name].[hash].[ext]`;
+          },
+          codeSplitting: {
+            groups: [
+              // 框架核心，每个页面都依赖
+              {
+                name: "vendor-vue",
+                test: /node_modules[\\/](vue|@vue|vue-router|pinia|@vueuse)[\\/]/,
+              },
+              // 图表：首页趋势图使用
+              {
+                name: "vendor-echarts",
+                test: /node_modules[\\/](echarts|zrender)[\\/]/,
+              },
+            ],
           },
         },
       },

@@ -150,12 +150,16 @@ const dictItemList: Record<string, any[]> = {
 let nextDictId = 100;
 let nextItemId = 1000;
 
-/** 按 id 查找字典 */
+/**
+ * 按 id 查找字典
+ */
 function findDict(id: string) {
   return dictList.find((item) => item.id === id);
 }
 
-/** 按字典编码与 id 查找字典项 */
+/**
+ * 按字典编码与 id 查找字典项
+ */
 function findItem(dictCode: string, itemId: string) {
   return (dictItemList[dictCode] ?? []).find((item) => item.id === itemId);
 }
@@ -226,14 +230,14 @@ export default defineMock([
 
   // 获取字典表单数据
   {
-    url: "dicts/:id/form",
+    url: "dicts/:dictId/form",
     method: ["GET"],
     body: ({ params }) => {
-      const item = findDict(params.id);
+      const item = findDict(params.dictId);
       return {
         code: "00000",
         data: {
-          id: item?.id ?? params.id,
+          id: item?.id ?? params.dictId,
           name: item?.name ?? "",
           dictCode: item?.dictCode ?? "",
           status: item?.status ?? 1,
@@ -246,10 +250,10 @@ export default defineMock([
 
   // 修改字典
   {
-    url: "dicts/:id",
+    url: "dicts/:dictId",
     method: ["PUT"],
     body({ params, body }) {
-      const item = findDict(params.id);
+      const item = findDict(params.dictId);
       if (item) {
         Object.assign(item, {
           name: body.name ?? item.name,
@@ -260,7 +264,7 @@ export default defineMock([
       return {
         code: "00000",
         data: null,
-        msg: "修改字典" + (body.name ?? params.id) + "成功",
+        msg: "修改字典" + (body.name ?? params.dictId) + "成功",
       };
     },
   },
@@ -396,11 +400,11 @@ export default defineMock([
 
   // 删除字典项（支持逗号分隔的批量删除）
   {
-    url: "dicts/:dictCode/items/:itemId",
+    url: "dicts/:dictCode/items/:itemIds",
     method: ["DELETE"],
     body({ params }) {
       const rows = dictItemList[params.dictCode] ?? [];
-      String(params.itemId)
+      String(params.itemIds)
         .split(",")
         .forEach((id) => {
           const index = rows.findIndex((item) => item.id === id);
@@ -409,7 +413,7 @@ export default defineMock([
       return {
         code: "00000",
         data: null,
-        msg: "删除字典项" + params.itemId + "成功",
+        msg: "删除字典项" + params.itemIds + "成功",
       };
     },
   },

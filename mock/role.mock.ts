@@ -107,22 +107,22 @@ export default defineMock([
 
   // 获取角色表单数据
   {
-    url: "roles/:id/form",
+    url: "roles/:roleId/form",
     method: ["GET"],
     body: ({ params }) => {
       return {
         code: "00000",
-        data: roleMap[params.id],
+        data: roleMap[params.roleId],
         msg: "一切ok",
       };
     },
   },
   // 修改角色
   {
-    url: "roles/:id",
+    url: "roles/:roleId",
     method: ["PUT"],
     body({ params, body }) {
-      const role = roleMap[params.id];
+      const role = roleMap[params.roleId];
       if (!role) return { code: "00000", data: null, msg: "角色不存在" };
       const dataScope = Number(body.dataScope ?? role.dataScope);
       Object.assign(role, {
@@ -145,38 +145,38 @@ export default defineMock([
 
   // 删除角色（同时清理该角色的菜单授权）
   {
-    url: "roles/:id",
+    url: "roles/:ids",
     method: ["DELETE"],
     body({ params }) {
-      delete roleMap[params.id];
-      delete roleMenuIds[params.id];
+      delete roleMap[params.ids];
+      delete roleMenuIds[params.ids];
       return {
         code: "00000",
         data: null,
-        msg: "删除角色" + params.id + "成功",
+        msg: "删除角色" + params.ids + "成功",
       };
     },
   },
 
   // 获取角色拥有的菜单ID（内存态，保存后即时生效）
   {
-    url: "roles/:id/menu-ids",
+    url: "roles/:roleId/menu-ids",
     method: ["GET"],
     body({ params }) {
       return {
         code: "00000",
-        data: roleMenuIds[params.id] ?? [],
+        data: roleMenuIds[params.roleId] ?? [],
         msg: "一切ok",
       };
     },
   },
   // 保存角色菜单
   {
-    url: "roles/:id/menus",
+    url: "roles/:roleId/menus",
     method: ["PUT"],
     body({ params, body }) {
       const ids = Array.isArray(body) ? body : (body?.menuIds ?? []);
-      roleMenuIds[params.id] = ids.map(String);
+      roleMenuIds[params.roleId] = ids.map(String);
       return {
         code: "00000",
         data: null,
@@ -187,10 +187,10 @@ export default defineMock([
 
   // 获取角色部门ID列表(自定义数据权限)
   {
-    url: "roles/:id/dept-ids",
+    url: "roles/:roleId/dept-ids",
     method: ["GET"],
     body: ({ params }) => {
-      const role = roleMap[params.id];
+      const role = roleMap[params.roleId];
       return {
         code: "00000",
         data: role?.dataScope === 5 ? role.deptIds || [1, 2] : [],
@@ -401,7 +401,9 @@ const DATA_SCOPE_LABEL: Record<number, string> = {
   5: "自定义部门数据",
 };
 
-/** 角色列表：从 roleMap 派生，保证增删改后立即生效（按 sort 升序） */
+/**
+ * 角色列表：从 roleMap 派生，保证增删改后立即生效（按 sort 升序）
+ */
 function listRoles(): RoleRow[] {
   return (Object.values(roleMap) as RoleRow[]).sort((a, b) => a.sort - b.sort);
 }

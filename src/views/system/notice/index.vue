@@ -313,7 +313,7 @@ import { ElMessage, ElMessageBox, type FormInstance, type FormRules } from "elem
 import { Close, CopyDocument, FullScreen, Refresh } from "@element-plus/icons-vue";
 
 import NoticeAPI from "@/api/system/notice";
-import type { NoticeDetail, NoticeForm, NoticeItem, NoticeQueryParams } from "@/api/system/notice";
+import type { NoticeDetail, NoticeForm, NoticeItem, NoticeQuery } from "@/api/system/notice";
 import UserAPI from "@/api/system/user";
 import type { OptionItem } from "@/api/common";
 import { usePageTable, useTableSelection } from "@/composables";
@@ -340,7 +340,7 @@ const NOTICE_TARGET_SPECIFIED = 2;
 // 分页表格数据管理
 const { loading, list, total, params, fetchData, handleQuery, handleResetQuery } = usePageTable<
   NoticeItem,
-  NoticeQueryParams
+  NoticeQuery
 >({
   initialParams: {
     pageNum: 1,

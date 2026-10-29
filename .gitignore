@@ -35,3 +35,12 @@ yarn.lock
 
 # Local history
 .history
+
+# 部署脚本（含服务器 IP/端口等信息，不入库）
+deploy.mjs
+
+# 独立 mock 服务的构建产物
+.deploy/
+
+# 线上部署专用变量，不入库
+.env.youlai

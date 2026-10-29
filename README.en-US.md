@@ -157,7 +157,7 @@ The project supports both online API and local mock API. By default, it uses the
 
 1. Get the backend source code based on `Java` and `SpringBoot` from [youlai-boot](https://gitee.com/youlaiorg/youlai-boot.git).
 2. Follow the instructions in the backend project's README.md to set up the local environment.
-3. Modify the value of `VITE_PROXY_TARGET` in the `.env.development` file to `http://localhost:8989`, replacing it with the backend API URL.
+3. Modify the value of `API_PROXY_TARGET` in the `.env.development` file to `http://localhost:8989`, replacing it with the backend API URL.
 
 ## Notes
 

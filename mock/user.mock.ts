@@ -279,10 +279,10 @@ export default defineMock([
 
   // 删除用户
   {
-    url: "users/:userId",
+    url: "users/:ids",
     method: ["DELETE"],
     body({ params }) {
-      String(params.userId)
+      String(params.ids)
         .split(",")
         .forEach((id) => {
           const index = userList.findIndex((row) => row.id === id);
@@ -292,7 +292,7 @@ export default defineMock([
       return {
         code: "00000",
         data: null,
-        msg: "删除用户" + params.userId + "成功",
+        msg: "删除用户" + params.ids + "成功",
       };
     },
   },

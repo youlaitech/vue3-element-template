@@ -1,11 +1,5 @@
 import request from "@/utils/request";
-import type {
-  CaptchaInfo,
-  LoginRequest,
-  LoginResult,
-  QrCodeGenerateResult,
-  QrCodeStatusResult,
-} from "./types";
+import type { CaptchaInfo, LoginRequest, LoginResult } from "./types";
 
 const AUTH_BASE_URL = "/api/v1/auth";
 
@@ -60,41 +54,6 @@ const AuthAPI = {
       url: `${AUTH_BASE_URL}/refresh-token`,
       method: "post",
       params: { refreshToken },
-      anonymous: true,
-    });
-  },
-
-  /**
-   * 生成扫码登录票据
-   */
-  qrGenerate(): Promise<QrCodeGenerateResult> {
-    return request<unknown, QrCodeGenerateResult>({
-      url: `${AUTH_BASE_URL}/qr-code/generate`,
-      method: "post",
-      anonymous: true,
-    });
-  },
-
-  /**
-   * 轮询扫码登录状态
-   */
-  qrStatus(ticket: string): Promise<QrCodeStatusResult> {
-    return request<unknown, QrCodeStatusResult>({
-      url: `${AUTH_BASE_URL}/qr-code/status`,
-      method: "get",
-      params: { ticket },
-      anonymous: true,
-    });
-  },
-
-  /**
-   * 用票据换取登录令牌
-   */
-  qrLogin(ticket: string): Promise<LoginResult> {
-    return request<unknown, LoginResult>({
-      url: `${AUTH_BASE_URL}/qr-code/login`,
-      method: "post",
-      data: { ticket },
       anonymous: true,
     });
   },

@@ -47,14 +47,7 @@
       <div class="login-card">
         <div class="login-card__inner">
           <transition name="fade-slide" mode="out-in">
-            <QrCodeLogin
-              v-if="component === 'qrcode'"
-              key="qrcode"
-              class="login-card__form"
-              @switch="component = 'login'"
-            />
-
-            <div v-else-if="component === 'login'" key="login" class="login-card__form">
+            <div v-if="component === 'login'" key="login" class="login-card__form">
               <h2 class="login-card__title">欢迎回来</h2>
               <p class="login-card__desc">请完成身份验证后进入系统</p>
 
@@ -143,10 +136,6 @@
               <div class="login-card__alt">
                 <div class="login-card__alt-divider">其他登录方式</div>
                 <div class="flex gap-12px">
-                  <button class="login-card__alt-btn" @click="component = 'qrcode'">
-                    <span class="i-svg:scan login-card__alt-icon" />
-                    扫码登录
-                  </button>
                   <button class="login-card__alt-btn">
                     <span class="i-svg:security login-card__alt-icon" />
                     统一认证
@@ -182,12 +171,11 @@ import { useUserStore } from "@/stores";
 import { AuthStorage } from "@/utils/auth";
 import { appConfig } from "@/settings";
 import ResetPwd from "./components/ResetPwd.vue";
-import QrCodeLogin from "./components/QrCodeLogin.vue";
 import logo from "@/assets/images/logo.png";
 
 const userStore = useUserStore();
 const route = useRoute();
-const component = ref<"login" | "resetPwd" | "qrcode">("login");
+const component = ref<"login" | "resetPwd">("login");
 
 const loginFormRef = ref<FormInstance>();
 const loading = ref(false);
@@ -939,6 +927,18 @@ $input-h: 44px;
 
   .login-brand {
     padding: 24px 24px 28px;
+
+    /* 版本号移到名称下方，避免与右上角工具栏图标重叠 */
+    &__identity {
+      flex-direction: column;
+      gap: 6px;
+      align-items: flex-start;
+    }
+
+    &__name {
+      font-size: 20px;
+      white-space: nowrap;
+    }
   }
 
   .login-card {

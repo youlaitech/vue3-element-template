@@ -41,7 +41,7 @@ export function setupPermissionGuard() {
       // 动态路由生成
       if (!permissionStore.isRouteGenerated) {
         if (!userStore.userInfo?.roles?.length) {
-          await userStore.getUserInfo();
+          await userStore.fetchUserInfo();
         }
 
         const dynamicRoutes = await permissionStore.generateRoutes();
@@ -68,7 +68,15 @@ export function setupPermissionGuard() {
       }
     } catch (error) {
       console.error("Route guard error:", error);
-      await useUserStore().resetAllState();
+
+      const userStore = useUserStore();
+      // 会话失效已由请求拦截器统一清状态并跳登录页，这里不再重复导航
+      if (userStore.isSessionExpired()) {
+        NProgress.done();
+        return false;
+      }
+
+      await userStore.resetAllState();
       NProgress.done();
       return "/login";
     }

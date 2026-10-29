@@ -383,9 +383,13 @@ const mobileBindingFormRef = ref();
 const emailBindingFormRef = ref();
 
 const userProfileForm = reactive<UserProfileForm>({});
-const passwordChangeForm = reactive<PasswordChangeForm>({});
-const mobileUpdateForm = reactive<MobileUpdateForm>({});
-const emailUpdateForm = reactive<EmailUpdateForm>({});
+const passwordChangeForm = reactive<PasswordChangeForm>({
+  oldPassword: "",
+  newPassword: "",
+  confirmPassword: "",
+});
+const mobileUpdateForm = reactive<MobileUpdateForm>({ mobile: "", code: "", password: "" });
+const emailUpdateForm = reactive<EmailUpdateForm>({ email: "", code: "", password: "" });
 
 const mobileCountdown = ref(0);
 const mobileTimer = ref();

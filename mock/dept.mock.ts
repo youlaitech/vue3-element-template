@@ -58,7 +58,9 @@ const deptList: DeptRow[] = [
 /** 新增部门的 id 游标 */
 let nextDeptId = 100;
 
-/** 扁平数据 → 部门树 */
+/**
+ * 扁平数据 → 部门树
+ */
 function buildDeptTree(): DeptNode[] {
   const map = new Map<string, DeptNode>();
   deptList.forEach((item) => map.set(item.id, { ...item, children: [] }));
@@ -78,7 +80,9 @@ function buildDeptTree(): DeptNode[] {
   return roots;
 }
 
-/** 收集部门及其子部门 id（带环保护） */
+/**
+ * 收集部门及其子部门 id（带环保护）
+ */
 function collectDeptIds(id: string, acc: string[] = []): string[] {
   if (acc.includes(id)) return acc;
   acc.push(id);
@@ -146,14 +150,14 @@ export default defineMock([
 
   // 获取部门表单数据
   {
-    url: "depts/:id/form",
+    url: "depts/:deptId/form",
     method: ["GET"],
     body: ({ params }) => ({
       code: "00000",
       data:
-        deptList.find((item) => item.id === params.id) ??
+        deptList.find((item) => item.id === params.deptId) ??
         ({
-          id: params.id,
+          id: params.deptId,
           parentId: "0",
           name: "",
           code: "",
@@ -166,10 +170,10 @@ export default defineMock([
 
   // 修改部门
   {
-    url: "depts/:id",
+    url: "depts/:deptId",
     method: ["PUT"],
     body({ params, body }) {
-      const item = deptList.find((row) => row.id === params.id);
+      const item = deptList.find((row) => row.id === params.deptId);
       if (item) {
         // 不允许把自身或其子部门设为上级，避免形成环
         const nextParentId = String(body.parentId ?? item.parentId);
@@ -187,24 +191,24 @@ export default defineMock([
       return {
         code: "00000",
         data: null,
-        msg: "修改部门" + (body.name ?? params.id) + "成功",
+        msg: "修改部门" + (body.name ?? params.deptId) + "成功",
       };
     },
   },
 
   // 删除部门（连同子部门）
   {
-    url: "depts/:id",
+    url: "depts/:ids",
     method: ["DELETE"],
     body({ params }) {
-      collectDeptIds(params.id).forEach((id) => {
+      collectDeptIds(params.ids).forEach((id) => {
         const index = deptList.findIndex((row) => row.id === id);
         if (index !== -1) deptList.splice(index, 1);
       });
       return {
         code: "00000",
         data: null,
-        msg: "删除部门" + params.id + "成功",
+        msg: "删除部门" + params.ids + "成功",
       };
     },
   },

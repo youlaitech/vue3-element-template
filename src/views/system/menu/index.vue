@@ -241,7 +241,7 @@
           <el-form-item label="外链地址" prop="externalUrl">
             <el-input
               v-model="formData.externalUrl"
-              placeholder="https://example.com 或站内路径 /data-screen"
+              placeholder="https://example.com 或站内路径 /dashboard"
               clearable
             />
           </el-form-item>
@@ -484,7 +484,7 @@ import {
 } from "@element-plus/icons-vue";
 
 import MenuAPI from "@/api/system/menu";
-import type { MenuForm, MenuItem, MenuQueryParams } from "@/api/system/menu";
+import type { MenuForm, MenuItem, MenuQuery } from "@/api/system/menu";
 import type { OptionItem } from "@/api/common";
 import {
   filterPageComponent,
@@ -533,7 +533,7 @@ const list = ref<MenuItem[]>([]);
 const tableRef = ref<TableInstance>();
 // 是否展开全部菜单层级，默认折叠只显示顶级菜单
 const expandAll = ref(false);
-const queryParams = reactive<MenuQueryParams>({ keywords: "" });
+const queryParams = reactive<MenuQuery>({ keywords: "" });
 
 const dialogState = reactive({
   title: "新增菜单",
@@ -768,7 +768,7 @@ const validateExternalUrl = (_: unknown, value: string, callback: (error?: Error
     return;
   }
 
-  // 站内路径（如 /data-screen）由前端补全当前站点域名
+  // 站内路径（如 /dashboard）由前端补全当前站点域名
   if (value.startsWith("/")) {
     callback();
     return;

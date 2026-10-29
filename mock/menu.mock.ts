@@ -3,7 +3,7 @@ import { defineMock } from "./base";
 /* ------------------------------------------------------------------
  * 菜单 mock（内存态）
  * 数据取自 sql/youlai_admin.sql 的 sys_menu，仅保留模板已有页面的菜单：
- * 系统管理(1) 与 代码生成(3)；新增/修改/删除直接作用于内存数据，
+ * 系统管理(1)、数据大屏(2) 与 代码生成(3)；新增/修改/删除直接作用于内存数据，
  * 「动态路由」由菜单树实时生成，便于演示完整闭环。
  * ------------------------------------------------------------------ */
 
@@ -802,23 +802,6 @@ const MENU_TREE: MenuTreeNode[] = [
     ],
   },
   {
-    id: "2",
-    parentId: "0",
-    name: "数据大屏",
-    type: "E",
-    routeName: null,
-    routePath: "",
-    component: null,
-    externalUrl: "/data-screen",
-    perm: null,
-    visible: 1,
-    sort: 2,
-    icon: "el-icon-Monitor",
-    redirect: null,
-    keepAlive: null,
-    children: [],
-  },
-  {
     id: "3",
     parentId: "0",
     name: "代码生成",
@@ -888,7 +871,9 @@ interface RouteNode {
 /** 新增菜单的 id 游标 */
 let nextMenuId = 20000;
 
-/** 按 id 查找菜单 */
+/**
+ * 按 id 查找菜单
+ */
 function findMenu(nodes: MenuTreeNode[], id: string): MenuTreeNode | undefined {
   for (const node of nodes) {
     if (node.id === id) return node;
@@ -898,7 +883,9 @@ function findMenu(nodes: MenuTreeNode[], id: string): MenuTreeNode | undefined {
   return undefined;
 }
 
-/** 从树中摘除菜单（连同其子菜单） */
+/**
+ * 从树中摘除菜单（连同其子菜单）
+ */
 function removeMenu(nodes: MenuTreeNode[], id: string): MenuTreeNode | undefined {
   const index = nodes.findIndex((item) => item.id === id);
   if (index !== -1) return nodes.splice(index, 1)[0];
@@ -909,7 +896,9 @@ function removeMenu(nodes: MenuTreeNode[], id: string): MenuTreeNode | undefined
   return undefined;
 }
 
-/** 挂载菜单到父级下（父级不存在时作为顶级），同级按 sort 排序 */
+/**
+ * 挂载菜单到父级下（父级不存在时作为顶级），同级按 sort 排序
+ */
 function insertMenu(node: MenuTreeNode): void {
   const parent = node.parentId === "0" ? undefined : findMenu(MENU_TREE, node.parentId);
   const bucket = parent ? parent.children : MENU_TREE;
@@ -918,7 +907,9 @@ function insertMenu(node: MenuTreeNode): void {
   bucket.sort((a, b) => a.sort - b.sort);
 }
 
-/** 按关键字过滤菜单树（命中节点保留祖先链，便于树形表格展示） */
+/**
+ * 按关键字过滤菜单树（命中节点保留祖先链，便于树形表格展示）
+ */
 function filterMenuTree(nodes: MenuTreeNode[], keywords: string): MenuTreeNode[] {
   const lower = keywords.toLowerCase();
   return nodes.reduce<MenuTreeNode[]>((acc, node) => {
@@ -930,7 +921,9 @@ function filterMenuTree(nodes: MenuTreeNode[], keywords: string): MenuTreeNode[]
   }, []);
 }
 
-/** 归一化 types 参数（支持 "C,M" 与重复键） */
+/**
+ * 归一化 types 参数（支持 "C,M" 与重复键）
+ */
 function normalizeTypes(raw: unknown): string[] {
   if (Array.isArray(raw)) return raw.map(String);
   return String(raw ?? "")
@@ -938,7 +931,9 @@ function normalizeTypes(raw: unknown): string[] {
     .filter(Boolean);
 }
 
-/** 生成下拉树（按钮类型默认不参与上级菜单选择） */
+/**
+ * 生成下拉树（按钮类型默认不参与上级菜单选择）
+ */
 function filterMenuOptions(nodes: MenuTreeNode[], types: string[]): MenuOptionNode[] {
   return nodes
     .filter((node) => !types.length || types.includes(node.type))
@@ -950,7 +945,9 @@ function filterMenuOptions(nodes: MenuTreeNode[], types: string[]): MenuOptionNo
     }));
 }
 
-/** 菜单树 → 前端动态路由（仅目录与可见菜单） */
+/**
+ * 菜单树 → 前端动态路由（仅目录与可见菜单）
+ */
 function buildRoutes(nodes: MenuTreeNode[]): RouteNode[] {
   return nodes
     .filter((node) => node.type !== "B" && node.visible === 1)
