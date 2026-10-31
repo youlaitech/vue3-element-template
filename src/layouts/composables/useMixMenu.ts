@@ -86,7 +86,7 @@ export function useMixMenu() {
         permissionStore.setMixLayoutSideMenus(topMenuPath);
       }
     },
-    { immediate: true }
+    { immediate: true },
   );
 
   return {

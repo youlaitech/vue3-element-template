@@ -152,7 +152,7 @@ export default defineMock([
       const deptId = String(query?.deptId ?? "").trim();
       const range = query?.createTime;
       const [start, end] = (Array.isArray(range) ? range : String(range ?? "").split(",")).map(
-        (value) => String(value ?? "").slice(0, 10)
+        (value) => String(value ?? "").slice(0, 10),
       );
       const day = (value: unknown) =>
         String(value ?? "")

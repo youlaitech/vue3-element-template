@@ -346,7 +346,7 @@ function getPaletteColors(colors: ThemeColorMap) {
 }
 
 const activePaletteName = computed(() =>
-  settingsStore.activeThemePalette ? settingsStore.activeThemePalette.name : "自定义调色板"
+  settingsStore.activeThemePalette ? settingsStore.activeThemePalette.name : "自定义调色板",
 );
 
 /**

@@ -1,6 +1,5 @@
 import vue from "@vitejs/plugin-vue";
-import type { PluginOption } from "vite";
-import { type ConfigEnv, type UserConfig, loadEnv, defineConfig } from "vite";
+import { type ConfigEnv, type Plugin, type UserConfig, loadEnv, defineConfig } from "vite";
 
 import AutoImport from "unplugin-auto-import/vite";
 import Components from "unplugin-vue-components/vite";
@@ -9,8 +8,8 @@ import { ElementPlusResolver } from "unplugin-vue-components/resolvers";
 import { mockDevServerPlugin } from "vite-plugin-mock-dev-server";
 
 import UnoCSS from "unocss/vite";
-import { existsSync, mkdirSync, writeFileSync } from "fs";
-import { join, resolve } from "path";
+import { existsSync, readdirSync } from "node:fs";
+import { resolve } from "node:path";
 import { name, version } from "./package.json" with { type: "json" };
 
 // 平台名称、版本信息
@@ -21,20 +20,13 @@ const __APP_INFO__ = {
 
 const pathSrc = resolve(import.meta.dirname, "src");
 
-export default defineConfig(({ mode, command }: ConfigEnv): UserConfig => {
+export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
   const env = loadEnv(mode, import.meta.dirname, "");
-  const port = Number(env.APP_PORT ?? "3000");
-  if (!Number.isInteger(port) || port < 1 || port > 65535) {
-    throw new Error("APP_PORT 必须是 1–65535 的整数");
-  }
+  const port = Number(env.APP_PORT) || undefined;
   const proxyTarget = env.API_PROXY_TARGET;
-  // 构建产物不经过开发代理，只在 dev server 校验代理目标
-  if (command === "serve" && (!proxyTarget || !/^https?:\/\//.test(proxyTarget))) {
-    throw new Error("API_PROXY_TARGET 必须是 HTTP(S) 地址");
-  }
 
   return {
-    // 部署基础路径
+    // 子路径部署由 VITE_BASE_URL 指定，缺省为站点根路径
     base: env.VITE_BASE_URL || "/",
     resolve: {
       alias: {
@@ -43,7 +35,6 @@ export default defineConfig(({ mode, command }: ConfigEnv): UserConfig => {
     },
     css: {
       preprocessorOptions: {
-        // 注入项目布局变量。
         scss: {
           additionalData: `@use "@/styles/variables.scss" as *;`,
         },
@@ -58,6 +49,13 @@ export default defineConfig(({ mode, command }: ConfigEnv): UserConfig => {
           changeOrigin: true,
           target: proxyTarget,
           rewrite: (path: string) => path.replace(new RegExp(`^${env.VITE_API_BASE}`), ""),
+        },
+        // 通知中心 WebSocket，单独代理以转发握手请求
+        "/api/v1/realtime/ws": {
+          changeOrigin: true,
+          rewriteWsOrigin: true,
+          target: proxyTarget,
+          ws: true,
         },
       },
     },
@@ -76,55 +74,32 @@ export default defineConfig(({ mode, command }: ConfigEnv): UserConfig => {
                       dist: resolve(import.meta.dirname, ".deploy/mock-server"),
                     },
                   }
-                : {}
+                : {},
             ),
           ]
         : []),
       UnoCSS(),
-      // API 自动导入
+      // 函数自动导入
       AutoImport({
-        // 导入 Vue 函数，如：ref, reactive, toRef 等
         imports: ["vue", "@vueuse/core", "pinia", "vue-router"],
-        resolvers: [
-          // 导入 Element Plus函数，如：ElMessage, ElMessageBox 等
-          ElementPlusResolver({ importStyle: "sass" }),
-        ],
-        eslintrc: {
-          enabled: false,
-          filepath: "./.eslintrc-auto-import.json",
-          globalsPropValue: true,
-        },
+        // Element Plus 函数按需导入
+        resolvers: [ElementPlusResolver({ importStyle: "sass" })],
         vueTemplate: true,
-        // 导入函数类型声明文件路径 (false:关闭自动生成)
+        // 默认不生成类型声明，需要时改用下面的 dts 路径
         dts: false,
         // dts: "types/auto-imports.d.ts",
       }),
       // 组件自动导入
       Components({
-        resolvers: [
-          // 导入 Element Plus 组件
-          ElementPlusResolver({ importStyle: "sass" }),
-        ],
-        // 指定自定义组件位置(默认:src/components)
+        resolvers: [ElementPlusResolver({ importStyle: "sass" })],
+        // 全局组件与页面内组件目录
         dirs: ["src/components", "src/**/components"],
-        // 导入组件类型声明文件路径 (false:关闭自动生成)
+        // 默认不生成类型声明，需要时改用下面的 dts 路径
         dts: false,
+        // dts: "types/components.d.ts",
       }),
-      // 生成版本号文件
-      {
-        name: "dist-version",
-        closeBundle() {
-          const distDir = resolve(import.meta.dirname, "dist");
-          if (!existsSync(distDir)) {
-            mkdirSync(distDir, { recursive: true });
-          }
-          writeFileSync(
-            join(distDir, "version.json"),
-            JSON.stringify({ version: __APP_INFO__.buildTimestamp })
-          );
-        },
-      },
-    ] as PluginOption[],
+      distVersionPlugin,
+    ],
     // 预加载项目必需的依赖
     optimizeDeps: {
       include: [
@@ -150,103 +125,21 @@ export default defineConfig(({ mode, command }: ConfigEnv): UserConfig => {
         "element-plus/es",
         "element-plus/es/locale/lang/en",
         "element-plus/es/locale/lang/zh-cn",
-        // Element Plus 组件样式预构建：按 src 实际用到的组件清单硬编码，首启即预加载，
-        // 避免首次使用某组件时触发依赖重优化导致页面刷新
-        ...[
-          "alert",
-          "avatar",
-          "backtop",
-          "badge",
-          "base",
-          "breadcrumb",
-          "breadcrumb-item",
-          "button",
-          "card",
-          "cascader",
-          "checkbox",
-          "checkbox-group",
-          "checkbox-button",
-          "col",
-          "color-picker",
-          "config-provider",
-          "collapse-transition",
-          "date-picker",
-          "descriptions",
-          "descriptions-item",
-          "dialog",
-          "divider",
-          "drawer",
-          "dropdown",
-          "dropdown-item",
-          "dropdown-menu",
-          "empty",
-          "form",
-          "form-item",
-          "icon",
-          "image",
-          "image-viewer",
-          "input",
-          "input-number",
-          "input-tag",
-          "link",
-          "loading",
-          "menu",
-          "menu-item",
-          "message",
-          "message-box",
-          "notification",
-          "option",
-          "pagination",
-          "popover",
-          "progress",
-          "radio",
-          "radio-button",
-          "radio-group",
-          "result",
-          "row",
-          "scrollbar",
-          "select",
-          "skeleton",
-          "skeleton-item",
-          "space",
-          "step",
-          "steps",
-          "sub-menu",
-          "switch",
-          "tab-pane",
-          "table",
-          "table-column",
-          "tabs",
-          "tag",
-          "text",
-          "time-picker",
-          "time-select",
-          "timeline",
-          "timeline-item",
-          "tooltip",
-          "tree",
-          "tree-select",
-          "upload",
-          "watermark",
-        ].map((c) => `element-plus/es/components/${c}/style/index`),
+        // Element Plus 组件样式：按组件目录枚举，新增组件时不会在运行期补优化并刷新页面
+        ...getElementPlusStyleDeps(),
       ],
     },
     // 构建配置（Vite 8 使用 Rolldown + Oxc）
     build: {
-      chunkSizeWarningLimit: 1200, // chunk 大小警告阈值
+      // 单个 chunk 告警阈值（kB），取略高于最大 vendor 包的值
+      chunkSizeWarningLimit: 1200,
+      // 跳过 gzip 体积统计，加快构建
       reportCompressedSize: false,
-      cssMinify: "lightningcss", // Vite 8 默认使用 Lightning CSS 压缩
-      // minify 默认使用 'oxc'，压缩速度比 terser 快 30-90 倍
       rolldownOptions: {
-        checks: {
-          pluginTimings: false,
-        },
         output: {
-          // 用于从入口点创建的块的打包输出格式；资源目录避开站点子路径，统一用 assets/
+          // 资源目录避开站点子路径，统一用 assets/
           entryFileNames: "assets/[name].[hash].js",
-          // 用于命名代码拆分时创建的共享块的输出命名
           chunkFileNames: "assets/[name].[hash].js",
-          // 用于输出静态资源的命名
           assetFileNames: (assetInfo) => {
             const assetName = assetInfo.names[0];
 
@@ -287,3 +180,28 @@ export default defineConfig(({ mode, command }: ConfigEnv): UserConfig => {
     },
   };
 });
+
+// 按组件目录枚举 Element Plus 样式入口，避免手写清单漏项后运行期补优化并刷新页面
+function getElementPlusStyleDeps(): string[] {
+  const componentsDir = resolve(import.meta.dirname, "node_modules/element-plus/es/components");
+  if (!existsSync(componentsDir)) return [];
+  return readdirSync(componentsDir, { withFileTypes: true })
+    .filter(
+      (entry) =>
+        entry.isDirectory() && existsSync(resolve(componentsDir, entry.name, "style/index.mjs")),
+    )
+    .map((entry) => `element-plus/es/components/${entry.name}/style/index`);
+}
+
+// 生成 version.json，供前端检测版本更新
+const distVersionPlugin: Plugin = {
+  name: "dist-version",
+  apply: "build",
+  generateBundle() {
+    this.emitFile({
+      type: "asset",
+      fileName: "version.json",
+      source: JSON.stringify({ version: __APP_INFO__.buildTimestamp }),
+    });
+  },
+};

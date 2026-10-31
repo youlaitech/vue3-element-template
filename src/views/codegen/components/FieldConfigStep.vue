@@ -175,6 +175,7 @@
 
 <script setup lang="ts">
 import Sortable from "sortablejs";
+import type { SortableEvent } from "sortablejs";
 import { FormTypeEnum, QueryTypeEnum } from "@/enums/codegen";
 import type { GenConfigForm } from "@/api/codegen";
 import type { OptionItem } from "@/api/common";
@@ -211,7 +212,7 @@ async function locateField(columnName: string) {
   await nextTick();
   const cards = listRef.value?.querySelectorAll<HTMLElement>(".field-card");
   const target = Array.from(cards ?? []).find(
-    (card) => card.querySelector(".field-column")?.textContent?.trim() === columnName
+    (card) => card.querySelector(".field-column")?.textContent?.trim() === columnName,
   );
   if (!target) return;
   target.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -245,7 +246,7 @@ function initSort() {
     ghostClass: "sortable-ghost",
     handle: ".sortable-handle",
     easing: "cubic-bezier(1, 0, 0, 1)",
-    onEnd: (evt: any) => {
+    onEnd: (evt: SortableEvent) => {
       const { oldIndex, newIndex } = evt;
       if (oldIndex === undefined || newIndex === undefined || oldIndex === newIndex) return;
       const list = formData.value?.fieldConfigs || [];

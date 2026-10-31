@@ -1079,7 +1079,7 @@ export default defineMock([
               keepAlive: null,
               children: [],
             });
-          }
+          },
         );
       }
 

@@ -47,8 +47,8 @@ export function useCodePreview(genConfigFormData: Ref<GenConfigForm>) {
       new Set(
         previewList
           .map((item) => item.language || item.fileName.split(".").pop() || "")
-          .filter(Boolean)
-      )
+          .filter(Boolean),
+      ),
     );
     previewTypeOptions.value = typeOptions;
     previewTypes.value = [...typeOptions];
@@ -115,7 +115,7 @@ export function useCodePreview(genConfigFormData: Ref<GenConfigForm>) {
         fileTreeRef.value?.setCurrentKey?.(currentFileKey.value);
       }
     },
-    { immediate: true }
+    { immediate: true },
   );
 
   return {

@@ -149,12 +149,12 @@ import type { FormInstance, PopoverProps, TableInstance } from "element-plus";
 /**
  * 对象类型
  */
-export type IObject = Record<string, any>;
+export type IObject = Record<string, unknown>;
 
 /**
  * 定义接收的属性
  */
-export interface ISelectConfig<T = any> {
+export interface ISelectConfig<T = IObject> {
   /** 宽度 */
   width?: string;
   /** 占位符 */
@@ -164,7 +164,7 @@ export interface ISelectConfig<T = any> {
   /**
    * 列表的网络请求函数（需返回 Promise）
    */
-  indexAction: (_queryParams: T) => Promise<any>;
+  indexAction: (_queryParams: T) => Promise<{ list: IObject[]; total: number }>;
   /** 主键（跨页选择必填，默认为 id） */
   pk?: string;
   /** 是否多选 */
@@ -180,9 +180,9 @@ export interface ISelectConfig<T = any> {
     /** 组件属性 */
     attrs?: IObject;
     /** 初始值 */
-    initialValue?: any;
+    initialValue?: string | number | null;
     /** 可选项（适用于 select 组件） */
-    options?: { label: string; value: any }[];
+    options?: { label: string; value: string | number }[];
   }>;
   /** 列选项 */
   tableColumns: Array<{
@@ -190,7 +190,7 @@ export interface ISelectConfig<T = any> {
     label?: string;
     prop?: string;
     width?: string | number;
-    [key: string]: any;
+    [key: string]: unknown;
   }>;
 }
 const props = withDefaults(
@@ -200,14 +200,14 @@ const props = withDefaults(
   }>(),
   {
     text: "",
-  }
+  },
 );
 
 /**
  * 自定义事件
  */
 const emit = defineEmits<{
-  confirmClick: [selection: any[]];
+  confirmClick: [selection: IObject[]];
 }>();
 
 // 主键
@@ -227,7 +227,7 @@ const pageSize = 10;
 const queryParams = reactive<{
   pageNum: number;
   pageSize: number;
-  [key: string]: any;
+  [key: string]: string | number | null;
 }>({
   pageNum: 1,
   pageSize,
@@ -292,7 +292,7 @@ const confirmText = computed(() => {
 /**
  * 处理表格单选与多选
  */
-function handleSelect(selection: any[]) {
+function handleSelect(selection: IObject[]) {
   if (isMultiple || selection.length === 0) {
     // 多选
     selectedItems.value = selection;
@@ -307,7 +307,7 @@ function handleSelect(selection: any[]) {
 /**
  * 处理表格全选
  */
-function handleSelectAll(selection: any[]) {
+function handleSelectAll(selection: IObject[]) {
   if (isMultiple) {
     selectedItems.value = selection;
   }

@@ -106,7 +106,7 @@ const isLogoCollapsed = computed(() => width.value < 768);
 const useMenuColors = computed(
   () =>
     settingsStore.resolvedTheme === ThemeMode.DARK ||
-    settingsStore.sidebarColorScheme === SidebarColor.CLASSIC_BLUE
+    settingsStore.sidebarColorScheme === SidebarColor.CLASSIC_BLUE,
 );
 </script>
 

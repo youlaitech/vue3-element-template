@@ -21,7 +21,7 @@ export function setupPermissionGuard() {
       // 未登录处理
       if (!isLoggedIn) {
         const isWhiteListed = whiteList.some(
-          (path) => to.path === path || to.path.startsWith(`${path}/`)
+          (path) => to.path === path || to.path.startsWith(`${path}/`),
         );
         if (isWhiteListed) {
           return;

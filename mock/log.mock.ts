@@ -1217,7 +1217,7 @@ export default defineMock([
       const [start, end] = (Array.isArray(range) ? range : String(range).split(",")).map((v) =>
         String(v ?? "")
           .replace("T", " ")
-          .slice(0, 19)
+          .slice(0, 19),
       );
       const time = (value: string) => value.replace("T", " ").slice(0, 19);
 

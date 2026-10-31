@@ -1,51 +1,32 @@
-import eslint from "@eslint/js";
-import globals from "globals";
-import * as typescriptEslint from "typescript-eslint";
+import { globalIgnores } from "eslint/config";
+import { defineConfigWithVueTs, vueTsConfigs } from "@vue/eslint-config-typescript";
 import pluginVue from "eslint-plugin-vue";
-import vueParser from "vue-eslint-parser";
-import configPrettier from "eslint-config-prettier";
-import fs from "node:fs";
+import skipFormatting from "@vue/eslint-config-prettier/skip-formatting";
+import globals from "globals";
 
-let autoImportGlobals: Record<string, "readonly"> = {};
-try {
-  autoImportGlobals =
-    JSON.parse(fs.readFileSync("./.eslintrc-auto-import.json", "utf-8")).globals || {};
-} catch (error) {
-  console.warn("Could not load auto-import globals", error);
-}
+export default defineConfigWithVueTs(
+  { files: ["**/*.{js,mjs,cjs,ts,mts,cts,vue}"] },
 
-export default [
-  {
-    ignores: [
-      "**/node_modules/**",
-      "**/dist/**",
-      "**/*.min.*",
-      "**/auto-imports.d.ts",
-      "**/components.d.ts",
-      "types/**/*.d.ts",
-    ],
-  },
+  globalIgnores([
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/*.min.*",
+    "**/auto-imports.d.ts",
+    "**/components.d.ts",
+    "types/**/*.d.ts",
+  ]),
 
-  eslint.configs.recommended,
-  ...pluginVue.configs["flat/recommended"],
-  ...typescriptEslint.configs.recommended,
+  pluginVue.configs["flat/recommended"],
+  vueTsConfigs.recommended,
 
   {
-    files: ["**/*.{js,mjs,cjs,ts,mts,cts,vue}"],
     languageOptions: {
-      ecmaVersion: "latest",
-      sourceType: "module",
       globals: {
         ...globals.browser,
         ...globals.node,
         ...globals.es2022,
-        ...autoImportGlobals,
         __APP_INFO__: "readonly",
       },
-    },
-    plugins: {
-      vue: pluginVue,
-      "@typescript-eslint": typescriptEslint.plugin,
     },
     rules: {
       // 基础规则
@@ -72,16 +53,6 @@ export default [
 
   {
     files: ["**/*.vue"],
-    languageOptions: {
-      parser: vueParser,
-      parserOptions: {
-        ecmaVersion: "latest",
-        sourceType: "module",
-        parser: typescriptEslint.parser,
-        extraFileExtensions: [".vue"],
-        tsconfigRootDir: __dirname,
-      },
-    },
     rules: {
       "vue/multi-word-component-names": "off",
       "vue/no-v-html": "off",
@@ -117,15 +88,6 @@ export default [
 
   {
     files: ["**/*.{ts,tsx,mts,cts}"],
-    languageOptions: {
-      parser: typescriptEslint.parser,
-      parserOptions: {
-        ecmaVersion: "latest",
-        sourceType: "module",
-        project: "./tsconfig.eslint.json",
-        tsconfigRootDir: __dirname,
-      },
-    },
     rules: {
       "@typescript-eslint/no-explicit-any": "warn",
       "@typescript-eslint/no-empty-function": "off",
@@ -161,6 +123,13 @@ export default [
   },
 
   {
+    files: ["mock/**/*.ts"],
+    rules: {
+      "@typescript-eslint/no-explicit-any": "off",
+    },
+  },
+
+  {
     files: ["**/components/Crud/**/*.{ts,vue}"],
     rules: {
       "no-unused-vars": "off",
@@ -169,11 +138,5 @@ export default [
     },
   },
 
-  {
-    rules: {
-      ...configPrettier.rules,
-      "arrow-body-style": "off",
-      "prefer-arrow-callback": "off",
-    },
-  },
-];
+  skipFormatting,
+);

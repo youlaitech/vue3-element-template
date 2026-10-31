@@ -43,9 +43,9 @@ const tags = defineModel<string[]>();
 defineProps({
   config: {
     type: Object as () => {
-      buttonAttrs: Record<string, any>;
-      inputAttrs: Record<string, any>;
-      tagAttrs: Record<string, any>;
+      buttonAttrs: Record<string, unknown>;
+      inputAttrs: Record<string, unknown>;
+      tagAttrs: Record<string, unknown>;
     },
     default: () => ({
       buttonAttrs: {},

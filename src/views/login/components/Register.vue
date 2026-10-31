@@ -167,7 +167,7 @@ const rules = computed(() => {
         trigger: "blur",
       },
       {
-        validator: (_: any, value: string) => {
+        validator: (_: unknown, value: string) => {
           return value === model.value.password;
         },
         trigger: "blur",

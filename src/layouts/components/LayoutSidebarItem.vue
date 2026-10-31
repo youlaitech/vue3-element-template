@@ -86,7 +86,7 @@ const props = defineProps({
 
 // 可见子路由
 const showingChildren = computed(() =>
-  (props.item.children ?? []).filter((route) => !route.meta?.hidden)
+  (props.item.children ?? []).filter((route) => !route.meta?.hidden),
 );
 
 // 叶子菜单渲染目标

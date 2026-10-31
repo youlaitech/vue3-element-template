@@ -12,7 +12,7 @@ const props = withDefaults(
   }>(),
   {
     icon: "",
-  }
+  },
 );
 
 const isElementIcon = computed(() => (props.icon || "").startsWith("el-icon"));

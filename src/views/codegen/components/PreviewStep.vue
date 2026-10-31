@@ -149,6 +149,7 @@ import type { EditorConfiguration } from "codemirror";
 import GeneratorAPI from "@/api/codegen";
 import type { GenConfigForm } from "@/api/codegen";
 import { getFileIcon } from "../utils/tree-builder";
+import type { TreeNode } from "../utils/tree-builder";
 
 /**
  * 代码预览步骤
@@ -158,7 +159,7 @@ const props = defineProps<{
   previewScope: "all" | "frontend" | "backend";
   previewTypes: string[];
   previewTypeOptions: string[];
-  filteredTreeData: any[];
+  filteredTreeData: TreeNode[];
   code: string;
   currentFileKey: string;
   tableName: string;
@@ -170,7 +171,7 @@ const props = defineProps<{
 const emit = defineEmits<{
   (_e: "update:previewScope", _val: "all" | "frontend" | "backend"): void;
   (_e: "update:previewTypes", _val: string[]): void;
-  (_e: "file-click", _data: any): void;
+  (_e: "file-click", _data: TreeNode): void;
   (_e: "copy"): void;
 }>();
 
@@ -189,15 +190,15 @@ const currentFilePath = computed(() => {
 /**
  * 切换预览范围
  */
-function onScopeChange(val: any) {
+function onScopeChange(val: string | number | boolean | undefined) {
   emit("update:previewScope", val as "all" | "frontend" | "backend");
 }
 
 /**
  * 切换预览文件类型
  */
-function onTypesChange(val: any) {
-  emit("update:previewTypes", val as string[]);
+function onTypesChange(val: (string | number | boolean)[]) {
+  emit("update:previewTypes", val.map(String));
 }
 
 const currentLanguage = computed(() => {
@@ -211,7 +212,7 @@ const fileCount = computed(() => {
   /**
    * 递归统计文件数量
    */
-  function walk(nodes: any[]) {
+  function walk(nodes: TreeNode[]) {
     nodes.forEach((n) => {
       if (!n.children || !n.children.length) count++;
       else walk(n.children);
@@ -233,7 +234,13 @@ function handleDownload() {
  * 刷新代码编辑器布局
  */
 function refreshEditor() {
-  const inst = cmRef.value as any;
+  const inst = cmRef.value as
+    | (CmComponentRef & {
+        cminstance?: { refresh?: () => void };
+        cm?: { refresh?: () => void };
+        editor?: { refresh?: () => void };
+      })
+    | null;
   inst?.cminstance?.refresh?.();
   inst?.cm?.refresh?.();
   inst?.editor?.refresh?.();

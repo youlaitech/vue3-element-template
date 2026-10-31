@@ -35,7 +35,7 @@
 <script setup lang="ts">
 import "@wangeditor-next/editor/dist/css/style.css";
 import { Toolbar, Editor } from "@wangeditor-next/editor-for-vue";
-import type { IToolbarConfig, IEditorConfig } from "@wangeditor-next/editor";
+import type { IDomEditor, IToolbarConfig, IEditorConfig } from "@wangeditor-next/editor";
 
 // 文件上传 API
 import FileAPI from "@/api/file";
@@ -80,14 +80,14 @@ const editorConfig: Partial<IEditorConfig> = {
         const data = await FileAPI.uploadFile(file);
         insertFn(data.url, data.name, data.url);
       },
-    } as any,
+    } as NonNullable<IEditorConfig["MENU_CONF"]>["uploadImage"],
   },
 };
 
 /**
  * 记录 editor 实例
  */
-const handleCreated = (editor: any) => {
+const handleCreated = (editor: IDomEditor) => {
   editorRef.value = editor;
 };
 
@@ -107,7 +107,7 @@ watch(
     if (innerUpdating.value) return;
     editorRef.value = null;
     editorKey.value += 1;
-  }
+  },
 );
 
 // 组件销毁时，及时销毁编辑器
