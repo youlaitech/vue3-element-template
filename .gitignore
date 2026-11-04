@@ -42,5 +42,6 @@ deploy.mjs
 # 独立 mock 服务的构建产物
 .deploy/
 
-# 线上部署专用变量，不入库
+# 本地部署与独立 mock 服务构建变量，不入库
 .env.youlai
+.env.mock

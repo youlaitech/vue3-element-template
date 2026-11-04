@@ -1,7 +1,7 @@
 {
   "name": "vue3-element-template",
   "description": "Vue3 + Vite + TypeScript + Element-Plus 的后台管理模板，基于 vue3-element-admin 的开发模板",
-  "version": "4.9.0",
+  "version": "4.9.1",
   "private": true,
   "type": "module",
   "scripts": {
@@ -137,5 +137,6 @@
   },
   "repository": "https://gitee.com/youlaiorg/vue3-element-admin.git",
   "author": "有来开源组织",
-  "license": "MIT"
+  "license": "MIT",
+  "packageManager": "pnpm@10.34.5"
 }

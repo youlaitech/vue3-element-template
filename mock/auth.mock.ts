@@ -1,7 +1,7 @@
 import { defineMock } from "./base";
 
 // 永久令牌说明（仅本地开发/演示）：
-// accessToken / refreshToken 由 youlai-boot 同款规则离线签发（HS256、不含 exp），
+// accessToken / refreshToken 按固定密钥离线签发（HS256、不含 exp），
 // 即"永不过期"；expiresIn: -1 与之对应。切勿用于生产环境。
 
 export default defineMock([
