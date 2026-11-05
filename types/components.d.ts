@@ -115,7 +115,6 @@ declare module 'vue' {
     IconSelect: typeof import('./../src/components/IconSelect/index.vue')['default']
     InputTag: typeof import('./../src/components/InputTag/index.vue')['default']
     InstanceDetailDrawer: typeof import('./../src/views/workflow/components/InstanceDetailDrawer.vue')['default']
-    LangSelect: typeof import('./../src/components/LangSelect/index.vue')['default']
     LayoutLogo: typeof import('./../src/layouts/components/LayoutLogo.vue')['default']
     LayoutMain: typeof import('./../src/layouts/components/LayoutMain.vue')['default']
     LayoutMenuIcon: typeof import('./../src/layouts/components/LayoutMenuIcon.vue')['default']
