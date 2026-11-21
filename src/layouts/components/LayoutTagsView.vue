@@ -545,9 +545,9 @@ useContextMenuManager();
   align-items: center;
   width: 100%;
   height: $tags-view-height;
-  padding: 0 12px;
+  padding: 0 16px;
   background-color: var(--content-bg);
-  border-bottom: 1px solid var(--card-border);
+  border-bottom: 1px solid var(--border-color);
 }
 
 .layout-tabs__scroll {
@@ -562,7 +562,7 @@ useContextMenuManager();
 
 .layout-tabs__list {
   display: flex;
-  gap: 4px;
+  gap: 6px;
   align-items: center;
   height: 100%;
 }
@@ -573,15 +573,15 @@ useContextMenuManager();
   flex-shrink: 0;
   gap: 6px;
   align-items: center;
-  height: 26px;
+  height: 28px;
   padding: 0 12px;
   font-size: 13px;
   color: var(--el-text-color-regular);
   cursor: pointer;
   user-select: none;
-  background: #f8fafc;
-  border: 1px solid var(--card-border);
-  border-radius: 2px;
+  background: var(--surface-subtle);
+  border: 1px solid transparent;
+  border-radius: var(--radius-pill);
   transition:
     color 0.15s ease,
     background-color 0.15s ease,
@@ -625,8 +625,8 @@ useContextMenuManager();
 
   &:hover {
     color: var(--el-text-color-primary);
-    background-color: var(--content-bg);
-    border-color: var(--el-border-color);
+    background-color: var(--menu-hover);
+    border-color: transparent;
 
     .layout-tabs__item-close {
       opacity: 1;
@@ -640,8 +640,8 @@ useContextMenuManager();
   &.is-active {
     font-weight: 500;
     color: var(--el-color-primary);
-    background-color: var(--content-bg);
-    border-color: var(--el-color-primary-light-5);
+    background-color: var(--el-color-primary-light-9);
+    border-color: var(--el-color-primary-light-7);
 
     .layout-tabs__item-icon {
       color: var(--el-color-primary);

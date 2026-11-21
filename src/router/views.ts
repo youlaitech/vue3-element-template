@@ -5,14 +5,14 @@
 /**
  * 全部视图模块，键形如 /src/views/system/user/index.vue
  */
-export const viewModules = import.meta.glob("/src/views/**/*.vue");
+const viewModules = import.meta.glob("/src/views/**/*.vue");
 
 const VIEW_PREFIX = "/src/views/";
 
 /**
  * 视图文件路径集合，元素形如 system/user/index
  */
-export const viewPaths = new Set(
+const viewPaths = new Set(
   Object.keys(viewModules).map((key) => key.slice(VIEW_PREFIX.length).replace(/\.vue$/, "")),
 );
 

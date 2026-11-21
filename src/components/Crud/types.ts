@@ -8,26 +8,26 @@ import type { PageResult } from "@/api/common";
 import type { AxiosResponse } from "axios";
 
 /**
- * 搜索组件实例。
+ * 搜索组件实例
  */
 export type CrudSearchInstance = InstanceType<typeof CrudSearch>;
 /**
- * 表格组件实例。
+ * 表格组件实例
  */
 export type CrudTableInstance = InstanceType<typeof CrudTable>;
 /**
- * 共用表单组件实例。
+ * 共用表单组件实例
  */
 export type CrudFormInstance = InstanceType<typeof CrudForm>;
 
 /**
- * 动态控件与插槽的模型边界，业务接口仍使用具体类型。
+ * 动态控件与插槽的模型边界，业务接口仍使用具体类型
  */
 
 export type CrudRecord = Record<string, any>;
 
 /**
- * 搜索字段支持的控件。
+ * 搜索字段支持的控件
  */
 export type CrudSearchFieldType =
   | "input"
@@ -42,25 +42,25 @@ export type CrudSearchFieldType =
   | "input-tag"
   | "custom";
 /**
- * 表单支持搜索控件及只读文本、单选、复选等控件。
+ * 表单支持搜索控件及只读文本、单选、复选等控件
  */
 export type CrudFieldType =
   CrudSearchFieldType | "text" | "radio" | "checkbox" | "switch" | "icon-select";
 
 /**
- * 业务工具栏的内置动作。
+ * 业务工具栏的内置动作
  */
 type ToolbarActionKey = "create" | "delete" | "import" | "export";
 /**
- * 表格右侧的内置工具。
+ * 表格右侧的内置工具
  */
 type TableToolKey = "refresh" | "columns" | "import" | "export" | "search";
 /**
- * 行操作的内置动作。
+ * 行操作的内置动作
  */
 type RowActionKey = "edit" | "view" | "delete";
 /**
- * 工具栏和行操作共用的权限、状态与回调。
+ * 工具栏和行操作共用的权限、状态与回调
  */
 export type CrudAction = {
   key: string; // 动作标识，也用于按钮插槽
@@ -73,7 +73,7 @@ export type CrudAction = {
 };
 
 /**
- * 当前按钮的行及选择上下文。
+ * 当前按钮的行及选择上下文
  */
 export interface CrudActionContext {
   row?: CrudRecord;
@@ -82,7 +82,7 @@ export interface CrudActionContext {
 }
 
 /**
- * 交给页面处理的行操作。
+ * 交给页面处理的行操作
  */
 export interface CrudRowActionEvent {
   key: string;
@@ -90,7 +90,7 @@ export interface CrudRowActionEvent {
 }
 
 /**
- * 搜索字段及布局。
+ * 搜索字段及布局
  */
 export interface CrudSearchConfig {
   /** 标签冒号(默认：false) */
@@ -110,7 +110,7 @@ export interface CrudSearchConfig {
 }
 
 /**
- * 列表接口、按钮、列及导入导出。
+ * 列表接口、按钮、列及导入导出
  */
 export interface CrudTableConfig<TQuery = CrudRecord, TItem = CrudRecord> {
   /** 权限前缀，如 sys:user；动作可用完整权限覆盖 */
@@ -220,7 +220,7 @@ export interface CrudTableConfig<TQuery = CrudRecord, TItem = CrudRecord> {
 }
 
 /**
- * 新增、编辑和查看共用的弹窗表单。
+ * 新增、编辑和查看共用的弹窗表单
  */
 export interface CrudFormConfig<T = CrudRecord> {
   /** 标签冒号(默认：false) */
@@ -248,12 +248,12 @@ export interface CrudFormConfig<T = CrudRecord> {
 }
 
 /**
- * 同一表单支持的操作模式。
+ * 同一表单支持的操作模式
  */
 export type CrudFormMode = "create" | "edit" | "view";
 
 /**
- * 表单条件和提交所用的模式、路径主键及当前数据。
+ * 表单条件和提交所用的模式、路径主键及当前数据
  */
 export interface CrudFormContext {
   mode: CrudFormMode;
@@ -262,7 +262,7 @@ export interface CrudFormContext {
 }
 
 /**
- * 新增、编辑和查看共用的字段配置。
+ * 新增、编辑和查看共用的字段配置
  */
 export type CrudFormField = Omit<CrudField, "label"> & {
   label: string | ((context: CrudFormContext) => string);
@@ -272,12 +272,12 @@ export type CrudFormField = Omit<CrudField, "label"> & {
 };
 
 /**
- * 原生表单属性，模型与校验规则由组件维护。
+ * 原生表单属性，模型与校验规则由组件维护
  */
 export type CrudFormProps = Partial<Omit<FormProps, "model" | "rules">>;
 
 /**
- * 搜索与表单共用的字段配置。
+ * 搜索与表单共用的字段配置
  */
 export type CrudField<T = CrudFieldType> = {
   /** 组件类型(如 input,select,radio,custom 等) */

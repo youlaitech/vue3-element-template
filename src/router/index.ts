@@ -42,7 +42,8 @@ export const constantRoutes: RouteRecordRaw[] = [
           title: "首页",
           icon: "homepage",
           affix: true,
-          keepAlive: true,
+          // 开发环境关闭首页缓存：KeepAlive 缓存与 HMR 叠加会导致组件实例失效、页面空白
+          keepAlive: !import.meta.env.DEV,
         },
       },
       {

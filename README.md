@@ -4,8 +4,8 @@
 
 **Vue3 + Vite + TypeScript 企业级后台管理前端模板**
 
-[![Vue](https://img.shields.io/badge/Vue-3.5.30-brightgreen.svg)](https://vuejs.org/)
-[![Element Plus](https://img.shields.io/badge/Element%20Plus-2.13.5-blue.svg)](https://element-plus.org/)
+[![Vue](https://img.shields.io/badge/Vue-3.5.41-brightgreen.svg)](https://vuejs.org/)
+[![Element Plus](https://img.shields.io/badge/Element%20Plus-2.14.4-blue.svg)](https://element-plus.org/)
 [![Gitee Star](https://gitee.com/youlaiorg/vue3-element-template/badge/star.svg)](https://gitee.com/youlaiorg/vue3-element-template/stargazers)
 [![GitHub Star](https://img.shields.io/github/stars/youlaitech/vue3-element-template?style=social)](https://github.com/youlaitech/vue3-element-template)
 [![GitCode Star](https://gitcode.com/youlai/vue3-element-template/star/badge.svg)](https://gitcode.com/youlai/vue3-element-template/stargazers)
@@ -17,7 +17,7 @@
 
 <div align="center">
 
-[![在线预览](https://img.shields.io/badge/在线预览-2D8CF0?style=for-the-badge&logo=google-chrome&logoColor=white)](https://vue.youlai.tech/template)
+[![在线预览](https://img.shields.io/badge/在线预览-2D8CF0?style=for-the-badge&logo=google-chrome&logoColor=white)](https://admin.youlai.tech/template/)
 [![文档](https://img.shields.io/badge/文档-8B5CF6?style=for-the-badge&logo=gitbook&logoColor=white)](https://www.youlai.tech/vue3-element-admin)
 [![官网](https://img.shields.io/badge/官网-FF9F1C?style=for-the-badge&logo=safari&logoColor=white)](https://www.youlai.tech/docs/web/)
 
@@ -93,7 +93,7 @@ pnpm install
 pnpm run dev
 ```
 
-启动后访问 [http://localhost:3000](http://localhost:3000)，使用 `admin` / `123456` 登录。
+启动后访问 [http://localhost:3000](http://localhost:3000)，使用 `youlai` / `123456` 登录。
 
 > 更多内容详见官方文档：[快速开始](https://www.youlai.tech/docs/web/) · [部署指南](https://www.youlai.tech/docs/web/deployment/deploy.html)
 

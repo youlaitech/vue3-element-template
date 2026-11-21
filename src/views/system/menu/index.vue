@@ -1,24 +1,24 @@
 <template>
   <div class="page-container">
-    <el-card class="page-search" shadow="never">
-      <el-form ref="queryFormRef" :model="queryParams" :inline="true">
-        <el-form-item label="关键字" prop="keywords">
-          <el-input
-            v-model="queryParams.keywords"
-            placeholder="菜单名称"
-            clearable
-            @keyup.enter="handleQuery"
-          />
-        </el-form-item>
-
-        <el-form-item>
-          <el-button type="primary" @click="handleQuery">搜索</el-button>
-          <el-button @click="handleResetQuery">重置</el-button>
-        </el-form-item>
-      </el-form>
-    </el-card>
-
     <el-card ref="tableWrapperRef" class="page-content" shadow="never">
+      <div class="page-filter">
+        <el-form ref="queryFormRef" :model="queryParams" :inline="true">
+          <el-form-item label="关键字" prop="keywords">
+            <el-input
+              v-model="queryParams.keywords"
+              placeholder="菜单名称"
+              clearable
+              @keyup.enter="handleQuery"
+            />
+          </el-form-item>
+
+          <el-form-item>
+            <el-button type="primary" @click="handleQuery">搜索</el-button>
+            <el-button @click="handleResetQuery">重置</el-button>
+          </el-form-item>
+        </el-form>
+      </div>
+
       <div class="page-toolbar">
         <div class="page-toolbar__left">
           <el-button v-hasPerm="['sys:menu:create']" type="primary" @click="openDialog()">
@@ -212,7 +212,7 @@
           <span>{{ previewText }}</span>
         </div>
 
-        <SectionTitle title="基础信息" />
+        <div class="section-title">基础信息</div>
 
         <el-form-item label="菜单名称" prop="name">
           <div class="menu-form__field">
@@ -235,7 +235,7 @@
           />
         </el-form-item>
 
-        <SectionTitle v-if="showRoutePath || isExternal" title="访问配置" />
+        <div v-if="showRoutePath || isExternal" class="section-title">访问配置</div>
 
         <template v-if="isExternal">
           <el-form-item label="外链地址" prop="externalUrl">
@@ -341,7 +341,7 @@
           <el-input v-model="formData.perm" placeholder="如 sys:user:create（新增用户）" />
         </el-form-item>
 
-        <SectionTitle v-if="!isButton" title="展示设置" />
+        <div v-if="!isButton" class="section-title">展示设置</div>
 
         <el-form-item v-if="!isButton" label="在侧边栏显示">
           <el-switch v-model="visibleSwitch" />
@@ -596,7 +596,7 @@ const showKeepAlive = computed(() => isPage.value || isEmbeddedExternal.value);
 
 const showRouteName = computed(() => showKeepAlive.value && isStatusEnabled(formData.keepAlive));
 
-const showAdvanced = computed(() => showKeepAlive.value || isCatalog.value || showRouteName.value);
+const showAdvanced = computed(() => showKeepAlive.value || isCatalog.value);
 
 // 按钮权限只能挂在页面下；已有菜单的类型不可修改
 const typeOptions = computed(() => {
@@ -1515,5 +1515,25 @@ onMounted(() => {
 
 .menu-param-row__action {
   cursor: pointer;
+}
+
+/* 表单分区标题：左侧竖条 + 标题 */
+.section-title {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  margin: 2px 0 14px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--el-text-color-primary);
+}
+
+.section-title::before {
+  flex: none;
+  width: 3px;
+  height: 12px;
+  content: "";
+  background: var(--el-color-primary);
+  border-radius: 2px;
 }
 </style>

@@ -15,7 +15,7 @@
         >
           <template v-if="leafMenu.meta">
             <LayoutMenuIcon :icon="leafMenu.meta.icon || item.meta?.icon" />
-            <span v-if="leafMenu.meta.title" class="ml-1" :title="leafMenu.meta.title">
+            <span v-if="leafMenu.meta.title" class="ml-2" :title="leafMenu.meta.title">
               {{ leafMenu.meta.title }}
             </span>
             <span v-if="getBadge(leafMenu.meta)" class="menu-badge">
@@ -30,7 +30,7 @@
       <template #title>
         <template v-if="item.meta">
           <LayoutMenuIcon :icon="item.meta.icon" />
-          <span v-if="item.meta.title" class="ml-1" :title="item.meta.title">
+          <span v-if="item.meta.title" class="ml-2" :title="item.meta.title">
             {{ item.meta.title }}
           </span>
           <span v-if="getBadge(item.meta)" class="menu-badge">
@@ -124,13 +124,13 @@ function getBadge(meta: RouteMeta | undefined): string {
 /* 菜单角标：小巧不抢视觉重心，随侧边栏折叠自动隐藏（折叠态文本 span 均被 el-menu 隐藏） */
 .menu-badge {
   height: 16px;
-  padding: 0 5px;
+  padding: 0 6px;
   margin-left: 6px;
   font-size: 10px;
   font-weight: 600;
   line-height: 16px;
-  color: #fff;
-  background-color: var(--el-color-danger);
-  border-radius: 8px;
+  color: var(--menu-active-text);
+  background-color: color-mix(in srgb, var(--el-color-primary) 16%, transparent);
+  border-radius: var(--radius-pill);
 }
 </style>
