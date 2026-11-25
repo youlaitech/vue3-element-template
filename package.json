@@ -1,7 +1,7 @@
 {
   "name": "vue3-element-template",
   "description": "Vue3 + Vite + TypeScript + Element-Plus 的后台管理模板，基于 vue3-element-admin 的开发模板",
-  "version": "4.14.1",
+  "version": "4.14.2",
   "private": true,
   "type": "module",
   "scripts": {
@@ -57,9 +57,9 @@
     "@vueuse/core": "^14.4.0",
     "@wangeditor-next/editor": "^5.7.16",
     "@wangeditor-next/editor-for-vue": "^5.1.14",
-    "animate.css": "^4.1.1",
     "axios": "^1.19.0",
     "codemirror": "^5.65.21",
+    "dompurify": "^3.4.17",
     "codemirror-editor-vue3": "^2.8.0",
     "echarts": "^6.1.0",
     "element-plus": "^2.14.4",

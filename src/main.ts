@@ -4,7 +4,6 @@ import App from "./App.vue";
 import "element-plus/theme-chalk/dark/css-vars.css";
 import "@/styles/index.scss";
 import "uno.css";
-import "animate.css";
 
 import { setupDirective } from "@/directives";
 import { setupRouter } from "@/router";

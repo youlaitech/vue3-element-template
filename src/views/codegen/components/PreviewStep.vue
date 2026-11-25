@@ -226,7 +226,7 @@ const fileCount = computed(() => {
  * 下载生成的代码
  */
 function handleDownload() {
-  const pageType = props.genConfigFormData.pageType || "classic";
+  const pageType = props.genConfigFormData.pageType || "crud";
   GeneratorAPI.download(props.tableName, pageType as "classic" | "crud", "ts");
 }
 
@@ -272,7 +272,7 @@ function startResize(e: MouseEvent) {
 /**
  * 暴露编辑器刷新与文件树引用
  */
-defineExpose({ refreshEditor, fileTreeRef });
+defineExpose({ refreshEditor });
 
 onBeforeUnmount(() => {
   cmRef.value?.destroy();

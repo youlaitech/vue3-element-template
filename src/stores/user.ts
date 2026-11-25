@@ -102,10 +102,12 @@ export const useUserStore = defineStore("user", () => {
    * 登出，服务端退出失败也清理本地状态
    */
   async function logout(): Promise<void> {
+    const revision = authSessionRevision.value;
     try {
       await AuthAPI.logout();
     } finally {
-      resetAllState();
+      // 服务端退出失败也要清理本地状态，避免界面停留在已登录形态
+      if (revision === authSessionRevision.value) resetAllState();
     }
   }
 

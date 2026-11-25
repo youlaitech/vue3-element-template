@@ -11,7 +11,7 @@ import type { OptionItem } from "@/api/common";
 export function useGenConfig() {
   const genConfigFormData = ref<GenConfigForm>({
     fieldConfigs: [],
-    pageType: "classic",
+    pageType: "crud",
   });
 
   const genConfigFormRules = {
@@ -67,7 +67,7 @@ export function useGenConfig() {
    */
   function applyDefaults(config: GenConfigForm): GenConfigForm {
     if (!config.pageType) {
-      config.pageType = "classic";
+      config.pageType = "crud";
     }
     return config;
   }

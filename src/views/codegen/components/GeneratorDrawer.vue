@@ -282,7 +282,7 @@ async function handleNext() {
   }
 
   if (currentStep.value === STEP.PREVIEW) {
-    const pageType = genConfigFormData.value.pageType || "classic";
+    const pageType = genConfigFormData.value.pageType || "crud";
     GeneratorAPI.download(currentTableName.value, pageType as "classic" | "crud", "ts");
   }
 }

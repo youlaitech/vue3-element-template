@@ -49,7 +49,7 @@
       <div class="page-table-wrapper">
         <el-table
           ref="tableRef"
-          v-loading="loading"
+          v-loading="listLoading"
           class="page-table"
           border
           row-key="id"
@@ -164,6 +164,7 @@
                 type="danger"
                 link
                 size="small"
+                :loading="deletingId === scope.row.id"
                 @click.stop="handleDelete(scope.row.id)"
               >
                 删除
@@ -452,7 +453,7 @@
 
       <template #footer>
         <div class="dialog-footer">
-          <el-button type="primary" :loading="loading" @click="handleSubmit">确定</el-button>
+          <el-button type="primary" :loading="saving" @click="handleSubmit">确定</el-button>
           <el-button @click="closeDialog">取消</el-button>
         </div>
       </template>
@@ -503,10 +504,14 @@ defineOptions({
   inheritAttrs: false,
 });
 
-/** 外链打开方式 */
+/**
+ * 外链打开方式
+ */
 type ExternalMode = "blank" | "iframe";
 
-/** 菜单类型选项 */
+/**
+ * 菜单类型选项
+ */
 interface MenuTypeOption {
   value: MenuTypeEnum;
   label: string;
@@ -528,7 +533,10 @@ const { toggle: toggleFullscreen } = useFullscreen(tableWrapperRef);
 const queryFormRef = ref<FormInstance>();
 const menuFormRef = ref<FormInstance>();
 
-const loading = ref(false);
+const listLoading = ref(false);
+const saving = ref(false);
+const deletingId = ref<string | null>(null);
+let listSequence = 0;
 const list = ref<MenuItem[]>([]);
 const tableRef = ref<TableInstance>();
 // 是否展开全部菜单层级，默认折叠只显示顶级菜单
@@ -630,9 +638,7 @@ const parentOptionProps = computed(() => ({
     if (isMenuInSubtree(findMenuById(parentMenuTree.value, formData.id), data.value)) {
       return true;
     }
-    /**
-     * 按钮挂页面下，其余类型挂目录或顶级；顶级不在菜单树里，取不到节点
-     */
+    // 按钮挂页面下，其余类型挂目录或顶级；顶级不在菜单树里，取不到节点
     const target = findMenuById(parentMenuTree.value, data.value);
     return formData.type === MenuTypeEnum.BUTTON
       ? target?.type !== MenuTypeEnum.MENU
@@ -807,14 +813,17 @@ const rules: FormRules<MenuForm> = {
  * 拉取菜单列表数据（一次性返回全量树）
  */
 async function fetchData(): Promise<void> {
-  loading.value = true;
+  const sequence = ++listSequence;
+  listLoading.value = true;
   try {
-    list.value = await MenuAPI.getList(queryParams);
+    const data = await MenuAPI.getList({ ...queryParams });
+    if (sequence !== listSequence) return;
+    list.value = data;
     // 表格渲染出树节点后再应用展开状态
     await nextTick();
-    applyExpansion();
+    if (sequence === listSequence) applyExpansion();
   } finally {
-    loading.value = false;
+    if (sequence === listSequence) listLoading.value = false;
   }
 }
 
@@ -1223,6 +1232,7 @@ function normalizeMenuPayload(): MenuForm {
  * 校验并提交菜单表单
  */
 async function handleSubmit(): Promise<void> {
+  if (saving.value) return;
   const valid = await menuFormRef.value?.validate().then(
     () => true,
     () => false,
@@ -1237,7 +1247,7 @@ async function handleSubmit(): Promise<void> {
   }
 
   const payload = normalizeMenuPayload();
-  loading.value = true;
+  saving.value = true;
   try {
     if (menuId) {
       await MenuAPI.update(menuId, payload);
@@ -1247,10 +1257,9 @@ async function handleSubmit(): Promise<void> {
       ElMessage.success("新增成功");
     }
     closeDialog();
-    fetchData();
-    refreshUserRoutes();
+    await Promise.all([fetchData(), refreshUserRoutes()]);
   } finally {
-    loading.value = false;
+    saving.value = false;
   }
 }
 
@@ -1260,6 +1269,7 @@ async function handleSubmit(): Promise<void> {
  * @param menuId 菜单 ID
  */
 async function handleDelete(menuId: string): Promise<void> {
+  if (deletingId.value !== null) return;
   const menu = findMenuById(list.value, menuId);
   if (!menu) return;
 
@@ -1276,14 +1286,13 @@ async function handleDelete(menuId: string): Promise<void> {
     return;
   }
 
-  loading.value = true;
+  deletingId.value = menuId;
   try {
     await MenuAPI.deleteById(menuId);
     ElMessage.success("删除成功");
-    fetchData();
-    refreshUserRoutes();
+    await Promise.all([fetchData(), refreshUserRoutes()]);
   } finally {
-    loading.value = false;
+    deletingId.value = null;
   }
 }
 
