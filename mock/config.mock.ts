@@ -4,10 +4,10 @@ import { defineMock } from "./base";
 const configList: Array<Record<string, any>> = [
   {
     id: "1",
-    configName: "系统限流QPS",
-    configKey: "IP_QPS_THRESHOLD_LIMIT",
-    configValue: "10",
-    remark: "单个IP请求的最大每秒查询数（QPS）阈值Key",
+    configName: "用户管理-账号初始密码",
+    configKey: "sys.user.initPassword",
+    configValue: "123456",
+    remark: "新增用户、导入用户时的默认密码",
   },
 ];
 
