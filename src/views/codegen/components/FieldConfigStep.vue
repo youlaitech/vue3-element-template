@@ -73,12 +73,7 @@
     <!-- 字段卡片：取代原来的宽表，设置项在卡片内分行排布 -->
     <div v-loading="loading" :element-loading-text="loadingText" class="field-cards-wrap">
       <div ref="listRef" class="field-cards">
-        <div
-          v-for="row in fieldConfigs"
-          :key="row.columnName"
-          class="field-card"
-          :class="{ 'is-located': locatedColumn === row.columnName }"
-        >
+        <div v-for="row in fieldConfigs" :key="row.columnName" class="field-card">
           <el-icon class="sortable-handle cursor-move text-gray-400 hover:text-primary">
             <Rank />
           </el-icon>
@@ -112,6 +107,7 @@
                   :key="key"
                   :label="item.label"
                   :value="item.value"
+                  :disabled="isQueryTypeDisabled(row, key)"
                 />
               </el-select>
             </div>
@@ -191,35 +187,24 @@ defineProps<{
   dictOptions?: OptionItem[];
 }>();
 
+type FieldConfig = NonNullable<GenConfigForm["fieldConfigs"]>[number];
+
 const formTypeOptions: Record<string, OptionItem> = FormTypeEnum;
 const queryTypeOptions: Record<string, OptionItem> = QueryTypeEnum;
+
+/**
+ * 判断查询方式是否适用于字段类型
+ */
+function isQueryTypeDisabled(row: FieldConfig, key: string): boolean {
+  if (key === "IN") return row.fieldType === "byte[]";
+  if (key === "BETWEEN") return row.fieldType === "Boolean" || row.fieldType === "byte[]";
+  return false;
+}
 
 const listRef = ref<HTMLElement>();
 const sortFlag = ref<Sortable | null>(null);
 
 const fieldConfigs = computed(() => formData.value?.fieldConfigs || []);
-
-// 定位目标字段，短暂高亮用
-const locatedColumn = ref("");
-let locateTimer: ReturnType<typeof setTimeout> | undefined;
-
-/**
- * 滚动到指定字段卡片并短暂高亮
- */
-async function locateField(columnName: string) {
-  if (!columnName) return;
-  // 等字段列表按当前筛选渲染完，再取节点，否则可能定位到上一帧已不存在的卡片
-  await nextTick();
-  const cards = listRef.value?.querySelectorAll<HTMLElement>(".field-card");
-  const target = Array.from(cards ?? []).find(
-    (card) => card.querySelector(".field-column")?.textContent?.trim() === columnName,
-  );
-  if (!target) return;
-  target.scrollIntoView({ behavior: "smooth", block: "center" });
-  locatedColumn.value = columnName;
-  clearTimeout(locateTimer);
-  locateTimer = setTimeout(() => (locatedColumn.value = ""), 2000);
-}
 
 // 统计数量
 const queryCount = computed(() => fieldConfigs.value.filter((f) => f.isShowInQuery === 1).length);
@@ -267,11 +252,10 @@ function destroySort() {
 /**
  * 暴露给父组件
  */
-defineExpose({ initSort, destroySort, locateField });
+defineExpose({ initSort, destroySort });
 
 onBeforeUnmount(() => {
   destroySort();
-  clearTimeout(locateTimer);
 });
 </script>
 
@@ -327,13 +311,6 @@ onBeforeUnmount(() => {
 
     &:hover {
       border-color: var(--el-border-color);
-    }
-
-    // 定位过来的字段用 outline 描边，避免和卡片边框叠在一起看不清
-    &.is-located {
-      outline: 2px solid var(--el-color-primary-light-5);
-      outline-offset: 1px;
-      border-color: var(--el-color-primary);
     }
 
     // 列名与类型固定宽度，保证各字段纵向对齐好扫读

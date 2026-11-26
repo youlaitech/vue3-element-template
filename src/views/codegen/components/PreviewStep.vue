@@ -234,22 +234,17 @@ function handleDownload() {
  * 刷新代码编辑器布局
  */
 function refreshEditor() {
-  const inst = cmRef.value as
-    | (CmComponentRef & {
-        cminstance?: { refresh?: () => void };
-        cm?: { refresh?: () => void };
-        editor?: { refresh?: () => void };
-      })
-    | null;
-  inst?.cminstance?.refresh?.();
-  inst?.cm?.refresh?.();
-  inst?.editor?.refresh?.();
+  cmRef.value?.refresh();
 }
+
+// 拖拽结束、再次开始或组件卸载时，共用同一份监听清理函数
+let stopResize: (() => void) | undefined;
 
 /**
  * 开始拖动文件树宽度
  */
 function startResize(e: MouseEvent) {
+  stopResize?.();
   const startX = e.clientX;
   const startWidth = fileTreeWidth.value;
   /**
@@ -264,7 +259,9 @@ function startResize(e: MouseEvent) {
   const onUp = () => {
     document.removeEventListener("mousemove", onMove);
     document.removeEventListener("mouseup", onUp);
+    stopResize = undefined;
   };
+  stopResize = onUp;
   document.addEventListener("mousemove", onMove);
   document.addEventListener("mouseup", onUp);
 }
@@ -275,6 +272,7 @@ function startResize(e: MouseEvent) {
 defineExpose({ refreshEditor });
 
 onBeforeUnmount(() => {
+  stopResize?.();
   cmRef.value?.destroy();
 });
 </script>
