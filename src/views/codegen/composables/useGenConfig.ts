@@ -107,16 +107,6 @@ export function useGenConfig() {
     return true;
   }
 
-  /**
-   * 批量设置字段属性
-   */
-  function bulkSet(key: "isShowInQuery" | "isShowInList" | "isShowInForm", value: 0 | 1) {
-    const list = genConfigFormData.value?.fieldConfigs || [];
-    list.forEach((row) => {
-      row[key] = value;
-    });
-  }
-
   return {
     genConfigFormData,
     genConfigFormRules,
@@ -125,7 +115,6 @@ export function useGenConfig() {
     loadConfig,
     saveConfig,
     validateBasic,
-    bulkSet,
     applyDefaults,
   };
 }

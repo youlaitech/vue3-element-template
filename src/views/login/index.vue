@@ -504,14 +504,6 @@ $input-h: 44px;
     letter-spacing: 0;
   }
 
-  &__desc {
-    max-width: 560px;
-    margin: 0;
-    font-size: 18px;
-    line-height: 1.6;
-    color: #475569;
-  }
-
   &__features {
     display: inline-flex;
     align-items: center;
@@ -877,28 +869,6 @@ $input-h: 44px;
       color: #fff;
       background: rgb(255 255 255 / 12%);
       border-color: rgb(255 255 255 / 28%);
-    }
-  }
-
-  &__alt-divider {
-    color: rgb(255 255 255 / 20%);
-
-    &::before,
-    &::after {
-      background: rgb(255 255 255 / 12%);
-    }
-  }
-
-  &__alt-btn {
-    color: rgb(255 255 255 / 65%);
-    background: rgb(255 255 255 / 6%);
-    border-color: rgb(255 255 255 / 12%);
-    box-shadow: none;
-
-    &:hover {
-      color: #fff;
-      background: rgb(255 255 255 / 12%);
-      border-color: rgb(255 255 255 / 24%);
     }
   }
 }

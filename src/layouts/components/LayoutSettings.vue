@@ -454,7 +454,6 @@ function buildDefaultsCode(): string {
     showWatermark: settingsStore.showWatermark,
     pageSwitchingAnimation: `"${settingsStore.pageSwitchingAnimation}"`,
     showSettings: true,
-    watermarkContent: "pkg.name",
   };
 
   return `export const defaults = {
@@ -471,7 +470,6 @@ function buildDefaultsCode(): string {
   showWatermark: ${settings.showWatermark},
   pageSwitchingAnimation: ${settings.pageSwitchingAnimation},
   showSettings: ${settings.showSettings},
-  watermarkContent: ${settings.watermarkContent},
 } as const;`;
 }
 

@@ -24,8 +24,6 @@ export interface RoleItem {
   status?: number;
   /** 数据权限(1-所有数据 2-部门及子部门数据 3-本部门数据 4-本人数据 5-自定义部门数据) */
   dataScope?: number;
-  /** 数据权限标签 */
-  dataScopeLabel?: string;
   /** 修改时间 */
   updateTime?: string;
 }

@@ -22,12 +22,6 @@ const RoleAPI = {
     return request<unknown, OptionItem[]>({ url: `${ROLE_BASE_URL}/options`, method: "get" });
   },
   /**
-   * 获取角色编码下拉数据源（value 为角色编码，供流程候选组等场景）
-   */
-  getCodeOptions() {
-    return request<unknown, OptionItem[]>({ url: `${ROLE_BASE_URL}/code-options`, method: "get" });
-  },
-  /**
    * 获取角色的菜单 ID 集合
    */
   getRoleMenuIds(roleId: string) {
@@ -47,15 +41,6 @@ const RoleAPI = {
    */
   getFormData(id: string) {
     return request<unknown, RoleForm>({ url: `${ROLE_BASE_URL}/${id}/form`, method: "get" });
-  },
-  /**
-   * 获取角色的部门 ID 集合(自定义数据权限)
-   */
-  getRoleDeptIds(roleId: string) {
-    return request<unknown, string[]>({
-      url: `${ROLE_BASE_URL}/${roleId}/dept-ids`,
-      method: "get",
-    });
   },
   /**
    * 新增角色

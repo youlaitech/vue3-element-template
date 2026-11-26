@@ -188,7 +188,7 @@
         :rules="rules"
         label-width="96px"
       >
-        <el-form-item label="菜单类型" prop="type" class="menu-type-item">
+        <el-form-item label="菜单类型" prop="type">
           <div class="menu-type-control">
             <el-segmented
               v-model="formData.type"
@@ -1482,10 +1482,6 @@ onMounted(() => {
 .menu-form__advanced {
   margin-top: 4px;
   border-top: none;
-}
-
-.menu-type-item {
-  margin-bottom: 12px;
 }
 
 .menu-type-control {

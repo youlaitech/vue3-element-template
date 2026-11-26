@@ -41,17 +41,6 @@ const GeneratorAPI = {
   },
 
   /**
-   * AI 推断代码生成配置，未开启 AI 时返回业务异常
-   */
-  aiFillConfig(tableName: string, requirement?: string) {
-    return request<unknown, GenConfigForm>({
-      url: `${GENERATOR_BASE_URL}/${tableName}/ai-config`,
-      method: "post",
-      data: requirement ? { requirement } : undefined,
-    });
-  },
-
-  /**
    * 保存代码生成配置
    */
   saveGenConfig(tableName: string, data: GenConfigForm) {

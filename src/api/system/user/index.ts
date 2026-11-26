@@ -70,17 +70,6 @@ const UserAPI = {
   },
 
   /**
-   * 修改用户启用状态
-   */
-  updateStatus(userId: string, status: 0 | 1) {
-    return request({
-      url: `${USER_BASE_URL}/${userId}/status`,
-      method: "patch",
-      params: { status },
-    });
-  },
-
-  /**
    * 修改用户密码
    */
   resetPassword(id: string, password: string) {

@@ -93,18 +93,6 @@ export interface MenuForm {
 }
 
 /**
- * AI 推断的菜单配置
- */
-export interface MenuAiResult {
-  /** 访问路径 */
-  routePath?: string;
-  /** 权限标识 */
-  perm?: string;
-  /** 建议的图标关键词，按贴切程度排列 */
-  iconKeywords?: string[];
-}
-
-/**
  * 路由对象
  */
 export interface RouteItem {
