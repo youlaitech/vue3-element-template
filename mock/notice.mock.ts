@@ -103,6 +103,19 @@ export default defineMock([
       };
     },
   },
+
+  // 预览通知
+  {
+    url: "notices/:id/preview",
+    method: ["GET"],
+    body: ({ params }) => {
+      return {
+        code: "00000",
+        data: noticeMap[params.id],
+        msg: "一切ok",
+      };
+    },
+  },
   // 发布通知
   {
     url: "notices/:id/publish",

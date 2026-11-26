@@ -62,7 +62,6 @@
 
       <div class="page-table-wrapper">
         <el-table
-          ref="dataTableRef"
           v-loading="loading"
           :data="list"
           class="page-table"
@@ -581,7 +580,7 @@ async function handleDelete(id?: string): Promise<void> {
  * @param id 通知 ID
  */
 async function openDetailDialog(id: string): Promise<void> {
-  currentNotice.value = await NoticeAPI.getDetail(id);
+  currentNotice.value = await NoticeAPI.getPreview(id);
   detailDialog.visible = true;
 }
 
